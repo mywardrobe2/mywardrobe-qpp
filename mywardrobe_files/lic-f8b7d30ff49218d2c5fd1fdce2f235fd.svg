@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="74px" height="48px" viewBox="0 0 74 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>编组 19备份</title>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="74" height="48"></rect>
+    </defs>
+    <g id="卡片-王俊-" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="编组-19备份">
+            <mask id="mask-2" fill="white">
+                <use xlink:href="#path-1"></use>
+            </mask>
+            <g id="蒙版"></g>
+            <g mask="url(#mask-2)" fill-rule="nonzero" id="路径">
+                <g transform="translate(13.000000, 0.000000)">
+                    <polygon fill="#00A0E9" points="23.8436482 0 2.11608818e-14 23.8957655 16 19.4471847"></polygon>
+                    <polygon fill="#FABE00" points="0 23.8957655 10.0995812 34.0809679 28.9139134 28.9883667 32.6924151 14.8124709"></polygon>
+                    <polygon fill="#009E96" points="23.8436482 0 16 19.4471847 32.6924151 14.8124709"></polygon>
+                    <polygon fill="#FFF100" points="23.8436482 0 47.6277338 23.8957655 32.6924151 14.8124709"></polygon>
+                    <polygon fill="#E60012" points="32.6924151 14.8124709 28.9139134 28.9883667 47.6277338 23.8957655"></polygon>
+                    <polygon fill="#00A051" points="28.9139134 28.9883667 23.8436482 48 10.0995812 34.0809679"></polygon>
+                    <polygon fill="#A50082" points="47.6277338 23.8957655 28.9139134 28.9883667 23.8436482 48"></polygon>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

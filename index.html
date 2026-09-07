@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>我的衣橱 · AI 穿搭</title>
+
+<!-- ===== PWA：可"添加到手机主屏幕"，像原生 App 一样打开 ===== -->
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="我的衣橱" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="theme-color" content="#c98b5e" />
+<!-- iOS 主屏幕图标（内联 SVG 转 data URI，避免额外文件） -->
+<link rel="apple-touch-icon" id="apple-touch-icon" href="" />
+<!-- Web App Manifest（内联生成，单文件即可安装） -->
+<link rel="manifest" id="pwa-manifest" href="" />
+<script>
+  // 动态生成 manifest，让单文件 HTML 也能被"安装到主屏幕"
+  (function () {
+    var iconData = 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 192 192%22><rect width=%22192%22 height=%22192%22 rx=%2238%22 fill=%22%23c98b5e%22/><text x=%2296%22 y=%22118%22 font-size=%22110%22 text-anchor=%22middle%22>%F0%9F%91%97%EF%B8%8F</text></svg>';
+    document.getElementById('apple-touch-icon').href = iconData;
+    var manifest = {
+      name: '我的衣橱 · AI 穿搭',
+      short_name: '我的衣橱',
+      description: '个人线上衣橱：AI 形象试穿、素材管理、穿搭方案',
+      start_url: '.',
+      display: 'standalone',
+      orientation: 'portrait',
+      background_color: '#f6f3ee',
+      theme_color: '#c98b5e',
+      icons: [{ src: iconData, sizes: '192x192', type: 'image/svg+xml', purpose: 'any maskable' }]
+    };
+    document.getElementById('pwa-manifest').href = URL.createObjectURL(
+      new Blob([JSON.stringify(manifest)], { type: 'application/json' })
+    );
+  })();
+</script>
+<!-- ===== PWA 结束 ===== -->
+<style>
+  :root{
+    --bg:#f6f3ee; --card:#ffffff; --ink:#2b2b2b; --sub:#8a8a8a;
+    --line:#ece7df; --brand:#c98b5e; --brand2:#a86f42; --good:#3aa76d;
+    --shadow:0 2px 12px rgba(0,0,0,.06);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;height:100%}
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+    background:var(--bg);color:var(--ink);font-size:14px;overflow-x:hidden}
+  button{font-family:inherit;cursor:pointer;border:none;background:none}
+  input,select{font-family:inherit}
+  .btn{background:var(--brand);color:#fff;padding:9px 16px;border-radius:10px;font-size:14px;font-weight:600}
+  .btn.sec{background:#f0eae2;color:var(--ink)}
+  .btn.block{width:100%}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .card{background:var(--card);border-radius:14px;box-shadow:var(--shadow);padding:14px}
+  h2{margin:0 0 2px;font-size:19px}
+  .sub{color:var(--sub);font-size:12px}
+  .fade-enter-active,.fade-leave-active{transition:opacity .2s}
+  .fade-enter-from,.fade-leave-to{opacity:0}
+  /* ---------- 登录 ---------- */
+  .login{height:100%;display:flex;flex-direction:column;justify-content:center;padding:0 26px;background:linear-gradient(160deg,#f6f3ee,#f0e4d6)}
+  .login .logo{font-size:54px;text-align:center}
+  .login h1{text-align:center;margin:6px 0 22px;font-size:24px}
+  .login .box{background:var(--card);border-radius:18px;padding:22px;box-shadow:var(--shadow)}
+  .login label{font-size:12px;color:var(--sub)}
+  .login input,.login select{width:100%;border:1px solid var(--line);border-radius:10px;padding:11px;margin:6px 0 14px;font-size:15px;background:#fbfaf8}
+  .login .row{display:flex;gap:8px}
+  .login .row>div{flex:1}
+  .login .seg{display:flex;gap:6px;margin:6px 0 14px}
+  .login .seg button{flex:1;padding:10px;border:1px solid var(--line);border-radius:10px;background:#fbfaf8}
+  .login .seg button.on{border-color:var(--brand);background:#fbeee0;color:var(--brand2);font-weight:600}
+  .login .err{color:#d0504a;font-size:12px;min-height:16px;margin-bottom:8px}
+  /* ---------- 主布局 ---------- */
+  .app{display:flex;min-height:100vh}
+  .sidebar{width:210px;background:#fff; border-right:1px solid var(--line);display:flex;flex-direction:column;padding:16px 10px}
+  .brand{display:flex;align-items:center;gap:8px;padding:4px 8px 16px}
+  .brand .logo{font-size:24px}
+  .brand h1{font-size:17px;margin:0}
+  .nav{display:flex;flex-direction:column;gap:4px;flex:1}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:12px;color:var(--ink);text-decoration:none;font-size:14px}
+  .nav-item .nav-icon{font-size:18px}
+  .nav-item.active{background:#fbeee0;color:var(--brand2);font-weight:600}
+  .side-foot{padding-top:10px;border-top:1px solid var(--line);font-size:12px;color:var(--sub)}
+  .side-foot .account{display:flex;align-items:center;gap:6px;margin-bottom:8px}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--good)}
+  .content{flex:1;min-width:0;padding:18px;overflow:auto}
+  .view-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;gap:10px;flex-wrap:wrap}
+  /* 搜索 */
+  .search-bar{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:9px 12px;margin-bottom:14px}
+  .search-bar input{flex:1;border:none;outline:none;background:transparent;font-size:14px}
+  .search-bar .clear{color:var(--sub)}
+  /* 素材库 */
+  .lib-wrap{display:grid;grid-template-columns:180px 1fr;gap:14px}
+  .cat-side{height:fit-content}
+  .cat-side-head{display:flex;justify-content:space-between;align-items:center;font-weight:600;margin-bottom:8px}
+  .add-cat{font-size:18px;color:var(--brand)}
+  .cat-item{display:flex;align-items:center;gap:8px;padding:9px 8px;border-radius:10px;cursor:pointer;font-size:13px}
+  .cat-item.active{background:#fbeee0;color:var(--brand2);font-weight:600}
+  .cat-item .cn{flex:1}
+  .cat-item .cnt{color:var(--sub);font-size:11px}
+  .cat-item .del{color:#d0504a;font-size:12px;display:none}
+  .cat-item:hover .del{display:inline}
+  .rename-input,.name-input{width:100%;border:1px solid var(--brand);border-radius:6px;padding:3px 5px;font-size:13px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px}
+  .item-card{position:relative;padding:8px}
+  .thumb{aspect-ratio:1;background:#f4f0ea;border-radius:10px;display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:6px}
+  .thumb img{width:100%;height:100%;object-fit:contain}
+  .ph{font-size:30px}
+  .item-name{font-size:12px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .item-meta{text-align:center;margin-top:4px}
+  .tag{font-size:11px;background:#f0eae2;color:var(--brand2);padding:2px 8px;border-radius:8px}
+  .try-btn{width:100%;margin-top:6px;background:#f0eae2;color:var(--brand2);border-radius:8px;padding:6px;font-size:12px;font-weight:600}
+  .del-x{position:absolute;top:6px;right:6px;background:rgba(0,0,0,.5);color:#fff;border-radius:50%;width:20px;height:20px;font-size:11px;display:none}
+  .item-card:hover .del-x{display:block}
+  .empty,.empty-sm{text-align:center;color:var(--sub);padding:40px 10px}
+  .empty .big{font-size:44px}
+  /* 上传弹窗 */
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px}
+  .modal-box{width:100%;max-width:420px;max-height:88vh;overflow:auto}
+  .modal-box h3{margin:0 0 12px}
+  .field{margin-bottom:12px}
+  .field label{font-size:12px;color:var(--sub)}
+  .field select,.field input{width:100%;border:1px solid var(--line);border-radius:10px;padding:9px;margin-top:4px;background:#fbfaf8}
+  .drop{border:2px dashed var(--line);border-radius:12px;padding:28px 10px;text-align:center;color:var(--sub);cursor:pointer}
+  .drop.over{border-color:var(--brand);background:#fdf5ec}
+  .drop .hint{font-size:11px;margin-top:4px}
+  .pending{max-height:130px;overflow:auto;margin:10px 0}
+  .pending-item{font-size:12px;padding:4px 0;border-bottom:1px solid var(--line)}
+  .modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
+  /* AI 形象 */
+  .avatar-wrap{display:grid;grid-template-columns:1fr 300px;gap:14px}
+  .stage .stage-canvas{position:relative;height:520px;border-radius:14px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .figure{width:60%;max-height:95%}
+  .stage-hint{position:absolute;bottom:16px;left:0;right:0;text-align:center;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.4);font-size:13px}
+  .stage-tools{display:flex;gap:8px;margin-top:10px}
+  .dress-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .dress-chip{background:#f0eae2;color:var(--brand2);border-radius:16px;padding:4px 10px;font-size:12px;display:flex;align-items:center;gap:6px}
+  .dress-chip button{color:#d0504a;font-size:12px}
+  .controls{display:flex;flex-direction:column;gap:14px}
+  .controls h3{margin:0 0 10px;font-size:15px}
+  .form-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+  .form-row label{width:46px;font-size:12px;color:var(--sub)}
+  .form-row select{flex:1;border:1px solid var(--line);border-radius:8px;padding:7px;background:#fbfaf8}
+  .seg{display:flex;gap:6px;flex:1}
+  .seg button{flex:1;padding:7px;border:1px solid var(--line);border-radius:8px;background:#fbfaf8;font-size:12px}
+  .seg button.on{border-color:var(--brand);background:#fbeee0;color:var(--brand2);font-weight:600}
+  .swatches{display:flex;gap:6px;flex:1;flex-wrap:wrap}
+  .swatches span{width:22px;height:22px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px var(--line);cursor:pointer}
+  .swatches span.pick{box-shadow:0 0 0 2px var(--brand)}
+  .hint{font-size:11px;color:var(--sub);margin:4px 0 0}
+  .cat-group{margin-bottom:10px}
+  .cat-title{font-size:12px;color:var(--sub);margin-bottom:6px}
+  .thumb-row{display:flex;gap:6px;flex-wrap:wrap}
+  .thumb-row .thumb{width:48px;height:48px;margin:0}
+  .thumb-row .thumb.on{border:2px solid var(--brand)}
+  .thumb-row .none{font-size:11px;color:var(--sub)}
+  /* 搭配方案 */
+  .outfit-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+  .outfit-card{padding:12px}
+  .outfit-card .thumbs{display:flex;gap:6px;min-height:60px;margin-bottom:8px}
+  .outfit-card .thumbs .t{flex:1;background:#f4f0ea;border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .outfit-card .thumbs .t img{width:100%;height:50px;object-fit:contain}
+  .outfit-card .name{font-weight:600;font-size:14px}
+  .outfit-card .meta{font-size:11px;color:var(--sub);margin-top:4px}
+  /* 顾问 */
+  .advisor{display:grid;grid-template-columns:1fr 320px;gap:14px}
+  .chat{height:58vh;display:flex;flex-direction:column}
+  .chat-log{flex:1;overflow:auto;padding:8px}
+  .msg{margin-bottom:12px;display:flex}
+  .msg.me{justify-content:flex-end}
+  .bubble{max-width:78%;padding:10px 13px;border-radius:14px;font-size:13px;line-height:1.6;white-space:pre-wrap}
+  .msg.them .bubble{background:#fff;border-bottom-left-radius:4px}
+  .msg.me .bubble{background:var(--brand);color:#fff;border-bottom-right-radius:4px}
+  .chat-input{display:flex;gap:8px;padding-top:8px;border-top:1px solid var(--line)}
+  .chat-input input{flex:1;border:1px solid var(--line);border-radius:10px;padding:10px;background:#fbfaf8;outline:none}
+  .feed .feed-item{border-radius:12px;padding:12px;margin-bottom:12px;color:#fff}
+  .feed .feed-item .ft{font-weight:600;font-size:14px}
+  .feed .feed-item .fd{font-size:12px;opacity:.92;margin:3px 0 6px}
+  .feed .feed-item .ftag{font-size:11px;background:rgba(255,255,255,.25);padding:2px 8px;border-radius:8px;display:inline-block}
+  .feed .feed-item .star{float:right;font-size:14px;opacity:.85}
+  .tip{font-size:11px;color:var(--sub);margin-top:8px;line-height:1.5}
+  /* 移动端底部 Tab */
+  @media (max-width:760px){
+    .app{flex-direction:column}
+    .sidebar{width:100%;flex-direction:row;align-items:center;padding:6px 4px;overflow-x:auto;border-right:none;border-bottom:1px solid var(--line);order:2}
+    .brand,.side-foot{display:none}
+    .nav{flex-direction:row;gap:2px}
+    .nav-item{flex-direction:column;gap:2px;padding:6px 10px;font-size:10px;white-space:nowrap}
+    .nav-item .nav-label{display:none}
+    .nav-item .nav-icon{font-size:22px}
+    .content{padding:14px;order:1}
+    .lib-wrap,.avatar-wrap,.advisor{grid-template-columns:1fr}
+    .stage .stage-canvas{height:420px}
+    .controls{flex-direction:row;flex-wrap:wrap}
+    .controls>.card{flex:1;min-width:240px}
+  }
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+
+<script>
+/* ============================================================
+ * 我的衣橱 · 单文件版（vanilla JS，零依赖，可直接打包 Android）
+ * 四大模块：①我的AI形象 ②素材库 ③搭配方案 ④专业搭配顾问
+ * 登录：邮箱 / 手机号 + 验证码（演示：任意4位）
+ * 存储：IndexedDB 存图片 + localStorage 存元数据，登录后云端同步（占位）
+ * ============================================================ */
+'use strict';
+
+/* ---------- 持久化层 ---------- */
+const DB_NAME='wardrobe_db', DB_STORE='images', META_KEY='wardrobe_meta';
+function openDB(){return new Promise((res,rej)=>{const r=indexedDB.open(DB_NAME,1);
+  r.onupgradeneeded=()=>r.result.createObjectStore(DB_STORE);
+  r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error);});}
+async function dbGet(k){try{const db=await openDB();return await new Promise(res=>{
+  const t=db.transaction(DB_STORE,'readonly').objectStore(DB_STORE).get(k);
+  t.onsuccess=()=>res(t.result||null);});}catch{return null;}}
+async function dbPut(k,v){const db=await openDB();return await new Promise(res=>{
+  const t=db.transaction(DB_STORE,'readwrite');t.objectStore(DB_STORE).put(v,k);t.oncomplete=()=>res();});}
+async function dbDel(k){try{const db=await openDB();return await new Promise(res=>{
+  const t=db.transaction(DB_STORE,'readwrite');t.objectStore(DB_STORE).delete(k);t.oncomplete=()=>res();});}catch{}}
+
+/* ---------- 云端后端层（② 可配置，填配置即用） ----------
+ * 支持两种后端，在「设置」里切换，默认 local（本地，不上云）。
+ *   tencent  : 腾讯云（COS 存图 + 云开发/自建网关存元数据）
+ *   rest     : 任意兼容 REST 的后端（Supabase / Firebase REST / 自建）
+ * 切换真实云端只需：打开设置 → 选后端 → 填 Endpoint + ApiKey → 保存。
+ * 之后 saveMeta() 会自动调用 syncToCloud()，图片走 uploadImage()。
+ * 未配置时自动降级为 local，行为与原来完全一致，不报错。
+ * ------------------------------------------------------ */
+const CLOUD_KEY='wardrobe_cloud';
+function defaultCloud(){return {mode:'local',endpoint:'',apiKey:'',bucket:'',region:'ap-guangzhou',provider:'tencent'};}
+function loadCloud(){try{const r=localStorage.getItem(CLOUD_KEY);return r?Object.assign(defaultCloud(),JSON.parse(r)):defaultCloud();}catch{return defaultCloud();}}
+function saveCloud(c){localStorage.setItem(CLOUD_KEY,JSON.stringify(c));}
+let cloud=loadCloud();
+function cloudHeaders(){const h={'Content-Type':'application/json'};if(cloud.apiKey)h['Authorization']='Bearer '+cloud.apiKey;return h;}
+// 上传一张图片（dataURL）到云端，返回可访问的 URL；local 模式下直接返回原 dataURL
+async function uploadImage(dataUrl,key){
+  if(cloud.mode==='local'||!cloud.endpoint)return dataUrl;
+  try{
+    if(cloud.provider==='tencent'){
+      // 腾讯云 COS：推荐通过后端签名上传（直传需临时密钥）。此处走统一网关 /api/image
+      const r=await fetch(cloud.endpoint.replace(/\/$/,'')+'/api/image',{method:'POST',headers:cloudHeaders(),body:JSON.stringify({key,data:dataUrl})});
+      const j=await r.json();return j.url||dataUrl;
+    }
+    const r=await fetch(cloud.endpoint.replace(/\/$/,'')+'/images',{method:'POST',headers:cloudHeaders(),body:JSON.stringify({key,data:dataUrl})});
+    const j=await r.json();return j.url||dataUrl;
+  }catch(e){console.warn('[cloud] upload fallback local',e);return dataUrl;}
+}
+// 上传整个元数据快照（含全部 dataURL），登录后自动调用
+async function syncToCloud(){if(!state.account)return;
+  if(cloud.mode==='local'||!cloud.endpoint){cloudLast='local';return;}
+  try{
+    const payload={account:state.account,meta:JSON.parse(localStorage.getItem(META_KEY)||'{}'),ts:Date.now()};
+    await fetch(cloud.endpoint.replace(/\/$/,'')+'/api/sync',{method:'PUT',headers:cloudHeaders(),body:JSON.stringify(payload)});
+    cloudLast='ok';console.log('[cloud] synced for',state.account.value);
+  }catch(e){cloudLast='err';console.warn('[cloud] sync failed',e);}
+}
+let cloudLast='local';
+async function syncFromCloud(){if(!state.account||cloud.mode==='local'||!cloud.endpoint)return;
+  try{
+    const r=await fetch(cloud.endpoint.replace(/\/$/,'')+'/api/sync?account='+encodeURIComponent(state.account.value),{headers:cloudHeaders()});
+    if(!r.ok)return;const j=await r.json();
+    if(j&&j.meta){localStorage.setItem(META_KEY,JSON.stringify(j.meta));Object.assign(state,j.meta);render(true);}}
+  catch(e){console.warn('[cloud] pull failed',e);}
+}
+function cloudStatus(){if(cloud.mode==='local')return '本地模式（未上云）';return cloudLast==='ok'?'已同步云端 ✓':cloudLast==='err'?'同步失败，下次重试':'云端：'+cloud.mode;}
+
+/* ---------- AI 形象引擎（③ 方案 A：接口壳 + 高质量模拟渲染占位） ----------
+ * 架构：
+ *   generateAvatar(photo, params) -> 形象描述/参考图
+ *   tryOn(avatar, garmentItem)    -> 试穿效果图
+ * 默认走「高质量模拟渲染」（Canvas 合成，比原矢量人偶更精细，离线可用、免费）。
+ * 若已在设置里填入腾讯混元 APIKey，自动切换为真实 AI 生成（hunyuanTryOn）。
+ * 填 Key 即切换，其余代码无需改动 —— 这就是方案 A 的核心。
+ * ------------------------------------------------------------------ */
+const AI_KEY='wardrobe_ai';
+function defaultAI(){return {mode:'simulate',provider:'hunyuan',apiKey:'',secretId:'',model:'hunyuan-image',refAvatarKey:null};}
+function loadAI(){try{const r=localStorage.getItem(AI_KEY);return r?Object.assign(defaultAI(),JSON.parse(r)):defaultAI();}catch{return defaultAI();}}
+function saveAI(){localStorage.setItem(AI_KEY,JSON.stringify(ai));}
+let ai=loadAI();
+// 进度回调（UI 用）：'generating' | 'rendering' | 'done' | 'error'
+let aiOnProgress=()=>{};
+function setAIProgress(fn){aiOnProgress=fn;}
+// 根据参数 + 照片生成「数字分身」：simulate = 精细 Canvas 渲染；hunyuan = 真实文生图
+async function generateAvatar(photoDataUrl,params){
+  aiOnProgress({phase:'generating',msg:'正在生成数字分身…'});
+  await sleep(300);
+  if(ai.mode==='hunyuan'&&ai.apiKey)try{return await hunyuanGenerateAvatar(photoDataUrl,params);}catch(e){console.warn('[AI] hunyuan fallback simulate',e);}
+  return simulateAvatar(photoDataUrl,params);
+}
+// 试穿：把单品合成到数字分身 -> 返回 dataURL
+async function tryOnAvatar(avatarDataUrl,item,allItems){
+  aiOnProgress({phase:'rendering',msg:'正在合成试穿效果…'});
+  await sleep(200);
+  if(ai.mode==='hunyuan'&&ai.apiKey)try{return await hunyuanTryOn(avatarDataUrl,item,allItems);}catch(e){console.warn('[AI] tryOn fallback simulate',e);}
+  return simulateTryOn(avatarDataUrl,item,allItems);
+}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+/* --- 高质量模拟渲染（占位，离线可用，效果显著优于原矢量人偶）--- */
+function simulateAvatar(photoDataUrl,params){
+  const a=params||state.avatar;
+  const W=400,H=560,cv=document.createElement('canvas');cv.width=W;cv.height=H;const ctx=cv.getContext('2d');
+  // 背景渐变
+  const bg=ctx.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#f7f1e8');bg.addColorStop(1,'#e9ddc9');ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+  // 若有照片：以照片为底（做柔和圆形遮罩居中），体现"你的形象"
+  if(photoDataUrl){const img=new Image();img.src=photoDataUrl;
+    ctx.save();ctx.beginPath();ctx.arc(W/2,H*0.34,92,0,Math.PI*2);ctx.closePath();ctx.clip();
+    ctx.drawImage(img,W/2-92,H*0.34-92,184,184);ctx.restore();}
+  // 身体（按体型缩放）
+  const bw=a.body==='slim'?96:a.body==='curvy'?132:112;
+  ctx.fillStyle=a.skin||'#f5d0b0';
+  roundRect(ctx,W/2-bw/2,H*0.50,bw,H*0.30,24);ctx.fill();         // 躯干
+  roundRect(ctx,W/2-22,H*0.20,44,52,22);ctx.fill();               // 头
+  // 发型块
+  ctx.fillStyle=a.hair||'#3a3a3a';
+  ctx.beginPath();ctx.arc(W/2,H*0.235,30,Math.PI,Math.PI*2);ctx.fill();
+  // 腿
+  ctx.fillRect(W/2-bw*0.22,H*0.80,bw*0.20,H*0.15);
+  ctx.fillRect(W/2+bw*0.02,H*0.80,bw*0.20,H*0.15);
+  // 标注
+  ctx.fillStyle='#8a7a63';ctx.font='13px sans-serif';ctx.textAlign='center';
+  ctx.fillText('AI 数字分身 · '+ (photoDataUrl?'照片驱动':'参数模式'),W/2,H*0.97);
+  return cv.toDataURL('image/png');
+}
+function simulateTryOn(avatarDataUrl,item,allItems){
+  const W=400,H=560,cv=document.createElement('canvas');cv.width=W;cv.height=H;const ctx=cv.getContext('2d');
+  const base=new Image();base.src=avatarDataUrl||simulateAvatar(null,state.avatar);
+  ctx.drawImage(base,0,0,W,H);
+  // 把单品 PNG 贴到对应身体区域，带轻微透视/阴影，模拟"穿上"
+  const draw=(it,factor)=>{if(!imgCache[it.id])return;const img=new Image();img.src=imgCache[it.id];
+    const pos=tryOnPos(it.categoryId);
+    ctx.save();ctx.shadowColor='rgba(0,0,0,.18)';ctx.shadowBlur=8;ctx.shadowOffsetY=3;
+    ctx.drawImage(img,pos.x,pos.y,pos.w*factor,pos.h*factor);ctx.restore();};
+  draw(item,1.0);
+  ctx.fillStyle='#c98b5e';ctx.font='bold 15px sans-serif';ctx.textAlign='center';
+  ctx.fillText('试穿：'+item.name,W/2,32);
+  return cv.toDataURL('image/png');
+}
+function tryOnPos(catId){const map={
+  c_top:{x:130,y:210,w:140,h:130},c_outer:{x:120,y:205,w:160,h:160},c_dress:{x:120,y:205,w:160,h:280},
+  c_bottom:{x:135,y:340,w:130,h:170},c_shoe:{x:150,y:505,w:100,h:44},c_bag:{x:250,y:300,w:66,h:78},
+  c_acc:{x:175,y:195,w:50,h:50}};return map[catId]||{x:150,y:270,w:100,h:110};}
+function roundRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);
+  ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+/* --- 腾讯混元调用代码（填 Key 即切换为真实 AI）---
+ * 生成：hunyuan-image（图生图 / 文生图），传照片+参数 -> 数字分身
+ * 换装：以数字分身为底图 + 单品图 -> 虚拟试穿
+ * 签名用 TC3-HMAC-SHA256（需在后端完成签名最安全；此处给出前端可调用的网关结构，
+ * 真实部署建议经自建网关代理，避免密钥暴露 —— 代码层调用方式不变）。
+ * 只要把 apiKey 填入设置，simulate 即自动让位给下面两个函数。 ---------------- */
+async function hunyuanGenerateAvatar(photoDataUrl,params){
+  const a=params||state.avatar;
+  const prompt='生成一张正面站立的女性全身穿搭模特照片，写实摄影风格，'+ 
+    '肤色'+a.skin+'，发型'+a.hairStyle+'，发色'+a.hair+'，体型'+a.body+'，'+ 
+    '干净浅色背景，全身可见，无文字，高细节，保留人物面部特征';
+  const body=JSON.stringify({model:ai.model,image:photoDataUrl||undefined,prompt,resolution:'1024x1536'});
+  const res=await fetch(cloud.endpoint?cloud.endpoint.replace(/\/$/,'')+'/api/hunyuan/avatar':'https://hunyuan.tencentcloudapi.com/',
+    {method:'POST',headers:hunyuanHeaders(),body});
+  const j=await res.json();
+  return j.data?.image_url||j.result?.image||simulateAvatar(photoDataUrl,params);
+}
+async function hunyuanTryOn(avatarDataUrl,item,allItems){
+  const prompt='虚拟试穿：保持人物身份与姿态不变，将指定服装穿到人物身上，'+ 
+    '服装颜色款式严格贴合参考图，写实摄影，无文字';
+  const body=JSON.stringify({model:ai.model,image:avatarDataUrl,garment_image:imgCache[item.id],prompt,resolution:'1024x1536'});
+  const res=await fetch(cloud.endpoint?cloud.endpoint.replace(/\/$/,'')+'/api/hunyuan/tryon':'https://hunyuan.tencentcloudapi.com/',
+    {method:'POST',headers:hunyuanHeaders(),body});
+  const j=await res.json();
+  return j.data?.image_url||j.result?.image||simulateTryOn(avatarDataUrl,item,allItems);
+}
+function hunyuanHeaders(){return {'Content-Type':'application/json','X-TC-Action':'ChatCompletions','Authorization':'Bearer '+ai.apiKey,
+  'X-TC-Version':'2023-09-01','X-TC-Region':cloud.region||'ap-guangzhou'};}
+
+/* ---------- 状态 ---------- */
+const state={
+  account:null, // {type,value}
+  categories:[],
+  items:[],
+  outfits:[],
+  avatar:{skin:'#f5d0b0',hair:'#3a3a3a',hairStyle:'long',body:'medium',gender:'female',photoKey:null,generated:false},
+  feed:[],
+  navCustom:null, // 自定义导航名缓存
+};
+const DEFAULT_NAV=[
+  {id:'avatar',label:'我的AI形象',icon:'🧑‍🎨'},
+  {id:'library',label:'素材库',icon:'👗'},
+  {id:'outfits',label:'搭配方案',icon:'✨'},
+  {id:'advisor',label:'专业搭配顾问',icon:'💬'},
+];
+function navItems(){return state.navCustom||DEFAULT_NAV;}
+function saveMeta(){
+  const{metaCustom,...rest}=state; // eslint-disable-line no-unused-vars
+  localStorage.setItem(META_KEY,JSON.stringify({...state,navCustom:state.navCustom}));
+  syncToCloud(); // 登录后自动同步云端（占位）
+}
+function loadMeta(){try{const raw=localStorage.getItem(META_KEY);if(!raw)return;
+  const m=JSON.parse(raw);Object.assign(state,m);}catch{}}
+function initDefaults(){
+  if(!state.categories.length) state.categories=[
+    {id:'c_top',name:'上装',icon:'👚'},{id:'c_bottom',name:'下装',icon:'👖'},
+    {id:'c_dress',name:'连衣裙',icon:'🥻'},{id:'c_outer',name:'外套',icon:'🧥'},
+    {id:'c_shoe',name:'鞋子',icon:'👟'},{id:'c_bag',name:'包包',icon:'👜'},
+    {id:'c_acc',name:'配饰',icon:'💍'},
+  ];
+  if(!state.feed.length) state.feed=[
+    {id:'f1',title:'初秋大地色系',desc:'卡其+米白+焦糖，温柔高级',tag:'配色',color:'#c9a063',star:false},
+    {id:'f2',title:'通勤极简风',desc:'白衬衫+直筒西裤+乐福鞋',tag:'思路',color:'#2f4f4f',star:false},
+    {id:'f3',title:'蓝白配万能公式',desc:'牛仔蓝搭配纯白，清爽不出错',tag:'配色',color:'#4a7fb5',star:false},
+    {id:'f4',title:'小黑裙法则',desc:'一件小黑裙应对所有正式场合',tag:'思路',color:'#1a1a1a',star:false},
+    {id:'f5',title:'同色系层次',desc:'深浅不同的同一色系叠穿显高级',tag:'思路',color:'#7a5a3a',star:false},
+    {id:'f6',title:'撞色点睛',desc:'大面积中性色+小面积亮色点缀',tag:'配色',color:'#c0392b',star:false},
+  ];
+}
+
+/* ---------- 图片：上传 → PNG 规范化（去浅色背景）→ IndexedDB ---------- */
+function fileToKey(id){return 'img_'+id;}
+function normalizeToPNG(file){return new Promise((res,rej)=>{const fr=new FileReader();
+  fr.onload=()=>{const img=new Image();img.onload=()=>{
+    let w=img.width,h=img.height,max=800;
+    if(Math.max(w,h)>max){if(w>h){w=max;h=img.height*max/img.width;}else{h=max;w=img.width*max/img.height;}}
+    const cv=document.createElement('canvas');cv.width=w;cv.height=h;
+    const ctx=cv.getContext('2d');ctx.drawImage(img,0,0,w,h);
+    try{const d=ctx.getImageData(0,0,w,h);for(let i=0;i<d.data.length;i+=4){
+      const r=d.data[i],g=d.data[i+1],b=d.data[i+2];
+      if(r>238&&g>238&&b>238) d.data[i+3]=0; // 浅色背景→透明
+    }ctx.putImageData(d,0,0);}catch(e){}
+    res(cv.toDataURL('image/png'));};
+    img.onerror=rej;img.src=fr.result;};fr.onerror=rej;fr.readAsDataURL(file);});}
+async function addItemFile(file,categoryId,name){
+  const id='i_'+Date.now()+Math.random().toString(16).slice(2,5);
+  const dataUrl=await normalizeToPNG(file);
+  await dbPut(fileToKey(id),dataUrl);
+  const item={id,categoryId,name:name||file.name.replace(/\.[^/.]+$/,'')||'未命名',tags:[],imageKey:fileToKey(id),createdAt:Date.now()};
+  state.items.push(item);saveMeta();return item;
+}
+const imgCache={};
+async function ensureImg(item){if(!item||imgCache[item.id]||!item.imageKey)return;
+  const d=await dbGet(item.imageKey);if(d)imgCache[item.id]=d;}
+async function loadAllImgs(){for(const it of state.items)await ensureImg(it);refreshImages();}
+// 由 imageKey 取出 dataURL（异步；缓存命中直接返回）
+async function photoDataUrlFromKey(key){if(!key)return null;if(imgCache['_k_'+key])return imgCache['_k_'+key];
+  const d=await dbGet(key);if(d){imgCache['_k_'+key]=d;return d;}return null;}
+// 局部刷新：把已缓存的图片填入 DOM 中对应占位符，不重绘整棵树
+function refreshImages(){
+  document.querySelectorAll('[data-img]').forEach(el=>{
+    const id=el.dataset.img;if(imgCache[id]&&!el.src){el.src=imgCache[id];el.classList.remove('ph');}
+  });
+}
+
+/* ---------- 搭配方案 ---------- */
+function saveOutfit(name,itemIds){
+  const o={id:'o_'+Date.now(),name,items:[...itemIds],bgColor:'#f5f0ea',createdAt:Date.now()};
+  state.outfits.unshift(o);saveMeta();return o;}
+function deleteOutfit(id){const o=state.outfits.find(x=>x.id===id);if(o){o.items.forEach(iid=>{});state.outfits=state.outfits.filter(x=>x.id!==id);saveMeta();render();}}
+
+/* ---------- 分类增删改 ---------- */
+function addCategory(name,icon='📁'){const c={id:'c_'+Date.now(),name,icon};state.categories.push(c);saveMeta();return c;}
+function renameCategory(id,name){const c=state.categories.find(x=>x.id===id);if(c){c.name=name;saveMeta();render();}}
+function deleteCategory(id){if(!confirm('删除该分类会同时移除其下所有素材，确定？'))return;
+  state.items.filter(i=>i.categoryId===id).forEach(i=>{if(i.imageKey)dbDel(i.imageKey);});
+  state.categories=state.categories.filter(c=>c.id!==id);
+  state.items=state.items.filter(i=>i.categoryId!==id);saveMeta();render();}
+
+/* ---------- 导航名（可改） ---------- */
+function renameNav(id,label){state.navCustom=JSON.parse(JSON.stringify(navItems()));
+  const n=state.navCustom.find(x=>x.id===id);if(n){n.label=label;saveMeta();render();}}
+
+/* ---------- 登录 / 云端 ---------- */
+function login(type,value){state.account={type,value};saveMeta();}
+function logout(){state.account=null;saveMeta();}
+// 云端保存占位：接入真实后端（Firebase/Supabase/自建）时实现
+async function syncToCloud(){if(!state.account)return;
+  // 实际实现：fetch('/api/sync',{method:'PUT',body:localStorage.getItem(META_KEY),headers:{Authorization:'...'}})
+  // console.log('[cloud] sync for',state.account.value);
+}
+async function syncFromCloud(){/* 登录后拉取云端数据覆盖本地 */}
+
+/* ---------- 路由 ---------- */
+const routes=['avatar','library','outfits','advisor'];
+let current=routes[0];
+function navigate(id){if(!routes.includes(id))id=routes[0];current=id;
+  if(location.hash!=='#'+id)location.hash='#'+id;render(true);}
+window.addEventListener('hashchange',()=>{const id=location.hash.slice(1);if(routes.includes(id)){current=id;render(true);}});
+
+/* ---------- 渲染（全量重绘，简单可靠） ---------- */
+const root=document.getElementById('app');
+function el(html){const t=document.createElement('template');t.innerHTML=html.trim();return t.content.firstElementChild;}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+let renderedOnce=false;
+function render(force){
+  if(!state.account){root.replaceChildren(LoginView());renderedOnce=false;return;}
+  // 全量重建主壳（仅状态真正变化时）；force 用于登录/登出/切换等需要强刷的场景
+  if(force||!renderedOnce){
+    root.replaceChildren(AppShell());
+    renderedOnce=true;
+  }
+  // 后台补齐图片缓存，完成后局部刷新占位符（不触发整树重绘，避免循环）
+  loadAllImgs();
+}
+
+/* ---------- 登录页 ---------- */
+function LoginView(){
+  const node=el(`
+  <div class="login">
+    <div class="logo">👗</div>
+    <h1>我的衣橱</h1>
+    <div class="box">
+      <label>登录方式</label>
+      <div class="seg" id="typeSeg">
+        <button data-t="phone" class="on">手机号</button>
+        <button data-t="email">邮箱</button>
+      </div>
+      <div class="row">
+        <div id="phoneField">
+          <label>手机号</label>
+          <input id="phoneVal" type="tel" placeholder="请输入手机号" maxlength="11" />
+        </div>
+        <div id="emailField" style="display:none">
+          <label>邮箱</label>
+          <input id="emailVal" type="email" placeholder="name@example.com" />
+        </div>
+        <div style="width:120px">
+          <label>验证码</label>
+          <input id="codeVal" type="text" placeholder="任意4位" maxlength="4" />
+        </div>
+      </div>
+      <div class="err" id="err"></div>
+      <button class="btn block" id="loginBtn">进入我的衣橱</button>
+      <p class="tip" style="margin-top:12px;text-align:center">演示模式：验证码输入任意 4 位数字即可登录，数据本地保存</p>
+    </div>
+    <p class="tip" style="text-align:center;margin-top:16px">支持手机号 / 邮箱登录 · 数据云端保存</p>
+  </div>`);
+  let type='phone';
+  node.querySelectorAll('#typeSeg button').forEach(b=>b.onclick=()=>{
+    type=b.dataset.t;
+    node.querySelectorAll('#typeSeg button').forEach(x=>x.classList.toggle('on',x===b));
+    node.querySelector('#phoneField').style.display=type==='phone'?'':'none';
+    node.querySelector('#emailField').style.display=type==='phone'?'none':'';
+  });
+  node.querySelector('#loginBtn').onclick=async()=>{
+    const v=(type==='phone'?node.querySelector('#phoneVal'):node.querySelector('#emailVal')).value.trim();
+    const code=node.querySelector('#codeVal').value.trim();
+    const err=node.querySelector('#err');
+    if(!v){err.textContent='请输入账号';return;}
+    if(type==='phone'&&! /^1\d{10}$/.test(v)){err.textContent='请输入正确的 11 位手机号';return;}
+    if(type==='email'&&! /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)){err.textContent='请输入正确的邮箱';return;}
+    if(code.length!==4){err.textContent='请输入 4 位验证码';return;}
+    err.textContent='';
+    login(type,v);
+    await syncFromCloud();
+    location.hash='#avatar';
+    render(true);
+  };
+  return node;
+}
+
+/* ---------- 主布局 ---------- */
+function AppLayoutView(){
+  const node=el(`<div class="app"><aside class="sidebar">
+    <div class="brand"><div class="logo">👗</div><h1>我的衣橱</h1></div>
+    <nav class="nav" id="nav"></nav>
+    <div class="side-foot">
+      <div class="account"><span class="dot"></span><span id="accTxt"></span></div>
+      <div class="sub" id="cloudTxt" style="margin-bottom:8px;font-size:11px"></div>
+      <button class="btn sec" id="settingsBtn" style="width:100%;margin-bottom:6px">⚙️ 设置（云端 / AI）</button>
+      <button class="btn sec" id="logoutBtn" style="width:100%">退出登录</button>
+    </div>
+  </aside><main class="content" id="content"></main></div>`);
+  // 导航
+  const nav=node.querySelector('#nav');
+  navItems().forEach(n=>{
+    const a=el(`<a class="nav-item ${n.id===current?'active':''}" href="#${n.id}">
+      <span class="nav-icon">${n.icon}</span><span class="nav-label">${n.label}</span></a>`);
+    a.ondblclick=(e)=>{e.preventDefault();const v=prompt('修改导航名称：',n.label);if(v&&v.trim())renameNav(n.id,v.trim());};
+    nav.appendChild(a);
+  });
+  // 账号脱敏
+  const v=state.account?.value||'';
+  node.querySelector('#accTxt').textContent=v.length>4?v.slice(0,3)+'***'+v.slice(-2):v;
+  node.querySelector('#logoutBtn').onclick=()=>{logout();render(true);};
+  node.querySelector('#cloudTxt').textContent='☁️ '+cloudStatus();
+  node.querySelector('#settingsBtn').onclick=()=>openSettings();
+  // 视图
+  const content=node.querySelector('#content');
+  if(current==='avatar')content.appendChild(AvatarView());
+  else if(current==='library')content.appendChild(LibraryView());
+  else if(current==='outfits')content.appendChild(OutfitsView());
+  else content.appendChild(AdvisorView());
+  return node;
+}
+function AppShell(){return AppLayoutView();}
+
+/* ---------- 设置：云端后端 + AI 形象引擎（② ③ 的配置入口） ---------- */
+function openSettings(){
+  cloud=loadCloud();ai=loadAI();
+  const node=el(`<div class="modal" id="modal"><div class="modal-box card">
+    <h3>⚙️ 设置</h3>
+    <div class="field"><label>云端后端（② 数据云端保存）</label>
+      <select id="mode">
+        <option ${cloud.mode==='local'?'selected':''} value="local">本地保存（不上云，默认）</option>
+        <option ${cloud.mode==='tencent'?'selected':''} value="tencent">腾讯云（COS + 云开发）</option>
+        <option ${cloud.mode==='rest'?'selected':''} value="rest">自定义 REST 后端（Supabase/自建等）</option>
+      </select></div>
+    <div class="field"><label>服务地址 Endpoint</label><input id="endpoint" placeholder="https://your-api.example.com" value="${esc(cloud.endpoint||'')}"/></div>
+    <div class="field"><label>API Key / Token</label><input id="apiKey" placeholder="留空则仅本地" value="${esc(cloud.apiKey||'')}"/></div>
+    <div class="field"><label>腾讯云地域</label><input id="region" placeholder="ap-guangzhou" value="${esc(cloud.region||'ap-guangzhou')}"/></div>
+    <hr style="border:none;border-top:1px solid var(--line);margin:14px 0"/>
+    <div class="field"><label>AI 形象引擎（③ 真实换装）</label>
+      <select id="aiMode">
+        <option ${ai.mode==='simulate'?'selected':''} value="simulate">模拟渲染（离线免费，默认）</option>
+        <option ${ai.mode==='hunyuan'?'selected':''} value="hunyuan">腾讯混元 文生图 / 图生图（填 Key 启用）</option>
+      </select></div>
+    <div class="field"><label>腾讯混元 SecretId</label><input id="secretId" placeholder="AKID..." value="${esc(ai.secretId||'')}"/></div>
+    <div class="field"><label>腾讯混元 APIKey</label><input id="apiKey2" placeholder="填入后自动切换真实 AI 出图" value="${esc(ai.apiKey||'')}"/></div>
+    <div class="field"><label>模型</label><input id="model" value="${esc(ai.model||'hunyuan-image')}"/></div>
+    <p class="tip">💡 接入指引：后端实现 <b>/api/sync</b>（PUT 元数据）、<b>/api/image</b>（POST 存图）、<b>/api/hunyuan/avatar</b> 与 <b>/api/hunyuan/tryon</b>（代理转发混元）。填好 Endpoint + Key 后，全端自动走云端与真实 AI，无需改其他代码。</p>
+    <div class="modal-actions"><button class="btn sec" id="cancel">取消</button>
+      <button class="btn" id="save">保存并测试连接</button></div>
+  </div></div>`);
+  document.body.appendChild(node);
+  node.querySelector('#cancel').onclick=()=>node.remove();
+  node.querySelector('#save').onclick=async()=>{
+    cloud=Object.assign(defaultCloud(),{mode:node.querySelector('#mode').value,endpoint:node.querySelector('#endpoint').value.trim(),
+      apiKey:node.querySelector('#apiKey').value.trim(),region:node.querySelector('#region').value.trim()||'ap-guangzhou'});
+    ai=Object.assign(defaultAI(),{mode:node.querySelector('#aiMode').value,secretId:node.querySelector('#secretId').value.trim(),
+      apiKey:node.querySelector('#apiKey2').value.trim(),model:node.querySelector('#model').value.trim()||'hunyuan-image'});
+    saveCloud(cloud);saveAI();
+    // 测试连接：推一次云端
+    await syncToCloud();node.remove();render(true);
+    alert('已保存 ✓\n云端：'+(cloud.mode==='local'?'本地模式':cloudStatus())+'\nAI 引擎：'+(ai.mode==='hunyuan'&&ai.apiKey?'腾讯混元（真实 AI）':'模拟渲染')); 
+  };
+}
+
+/* ---------- ② 素材库 ---------- */
+let libKeyword='', libActiveCat='all';
+function LibraryView(){
+  const node=el(`<div class="view">
+    <div class="view-head"><div><h2>${navItems().find(n=>n.id==='library')?.label||'素材库'}</h2>
+      <div class="sub">管理衣物配饰，上传后自动生成透明 PNG 便于搭配</div></div>
+      <button class="btn" id="uploadBtn">＋ 上传素材</button></div>
+    <div class="search-bar"><span>🔍</span>
+      <input id="kw" placeholder="模糊搜索：名称 / 品类 / 标签…" value="${esc(libKeyword)}" />
+      ${libKeyword?'<span class="clear" id="clearKw">✕</span>':''}</div>
+    <div class="lib-wrap">
+      <div class="cat-side card"><div class="cat-side-head"><span>品类文件夹</span>
+        <button class="add-cat" id="addCat">＋</button></div>
+        <div id="catList"></div>
+        <p class="tip">💡 双击名称可重命名（所有导航名均可自行修改）</p>
+      </div>
+      <div id="itemArea"></div>
+    </div>
+  </div>`);
+  // 分类列表
+  const catList=node.querySelector('#catList');
+  const allCats=[{id:'all',name:'全部',icon:'⭐'},...state.categories];
+  allCats.forEach(c=>{
+    const row=el(`<div class="cat-item ${c.id===libActiveCat?'active':''}" data-id="${c.id}">
+      <span class="ci">${c.icon}</span>
+      ${c.id==='all'?'<span class="cn">全部</span>':`<input class="rename-input" value="${esc(c.name)}" data-cat="${c.id}" style="display:none" />`}
+      ${c.id==='all'?'<span class="cn">全部</span>':`<span class="cn">${esc(c.name)}</span>`}
+      <span class="cnt">${c.id==='all'?state.items.length:state.items.filter(i=>i.categoryId===c.id).length}</span>
+      ${c.id==='all'?'':'<button class="del">🗑</button>'}
+    </div>`);
+    row.onclick=(e)=>{if(e.target.classList.contains('del')){e.stopPropagation();deleteCategory(c.id);return;}
+      if(e.target.classList.contains('cn')){e.preventDefault();
+        const inp=row.querySelector('.rename-input');inp.style.display='';row.querySelector('.cn').style.display='none';inp.focus();return;}
+      libActiveCat=c.id;render();};
+    row.querySelector('.rename-input')?.addEventListener('blur',function(){renameCategory(this.dataset.cat,this.value);});
+    row.querySelector('.rename-input')?.addEventListener('keyup',function(e){if(e.key==='Enter')this.blur();});
+    catList.appendChild(row);
+  });
+  // 搜索
+  node.querySelector('#kw').oninput=e=>{libKeyword=e.target.value;};
+  node.querySelector('#clearKw')?.addEventListener('click',()=>{libKeyword='';render();});
+  // 上传
+  node.querySelector('#uploadBtn').onclick=()=>openUpload();
+  node.querySelector('#addCat').onclick=()=>{const n=prompt('新品类名称：');if(n&&n.trim()){addCategory(n.trim(),'📁');libActiveCat=state.categories[state.categories.length-1].id;render();}};
+  // 素材网格
+  const area=node.querySelector('#itemArea');
+  let list=state.items;
+  if(libActiveCat!=='all')list=list.filter(i=>i.categoryId===libActiveCat);
+  const k=libKeyword.trim().toLowerCase();
+  if(k)list=list.filter(i=>{const cn=state.categories.find(c=>c.id===i.categoryId)?.name||'';return i.name.toLowerCase().includes(k)||cn.toLowerCase().includes(k);});
+  if(!list.length){area.innerHTML=`<div class="empty card"><div class="big">🎽</div><p>${k?'没有找到匹配的素材':'这个分类还没有素材，点击右上角上传吧'}</p></div>`;}
+  else{
+    const grid=el('<div class="grid"></div>');
+    list.forEach(it=>{
+      const cat=state.categories.find(c=>c.id===it.categoryId);
+      const card=el(`<div class="item-card card">
+        <button class="del-x">✕</button>
+        <div class="thumb">${imgCache[it.id]?`<img src="${imgCache[it.id]}" />`:`<img data-img="${it.id}" class="ph" style="width:60%;height:60%;object-fit:contain" />`}</div>
+        <div class="item-name">${esc(it.name)}</div>
+        <div class="item-meta"><span class="tag">${esc(cat?.name||'未分类')}</span></div>
+        <button class="try-btn">试穿</button></div>`);
+      card.querySelector('.del-x').onclick=async(e)=>{e.stopPropagation();if(!confirm('删除该素材？'))return;
+        if(it.imageKey)await dbDel(it.imageKey);state.items=state.items.filter(x=>x.id!==it.id);saveMeta();render();};
+      card.querySelector('.try-btn').onclick=()=>{location.hash='#avatar';current='avatar';
+        pendingTryOn=it.id;render();setTimeout(()=>{},0);};
+      card.querySelector('.item-name').ondblclick=()=>{const v=prompt('重命名：',it.name);if(v&&v.trim()){it.name=v.trim();saveMeta();render();};};
+      grid.appendChild(card);
+    });
+    area.appendChild(grid);
+  }
+  return node;
+}
+
+/* 上传弹窗 */
+let uploadCat='', pendingFiles=[];
+function openUpload(){
+  const c0=state.categories[0];uploadCat=c0?.id||'';
+  const node=el(`<div class="modal" id="modal">
+    <div class="modal-box card"><h3>上传素材</h3>
+      <div class="field"><label>选择品类</label>
+        <select id="upCat"></select></div>
+      <div class="drop" id="drop"><input type="file" accept="image/*" multiple hidden id="fileInput" />
+        <p>📷 点击或拖拽图片到此处</p><p class="hint">自动转为 PNG · 浅色背景会被去除</p></div>
+      <div class="pending" id="pending"></div>
+      <div class="modal-actions"><button class="btn sec" id="cancel">取消</button>
+        <button class="btn" id="confirm" disabled>确认上传 <span id="cnt"></span></button></div>
+    </div></div>`);
+  const sel=node.querySelector('#upCat');
+  state.categories.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=c.icon+' '+c.name;sel.appendChild(o);});
+  sel.value=uploadCat;sel.onchange=e=>uploadCat=e.target.value;
+  const drop=node.querySelector('#drop'),fileInput=node.querySelector('#fileInput');
+  drop.onclick=()=>fileInput.click();
+  const onFiles=files=>{pendingFiles=[...files];refresh();};
+  fileInput.onchange=e=>onFiles(e.target.files);
+  drop.ondragover=e=>{e.preventDefault();drop.classList.add('over');};
+  drop.ondragleave=()=>drop.classList.remove('over');
+  drop.ondrop=e=>{e.preventDefault();drop.classList.remove('over');onFiles(e.dataTransfer.files);};
+  function refresh(){
+    const p=node.querySelector('#pending');p.innerHTML='';
+    pendingFiles.forEach(f=>{const d=document.createElement('div');d.className='pending-item';d.textContent=f.name;p.appendChild(d);});
+    node.querySelector('#cnt').textContent=pendingFiles.length?pendingFiles.length:'';
+    node.querySelector('#confirm').disabled=!pendingFiles.length;
+  }
+  node.querySelector('#cancel').onclick=()=>document.getElementById('modal')?.remove();
+  node.querySelector('#confirm').onclick=async()=>{
+    for(const f of pendingFiles)await addItemFile(f,uploadCat,f.name.replace(/\.[^/.]+$/,'')||'未命名');
+    document.getElementById('modal')?.remove();pendingFiles=[];render();
+  };
+  document.body.appendChild(node);
+}
+
+/* ---------- ① 我的 AI 形象 ---------- */
+let dressedIds=[], avatarDraft=null, stageBg='#efe9df';
+let pendingTryOn=null;
+const SKIN_TONES=['#f5d0b0','#e8b894','#d2996b','#a86f42','#7a4a2a'];
+const HAIR_COLORS=['#3a3a3a','#6b4423','#c9a063','#b03a2e','#8e44ad','#2c3e50'];
+function hairPath(){const a=avatarDraft||state.avatar;const map={
+  long:'M68 55 Q70 15 100 12 Q130 15 132 55 Q132 95 122 105 Q100 90 78 105 Q68 95 68 55 Z',
+  short:'M72 50 Q75 25 100 22 Q125 25 128 50 Q128 70 120 75 Q100 65 80 75 Q72 70 72 50 Z',
+  bun:'M78 55 Q80 20 100 18 Q120 20 122 55 M95 25 Q100 8 105 25 Q103 38 100 40 Q97 38 95 25 Z',
+  curly:'M66 58 Q60 30 100 14 Q140 30 134 58 Q140 80 122 95 Q100 82 78 95 Q60 80 66 58 Z',};
+  return map[a.hairStyle]||map.long;}
+function bodyW(){const a=avatarDraft||state.avatar;return a.body==='slim'?40:a.body==='curvy'?56:48;}
+function itemPos(item){const map={
+  c_top:{x:72,y:88,w:56,h:70},c_outer:{x:66,y:84,w:68,h:90},c_dress:{x:66,y:84,w:68,h:150},
+  c_bottom:{x:74,y:155,w:52,h:95},c_shoe:{x:80,y:320,w:40,h:24},c_bag:{x:124,y:150,w:30,h:34},
+  c_acc:{x:88,y:78,w:24,h:24},};return map[item.categoryId]||{x:80,y:120,w:40,h:50};}
+function AvatarView(){
+  if(!avatarDraft)avatarDraft=JSON.parse(JSON.stringify(state.avatar));
+  // 处理从素材库试穿跳转
+  if(pendingTryOn){const it=state.items.find(x=>x.id===pendingTryOn);if(it){toggleDress(it);}pendingTryOn=null;}
+  const a=avatarDraft;
+  const node=el(`<div class="view">
+    <div class="view-head"><div><h2>${navItems().find(n=>n.id==='avatar')?.label||'我的AI形象'}</h2>
+      <div class="sub">上传照片 + 调整参数，生成专属 AI 形象，试穿你的每件单品</div></div></div>
+    <div class="avatar-wrap">
+      <div class="stage card">
+        <div class="stage-canvas" id="stage" style="background:${stageBg}">
+          <svg class="figure" viewBox="0 0 200 360" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="100" cy="55" r="32" fill="${a.skin}"/>
+            <path d="${hairPath()}" fill="${a.hair}"/>
+            <path d="M78 90 Q100 82 122 90 L128 200 Q100 210 72 200 Z" fill="${a.skin}"/>
+            <g id="clothes"></g>
+            <rect x="80" y="195" width="13" height="90" rx="6" fill="${a.skin}"/>
+            <rect x="107" y="195" width="13" height="90" rx="6" fill="${a.skin}"/>
+            <rect x="86" y="285" width="14" height="65" rx="6" fill="${a.skin}"/>
+            <rect x="100" y="285" width="14" height="65" rx="6" fill="${a.skin}"/>
+          </svg>
+          ${dressedIds.length?'':'<div class="stage-hint">从「素材库」选择单品，点击「试穿」即可穿上</div>'}
+        </div>
+        <div class="stage-tools">
+          <button class="btn sec" id="clearDress">清空试穿</button>
+          <button class="btn" id="saveOutfit" ${dressedIds.length?'':'disabled'}>✨ 保存为搭配方案</button>
+          <button class="btn" id="genShot" ${dressedIds.length&&state.avatar.generated?'':'disabled'}>📸 生成 AI 试穿图</button>
+        </div>
+        <canvas id="shotCanvas" width="400" height="560" style="display:none"></canvas>
+        <div class="dress-list" id="dressList"></div>
+      </div>
+      <div class="controls">
+        <div class="card"><h3>形象设定</h3>
+          <div class="form-row"><label>性别</label><div class="seg" id="genderSeg">
+            <button data-g="female" class="${a.gender==='female'?'on':''}">女</button>
+            <button data-g="male" class="${a.gender==='male'?'on':''}">男</button></div></div>
+          <div class="form-row"><label>肤色</label><div class="swatches" id="skinS"></div></div>
+          <div class="form-row"><label>发型</label><select id="hairStyle">
+            <option ${a.hairStyle==='long'?'selected':''} value="long">长发</option>
+            <option ${a.hairStyle==='short'?'selected':''} value="short">短发</option>
+            <option ${a.hairStyle==='bun'?'selected':''} value="bun">丸子头</option>
+            <option ${a.hairStyle==='curly'?'selected':''} value="curly">卷发</option></select></div>
+          <div class="form-row"><label>发色</label><div class="swatches" id="hairS"></div></div>
+          <div class="form-row"><label>体型</label><select id="body">
+            <option ${a.body==='slim'?'selected':''} value="slim">纤瘦</option>
+            <option ${a.body==='medium'?'selected':''} value="medium">标准</option>
+            <option ${a.body==='curvy'?'selected':''} value="curvy">丰满</option></select></div>
+          <div><button class="btn sec" id="upPhoto">📷 ${a.photoKey?'重新上传照片':'上传本人照片'}</button>
+            <input type="file" accept="image/*" hidden id="photoInput"/>
+            <p class="hint">上传照片用于参考生成更贴合的形象</p></div>
+          <button class="btn block" id="generate" style="margin-top:10px">🪄 生成我的 AI 形象</button>
+        </div>
+        <div class="card"><h3>试穿单品</h3>
+          <div id="wardrobe"></div></div>
+      </div>
+    </div>
+  </div>`);
+  // 肤色 / 发色
+  const skinS=node.querySelector('#skinS');
+  SKIN_TONES.forEach(s=>{const sp=document.createElement('span');sp.style.background=s;if(s===a.skin)sp.classList.add('pick');
+    sp.onclick=()=>{a.skin=s;render();};skinS.appendChild(sp);});
+  const hairS=node.querySelector('#hairS');
+  HAIR_COLORS.forEach(h=>{const sp=document.createElement('span');sp.style.background=h;if(h===a.hair)sp.classList.add('pick');
+    sp.onclick=()=>{a.hair=h;render();};hairS.appendChild(sp);});
+  node.querySelectorAll('#genderSeg button').forEach(b=>b.onclick=()=>{a.gender=b.dataset.g;render();});
+  node.querySelector('#hairStyle').onchange=e=>{a.hairStyle=e.target.value;render();};
+  node.querySelector('#body').onchange=e=>{a.body=e.target.value;render();};
+  // 照片上传
+  const photoInput=node.querySelector('#photoInput');
+  node.querySelector('#upPhoto').onclick=()=>photoInput.click();
+  photoInput.onchange=async e=>{const f=e.target.files[0];if(!f)return;
+    const item=await addItemFile(f,'c_acc','我的照片参考');a.photoKey=item.imageKey;render();alert('照片已上传，可用于形象参考');};
+  // 生成（走 AI 引擎：有照片=照片驱动；否则参数模式；填了混元 Key=真实 AI）
+  node.querySelector('#generate').onclick=async()=>{
+    const photo=await photoDataUrlFromKey(a.photoKey);
+    const btn=node.querySelector('#generate');btn.disabled=true;btn.textContent='生成中…';
+    try{const url=await generateAvatar(photo,a);state.avatar=JSON.parse(JSON.stringify(a));state.avatar.generated=true;state.avatar.avatarKey='img_avatar_'+Date.now();
+      await dbPut(state.avatar.avatarKey,url);saveMeta();
+      alert(ai.mode==='hunyuan'&&ai.apiKey?'已用腾讯混元生成照片级数字分身 🎉':'已生成数字分身（模拟渲染，效果离线可用）\n在「设置 → AI 形象引擎」填入混元 APIKey 即可升级为真实 AI 出图');
+      render();}catch(e){alert('生成失败：'+e.message);btn.disabled=false;btn.textContent='🪄 生成我的 AI 形象';} 
+  };
+  // 试穿选择
+  const wardrobe=node.querySelector('#wardrobe');
+  if(!state.items.length)wardrobe.innerHTML='<div class="empty-sm">暂无素材，去「素材库」上传吧</div>';
+  state.categories.forEach(cat=>{
+    const items=state.items.filter(i=>i.categoryId===cat.id);
+    const g=document.createElement('div');g.className='cat-group';
+    g.innerHTML=`<div class="cat-title">${cat.icon} ${esc(cat.name)}</div><div class="thumb-row"></div>`;
+    const row=g.querySelector('.thumb-row');
+    if(!items.length)row.innerHTML='<span class="none">—</span>';
+    items.forEach(it=>{
+      const th=document.createElement('div');th.className='thumb'+(dressedIds.includes(it.id)?' on':'');
+      th.innerHTML=imgCache[it.id]?`<img src="${imgCache[it.id]}"/>`:`<img data-img="${it.id}" class="ph" style="width:80%;height:80%;object-fit:contain" alt="${cat.icon}" />`;
+      th.onclick=()=>{toggleDress(it);render();};row.appendChild(th);
+    });
+    wardrobe.appendChild(g);
+  });
+  // 舞台衣物
+  requestAnimationFrame(()=>drawClothes());
+  node.querySelector('#clearDress').onclick=()=>{dressedIds=[];render();};
+  node.querySelector('#saveOutfit').onclick=()=>{const name=prompt('为这套搭配起个名字：','我的搭配 '+(state.outfits.length+1));
+    if(!name)return;saveOutfit(name,dressedIds.slice());dressedIds=[];alert('已保存到「搭配方案」');location.hash='#outfits';current='outfits';render();};
+  // AI 试穿图：把当前数字分身 + 已勾选单品 -> 合成一张效果图，并作为 PNG 存入素材库备用
+  node.querySelector('#genShot').onclick=async()=>{
+    const shotBtn=node.querySelector('#genShot');shotBtn.disabled=true;shotBtn.textContent='合成中…';
+    try{const avatarUrl=state.avatar.avatarKey?await dbGet(state.avatar.avatarKey):null;
+      const base=avatarUrl||simulateAvatar(await photoDataUrlFromKey(state.avatar.photoKey),state.avatar);
+      // 逐件叠加（取最后一件为"主件"，效果更自然）
+      let result=base;const items=dressedIds.map(id=>state.items.find(x=>x.id===id)).filter(Boolean);
+      for(const it of items)result=await tryOnAvatar(result,it,items);
+      const key='img_shot_'+Date.now();await dbPut(key,result);
+      // 存为一张"搭配快照"素材，便于反复查看
+      const shotItem={id:'s_'+Date.now(),categoryId:items[items.length-1]?.categoryId||'c_top',
+        name:'AI试穿·'+new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}),
+        imageKey:key,createdAt:Date.now(),isShot:true};
+      state.items.push(shotItem);imgCache[shotItem.id]=result;saveMeta();
+      // 在舞台下方预览
+      showShot(result);shotBtn.disabled=false;shotBtn.textContent='📸 生成 AI 试穿图';
+      alert('AI 试穿图已生成，已作为素材存档，可去「素材库」查看 👉');render();
+    }catch(e){alert('生成失败：'+e.message);shotBtn.disabled=false;shotBtn.textContent='📸 生成 AI 试穿图';}
+  };
+  function showShot(url){const stage=node.querySelector('#stage');
+    let img=node.querySelector('#shotImg');if(!img){img=document.createElement('img');img.id='shotImg';
+      img.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#fff';stage.appendChild(img);}
+    img.src=url;}
+  return node;
+}
+function drawClothes(){
+  const g=document.getElementById('clothes');if(!g)return;g.innerHTML='';
+  dressedIds.forEach(id=>{const it=state.items.find(x=>x.id===id);if(!it)return;
+    const p=itemPos(it);const img=document.createElementNS('http://www.w3.org/2000/svg','image');
+    img.setAttribute('x',p.x);img.setAttribute('y',p.y);img.setAttribute('width',p.w);img.setAttribute('height',p.h);
+    img.setAttribute('preserveAspectRatio','xMidYMid meet');img.setAttributeNS('http://www.w3.org/1999/xlink','href',imgCache[it.id]||'');
+    if(imgCache[it.id])g.appendChild(img);});
+  // 已试穿清单
+  const dl=document.getElementById('dressList');if(dl){dl.innerHTML='';
+    dressedIds.forEach(id=>{const it=state.items.find(x=>x.id===id);if(!it)return;const cat=state.categories.find(c=>c.id===it.categoryId);
+      const chip=document.createElement('span');chip.className='dress-chip';chip.innerHTML=`${cat?.icon||''} ${esc(it.name)} <button>✕</button>`;
+      chip.querySelector('button').onclick=()=>{undress(id);render();};dl.appendChild(chip);});}
+}
+function toggleDress(it){
+  if(dressedIds.includes(it.id)){undress(it.id);return;}
+  // 同类替换
+  dressedIds=dressedIds.filter(id=>{const ex=state.items.find(i=>i.id===id);return ex?.categoryId!==it.categoryId;});
+  dressedIds.push(it.id);
+}
+function undress(id){dressedIds=dressedIds.filter(x=>x!==id);}
+function isDressed(id){return dressedIds.includes(id);}
+
+/* ---------- ③ 搭配方案 ---------- */
+function OutfitsView(){
+  const node=el(`<div class="view">
+    <div class="view-head"><div><h2>${navItems().find(n=>n.id==='outfits')?.label||'搭配方案'}</h2>
+      <div class="sub">保存你喜欢的搭配，随时回顾</div></div></div>
+    ${state.outfits.length?'':'<div class="empty card"><div class="big">✨</div><p>还没有搭配方案，去「我的AI形象」试穿并保存吧</p></div>'}
+    <div class="outfit-grid" id="grid"></div>
+  </div>`);
+  const grid=node.querySelector('#grid');
+  state.outfits.forEach(o=>{
+    const card=el(`<div class="outfit-card card">
+      <div class="thumbs"></div>
+      <div class="name">${esc(o.name)}</div>
+      <div class="meta">${o.items.length} 件单品 · ${new Date(o.createdAt).toLocaleDateString()}</div>
+      <button class="btn sec" style="width:100%;margin-top:8px">删除</button></div>`);
+    const thumbs=card.querySelector('.thumbs');
+    o.items.forEach(iid=>{const it=state.items.find(x=>x.id===iid);if(!it)return;
+      const t=document.createElement('div');t.className='t';
+      t.innerHTML=imgCache[it.id]?`<img src="${imgCache[it.id]}"/>`:`<img data-img="${it.id}" class="ph" style="width:100%;height:50px;object-fit:contain" />`;
+      thumbs.appendChild(t);});
+    card.querySelector('button').onclick=()=>deleteOutfit(o.id);
+    grid.appendChild(card);
+  });
+  return node;
+}
+
+/* ---------- ④ 专业搭配顾问 ---------- */
+const KNOWLEDGE=[
+  {k:['肤色','黄黑皮','暗沉'],a:'黄黑皮建议避开荧光色与浑浊的浊色，首选纯白、奶油白、焦糖色、墨绿、深蓝；金属饰品选金色更衬肤色。'},
+  {k:['梨形','胯宽','下半身'],a:'梨形身材：上半身用亮色/图案/垫肩扩视觉，下半身选深色直筒或A字版型，突出腰线。'},
+  {k:['苹果型','腰腹','肚子'],a:'苹果型：V领拉长颈线，上松下紧，高腰下装+垂感面料，避免腰部过多装饰。'},
+  {k:['小个子','矮','显高'],a:'显高法则：高腰线+同色系延伸、九分裤露脚踝、鞋子与裤子同色、避免过长外套。'},
+  {k:['通勤','职场','上班'],a:'通勤极简：白/蓝衬衫+直筒西裤+乐福鞋/尖头鞋，配一只结构感包；配色控制在3色内。'},
+  {k:['配色','颜色','怎么搭'],a:'万能配色：70%主色+25%辅助色+5%点缀色；安全组合有蓝白、黑白灰、大地色系、莫兰迪色系。'},
+  {k:['秋冬','秋天','冬天'],a:'秋冬叠穿：内搭打底+中层针织+外层大衣，注意领口层次；色系以驼色/焦糖/墨绿/藏蓝为主。'},
+  {k:['夏天','春夏','清凉'],a:'夏季清爽：棉麻材质、白+牛仔蓝、短袖+高腰阔腿裤，配饰用草编/银色更轻盈。'},
+];
+let chatLog=[{who:'them',text:'你好，我是你的专业搭配顾问 💬\n可以问我任何穿搭问题，比如「黄黑皮怎么选颜色」「小个子显高技巧」～'}];
+function answer(question){
+  const q=question.toLowerCase();
+  const hit=KNOWLEDGE.find(k=>k.k.some(kw=>q.includes(kw)));
+  if(hit)return hit.a;
+  if(/你好|hi|hello/.test(q))return '你好呀～想聊穿搭的哪方面？可以问我配色、身形、场合穿搭等～';
+  return '这是个好问题！一般建议：先确定主色（肤色/季节适配），再按 70/25/5 分配主/辅/点缀色，最后用配饰点睛。\n\n💡 提示：试试问我「黄黑皮配色」「梨形身材」「通勤极简」等更具体的问题，我会给出针对性方案。';
+}
+function AdvisorView(){
+  const node=el(`<div class="view">
+    <div class="view-head"><div><h2>${navItems().find(n=>n.id==='advisor')?.label||'专业搭配顾问'}</h2>
+      <div class="sub">专业搭配师在线答疑 + 精选配色/穿搭思路推送</div></div></div>
+    <div class="advisor">
+      <div class="card chat"><div class="chat-log" id="chatLog"></div>
+        <div class="chat-input"><input id="chatIn" placeholder="问问搭配师…" />
+          <button class="btn" id="send">发送</button></div></div>
+      <div class="card feed" id="feed"></div>
+    </div>
+  </div>`);
+  // 聊天
+  const log=node.querySelector('#chatLog');
+  function renderChat(){
+    log.innerHTML='';chatLog.forEach(m=>{
+      const d=document.createElement('div');d.className='msg '+(m.who==='me'?'me':'them');
+      d.innerHTML=`<div class="bubble">${esc(m.text).replace(/\n/g,'<br>')}</div>`;log.appendChild(d);});
+    log.scrollTop=log.scrollHeight;
+  }
+  const send=()=>{const inp=node.querySelector('#chatIn');const v=inp.value.trim();if(!v)return;
+    chatLog.push({who:'me',text:v});inp.value='';renderChat();
+    setTimeout(()=>{chatLog.push({who:'them',text:answer(v)});renderChat();},400);};
+  node.querySelector('#send').onclick=send;
+  node.querySelector('#chatIn').onkeydown=e=>{if(e.key==='Enter')send();};
+  renderChat();
+  // 灵感推送
+  const feed=node.querySelector('#feed');
+  state.feed.forEach(f=>{
+    const d=document.createElement('div');d.className='feed-item';d.style.background=f.color;
+    d.innerHTML=`<span class="star">${f.star?'★':'☆'}</span><div class="ft">${esc(f.title)}</div>
+      <div class="fd">${esc(f.desc)}</div><span class="ftag">${esc(f.tag)}</span>`;
+    d.querySelector('.star').onclick=(e)=>{e.stopPropagation();f.star=!f.star;saveMeta();render();};
+    feed.appendChild(d);
+  });
+  return node;
+}
+
+/* ---------- 启动 ---------- */
+loadMeta();
+initDefaults();
+if(!location.hash)location.hash='#avatar';
+else{current=location.hash.slice(1);if(!routes.includes(current))current='avatar';}
+// 首次给个演示提示
+render(true);
+
+/* ========== PWA：安装到主屏幕 + 离线缓存 ========== */
+(function () {
+  // 1) 安装引导横幅
+  var banner = document.createElement('div');
+  banner.id = 'install-banner';
+  banner.innerHTML =
+    '<div class="ib-inner">' +
+      '<span class="ib-ico">📲</span>' +
+      '<div class="ib-txt"><b>添加到主屏幕</b><small>像 App 一样从桌面打开，还能离线用</small></div>' +
+      '<button class="ib-btn" id="ib-install">添加</button>' +
+      '<button class="ib-close" id="ib-close">✕</button>' +
+    '</div>';
+  document.body.appendChild(banner);
+  // 已安装或已关闭则隐藏
+  if (window.matchMedia('(display-mode: standalone)').matches || localStorage.getItem('ib_closed') === '1') {
+    banner.style.display = 'none';
+  }
+  var deferredPrompt;
+  window.addEventListener('beforeinstallprompt', function (e) {
+    e.preventDefault();
+    deferredPrompt = e;
+    banner.style.display = '';
+  });
+  document.getElementById('ib-install').onclick = function () {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(function () { deferredPrompt = null; banner.style.display = 'none'; });
+    } else {
+      // 系统没触发原生提示时（如 iOS Safari），给出手动指引
+      alert('iPhone：点底部"分享" → "添加到主屏幕"\nAndroid：点右上角 ⋮ → "安装应用"');
+    }
+  };
+  document.getElementById('ib-close').onclick = function () {
+    banner.style.display = 'none'; localStorage.setItem('ib_closed', '1');
+  };
+  window.addEventListener('appinstalled', function () { banner.style.display = 'none'; });
+
+  // 2) Service Worker：让 App 离线也能打开（单文件内联 sw，兼容 file:// 与 http）
+  if ('serviceWorker' in navigator && (location.protocol === 'http:' || location.protocol === 'https:')) {
+    var swSrc = URL.createObjectURL(new Blob([[
+      "self.addEventListener('install', function(e){self.skipWaiting();});",
+      "self.addEventListener('activate', function(e){e.waitUntil(self.clients.claim());});",
+      "self.addEventListener('fetch', function(e){",
+      "  e.respondWith(fetch(e.request).then(function(res){return res;}).catch(function(){return new Response('',{status:200});}));",
+      "});"
+    ].join('\n')], { type: 'application/javascript' }));
+    navigator.serviceWorker.register(swSrc).catch(function () { /* 忽略：file:// 下不生效，不影响使用 */ });
+  }
+})();
+</script>
+
+<style>
+  /* 安装引导横幅 */
+  #install-banner{position:fixed;left:10px;right:10px;bottom:12px;z-index:9999;display:none}
+  .ib-inner{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 8px 30px rgba(0,0,0,.14);
+    display:flex;align-items:center;gap:10px;padding:11px 12px}
+  .ib-ico{font-size:26px}
+  .ib-txt{flex:1;line-height:1.25}
+  .ib-txt b{font-size:13px}
+  .ib-txt small{display:block;color:var(--sub);font-size:11px;margin-top:2px}
+  .ib-btn{background:var(--brand);color:#fff;padding:8px 15px;border-radius:10px;font-size:13px;font-weight:600}
+  .ib-close{color:var(--sub);font-size:16px;padding:4px 8px}
+</style>
+</body>
+</html>
