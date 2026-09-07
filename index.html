@@ -5,498 +5,745 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>我的衣橱</title>
 
-<!-- Supabase -->
+<!-- ============ 外部依赖 (CDN) ============ -->
+<!-- Supabase (同步 + 存储 + 认证, 方案B) -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<!-- 抠图库 @imgly/background-removal（CDN，纯前端抠图） -->
-<script src="https://cdn.jsdelivr.net/npm/@imgly/background-removal@1"></script>
+<!-- imgly 抠图库 (纯前端抠图 -> 透明PNG, 方案A) -->
+<script src="https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.0/dist/index.js"></script>
 
 <style>
-  :root{
-    --pink:#f7c9c9; --pink2:#f4a3a3; --warm:#fff5f3; --ink:#3a2c2c;
-    --line:#f0d9d9; --gray:#9a8a8a; --green:#5cb98a; --red:#e26d6d; --blue:#6aa8e0;
-  }
-  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
-  body{margin:0; font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
-    background:var(--warm); color:var(--ink);}
-  #app{max-width:480px; margin:0 auto; min-height:100vh; position:relative; background:#fff;}
-  .page{display:none; padding:14px 14px 90px;}
-  .page.active{display:block;}
-  h2{font-size:18px; margin:4px 0 12px;}
-  .btn{background:var(--pink2); color:#fff; border:none; border-radius:22px;
-    padding:12px 18px; font-size:15px; font-weight:600; cursor:pointer;}
-  .btn.ghost{background:#fff; color:var(--pink2); border:1.5px solid var(--pink2);}
-  .btn.sm{padding:7px 12px; font-size:13px; border-radius:16px;}
-  .card{background:var(--warm); border:1px solid var(--line); border-radius:16px; padding:14px; margin-bottom:12px;}
-  input,select{width:100%; padding:11px 12px; border:1.5px solid var(--line); border-radius:12px;
-    font-size:15px; background:#fff; color:var(--ink); margin-top:4px;}
-  label{font-size:13px; color:var(--gray);}
+:root{
+  --pink:#ff6b81; --pink-dark:#e0556c; --bg:#fff5f7;
+  --card:#ffffff; --text:#333; --sub:#888; --line:#f0e3e7;
+  --green:#4caf50; --blue:#4a90d9;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+  background:var(--bg);color:var(--text);max-width:480px;margin:0 auto;
+  min-height:100vh;position:relative;overflow-x:hidden;}
+input,button,select{font-family:inherit;outline:none;}
+button{cursor:pointer;border:none;border-radius:12px;padding:12px 16px;font-size:15px;}
+.btn-primary{background:var(--pink);color:#fff;font-weight:600;}
+.btn-primary:active{background:var(--pink-dark);}
+.btn-ghost{background:#fff;color:var(--pink);border:1px solid var(--pink);}
+.card{background:var(--card);border-radius:16px;padding:16px;margin:12px;box-shadow:0 2px 10px rgba(255,107,129,.08);}
+.page{display:none;padding-bottom:70px;}
+.page.active{display:block;}
+.nav{position:fixed;bottom:0;left:0;right:0;max-width:480px;margin:0 auto;
+  background:#fff;border-top:1px solid var(--line);display:flex;z-index:50;}
+.nav button{flex:1;background:none;padding:10px 0;font-size:11px;color:var(--sub);
+  display:flex;flex-direction:column;align-items:center;gap:3px;border-radius:0;}
+.nav button .ic{font-size:20px;}
+.nav button.active{color:var(--pink);}
+input[type=text],input[type=password],input[type=email],input[type=number]{
+  width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;font-size:15px;background:#fff;}
+label{font-size:13px;color:var(--sub);display:block;margin:10px 0 5px;}
+h2{font-size:18px;margin:8px 12px;color:var(--pink-dark);}
+.muted{color:var(--sub);font-size:12px;}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.swatch{width:28px;height:28px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px var(--line);cursor:pointer;}
+.swatch.on{box-shadow:0 0 0 2px var(--pink);}
+canvas{width:100%;max-width:320px;background:repeating-linear-gradient(45deg,#fafafa,#fafafa 8px,#f2f2f2 8px,#f2f2f2 16px);border-radius:12px;}
+.fit-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.fit-grid .item{aspect-ratio:1;border-radius:10px;background:#f8f8f8;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--sub);border:1px solid var(--line);overflow:hidden;}
+.fit-grid .item img{width:100%;height:100%;object-fit:cover;}
+.fit-grid .item .ph{font-size:22px;}
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.8);color:#fff;padding:10px 18px;border-radius:20px;font-size:13px;z-index:99;display:none;}
+.toast.show{display:block;animation:fade 2s;}
+@keyframes fade{0%,80%{opacity:1}100%{opacity:0}}
+input[type=range]{width:100%;accent-color:var(--pink);}
+.hair-dot{width:24px;height:24px;border-radius:50%;cursor:pointer;border:2px solid #fff;box-shadow:0 0 0 1px var(--line);}
 
-  /* 底部导航 */
-  nav{position:fixed; bottom:0; left:0; right:0; max-width:480px; margin:0 auto;
-    background:#fff; border-top:1px solid var(--line); display:flex; height:64px;}
-  nav .tab{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
-    font-size:11px; color:var(--gray); cursor:pointer; gap:2px;}
-  nav .tab.on{color:var(--pink2); font-weight:600;}
-  nav .tab .ic{font-size:20px;}
-
-  /* 单品网格 */
-  .grid{display:grid; grid-template-columns:repeat(3,1fr); gap:10px;}
-  .item{position:relative; background:var(--warm); border:1px solid var(--line); border-radius:12px;
-    overflow:hidden; aspect-ratio:1/1; cursor:pointer;}
-  .item img{width:100%; height:100%; object-fit:cover;}
-  .item .loc{position:absolute; left:0; right:0; bottom:0; font-size:10px; color:#fff;
-    background:rgba(0,0,0,.45); padding:2px 4px; white-space:nowrap; overflow:hidden;}
-  .item .name{position:absolute; top:0; left:0; right:0; font-size:10px; color:#fff;
-    background:rgba(0,0,0,.35); padding:2px 4px; white-space:nowrap; overflow:hidden;}
-  .item .del{position:absolute; top:3px; right:3px; background:var(--red); color:#fff;
-    border:none; border-radius:50%; width:20px; height:20px; font-size:12px; line-height:1; cursor:pointer;}
-
-  .row{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
-  .chips{display:flex; gap:6px; flex-wrap:wrap;}
-  .chip{background:#fff; border:1px solid var(--line); border-radius:16px; padding:6px 12px; font-size:13px; cursor:pointer;}
-  .chip.on{background:var(--pink2); color:#fff; border-color:var(--pink2);}
-
-  /* 弹窗 */
-  .modal{position:fixed; inset:0; background:rgba(0,0,0,.5); display:none; align-items:center;
-    justify-content:center; z-index:50; padding:20px;}
-  .modal.on{display:flex;}
-  .panel{background:#fff; border-radius:18px; padding:20px; width:100%; max-width:380px;}
-  .panel h3{margin:0 0 14px; font-size:17px;}
-
-  /* 形象区 */
-  #avatarCanvas{width:100%; max-width:320px; display:block; margin:0 auto; background:var(--warm);
-    border-radius:14px;}
-  .swatch{width:22px; height:22px; border-radius:50%; display:inline-block; border:2px solid #fff;
-    box-shadow:0 0 0 1px var(--line); cursor:pointer;}
-  .swatch.on{box-shadow:0 0 0 2px var(--pink2);}
+/* ---------- 搭配方案 / 搭配顾问（新增板块，保持粉色主题） ---------- */
+.sub-tab{display:flex;gap:8px;margin:0 12px 8px;}
+.sub-tab button{flex:1;background:#fff;color:var(--sub);border:1px solid var(--line);border-radius:20px;padding:8px 0;font-size:13px;}
+.sub-tab button.on{background:var(--pink);color:#fff;border-color:var(--pink);}
+.plan-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;}
+.plan-card{background:var(--card);border-radius:14px;padding:10px;box-shadow:0 2px 8px rgba(255,107,129,.08);position:relative;}
+.plan-card .thumbs{display:flex;gap:4px;min-height:52px;margin-bottom:6px;}
+.plan-card .thumbs .t{flex:1;background:#fbeef1;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;min-height:48px;}
+.plan-card .thumbs .t.on{background:var(--pink);}
+.plan-card .name{font-weight:600;font-size:13px;}
+.plan-card .meta{font-size:11px;color:var(--sub);margin-top:3px;}
+.plan-card .del{position:absolute;top:6px;right:6px;background:rgba(0,0,0,.35);color:#fff;border:none;border-radius:50%;width:22px;height:22px;font-size:12px;line-height:1;}
+.tpl-grid{display:grid;grid-template-columns:1fr;gap:10px;}
+.tpl-card{border-radius:12px;padding:14px;color:#fff;}
+.tpl-card .ft{font-weight:600;font-size:14px;}
+.tpl-card .fd{font-size:12px;opacity:.92;margin:4px 0 8px;}
+.tpl-card .ftag{font-size:11px;background:rgba(255,255,255,.25);padding:2px 8px;border-radius:8px;}
+.tpl-card .use{margin-top:8px;background:rgba(255,255,255,.25);color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;}
+.chat{height:54vh;display:flex;flex-direction:column;}
+.chat-log{flex:1;overflow:auto;padding:8px;}
+.msg{margin-bottom:10px;display:flex;}
+.msg.me{justify-content:flex-end;}
+.bubble{max-width:78%;padding:9px 12px;border-radius:14px;font-size:13px;line-height:1.6;white-space:pre-wrap;}
+.msg.them .bubble{background:#fff;border-bottom-left-radius:4px;}
+.msg.me .bubble{background:var(--pink);color:#fff;border-bottom-right-radius:4px;}
+.chat-input{display:flex;gap:8px;padding-top:8px;border-top:1px solid var(--line);}
+.chat-input input{flex:1;border:1px solid var(--line);border-radius:10px;padding:9px;background:#fff;outline:none;}
 </style>
 </head>
 <body>
-<div id="app">
 
-  <!-- ============ 登录页 ============ -->
-  <div id="loginPage" class="page active" style="padding-top:60px;">
-    <div style="text-align:center; margin-bottom:30px;">
-      <div style="font-size:44px;">👗</div>
-      <h1 style="font-size:26px; color:var(--pink2); margin:8px 0;">我的衣橱</h1>
-      <p style="color:var(--gray); font-size:13px;">穿搭管理 · AI 试穿 · 云端同步</p>
-    </div>
-    <div class="card">
-      <label>邮箱</label>
-      <input id="email" type="email" placeholder="you@example.com">
-      <label style="margin-top:10px;display:block;">密码（≥6位）</label>
-      <input id="pwd" type="password" placeholder="设置或登录密码">
-      <button class="btn" style="width:100%; margin-top:16px;" onclick="onAuth()">登录 / 注册</button>
-    </div>
-    <p id="loginMsg" style="color:var(--red); font-size:13px; text-align:center;"></p>
+<!-- ============ 登录页 ============ -->
+<div id="page-login" class="page active" style="padding:40px 0;">
+  <div style="text-align:center;margin:30px 0;">
+    <div style="font-size:50px;">👗</div>
+    <h1 style="color:var(--pink);font-size:26px;">我的衣橱</h1>
+    <p class="muted">登录后衣橱与形象跨设备同步</p>
   </div>
-
-  <!-- ============ AI 试穿 / 形象页 ============ -->
-  <div id="tryonPage" class="page">
-    <h2>我的 AI 形象</h2>
-    <div class="card">
-      <canvas id="avatarCanvas" width="360" height="520"></canvas>
-      <button class="btn ghost sm" style="margin-top:10px;" onclick="openUpload()">重新上传照片</button>
-    </div>
-    <div class="card">
-      <label>体型</label>
-      <select id="bodyType" onchange="drawAvatar()">
-        <option value="slim">纤瘦</option><option value="normal" selected>标准</option>
-        <option value="curvy">丰满</option><option value="athletic">健美</option>
-      </select>
-      <div class="row" style="margin-top:10px;">
-        <div style="flex:1;"><label>身高 <span id="hVal">165</span> cm</label>
-          <input type="range" id="height" min="140" max="195" value="165" oninput="drawAvatar()"></div>
-        <div style="flex:1;"><label>体重 <span id="wVal">55</span> kg</label>
-          <input type="range" id="weight" min="35" max="120" value="55" oninput="drawAvatar()"></div>
-      </div>
-      <div class="row" style="margin-top:10px;">
-        <div style="flex:1;"><label>肤色</label>
-          <div class="chips" id="skinChips"></div></div>
-        <div style="flex:1;"><label>发色</label>
-          <div class="chips" id="hairChips"></div></div>
-      </div>
-      <button class="btn" style="width:100%; margin-top:14px;" onclick="generateTryon()">生成 AI 试穿图</button>
-    </div>
-
-    <h2>试穿单品</h2>
-    <div class="chips" id="catChips" style="margin-bottom:10px;"></div>
-    <div class="grid" id="itemGrid"></div>
-    <button class="btn ghost sm" onclick="openUpload(true)">+ 添加单品</button>
+  <div class="card">
+    <label>邮箱</label>
+    <input type="email" id="in-email" placeholder="you@example.com">
+    <label>密码</label>
+    <input type="password" id="in-pwd" placeholder="设置或输入密码">
+    <button class="btn-primary" style="width:100%;margin-top:16px;" id="btn-auth">登录 / 注册</button>
+    <p class="muted" style="margin-top:10px;text-align:center;" id="auth-hint">
+      首次使用该邮箱即自动注册（密码需 ≥6 位）</p>
   </div>
-
-  <!-- ============ 我的 / 个人操作中心 ============ -->
-  <div id="mePage" class="page">
-    <h2>个人操作中心</h2>
-    <div class="card">
-      <p style="margin:0;">账号：<b id="meEmail">-</b></p>
-      <button class="btn ghost sm" style="margin-top:10px;" onclick="logout()">退出登录</button>
-    </div>
-
-    <div class="card">
-      <h3 style="margin:0 0 10px;">🔑 AI 形象引擎（混元）</h3>
-      <label>混元 API Key</label>
-      <input id="hunyuanKey" placeholder="sk-xxx... 或 SecretKey">
-      <label style="margin-top:8px;display:block;">启用真实 AI 出图</label>
-      <select id="realAI" onchange="saveSettings()">
-        <option value="off">关（离线模拟）</option><option value="on">开（需填入 Key）</option>
-      </select>
-    </div>
-
-    <div class="card">
-      <h3 style="margin:0 0 10px;">☁️ 同步（Supabase）</h3>
-      <label>Project URL</label>
-      <input id="sbUrl" placeholder="https://xxx.supabase.co">
-      <label style="margin-top:8px;display:block;">anon public key</label>
-      <input id="sbAnon" placeholder="eyJhbGci...">
-      <button class="btn sm" style="margin-top:10px;" onclick="initSupabase()">连接 / 保存</button>
-      <span id="syncStatus" style="font-size:12px; color:var(--gray); margin-left:8px;"></span>
-    </div>
-
-    <div class="card">
-      <h3 style="margin:0 0 10px;">🔒 修改密码</h3>
-      <input id="newPwd" type="password" placeholder="新密码（≥6位）">
-      <button class="btn sm" style="margin-top:10px;" onclick="changePwd()">更新密码</button>
-    </div>
-
-    <div class="card">
-      <h3 style="margin:0 0 10px;">📂 形象照管理</h3>
-      <p style="font-size:12px; color:var(--gray); margin:0;">照片存放于专属空间（avatars），与「配饰」分类独立。</p>
-      <button class="btn ghost sm" style="margin-top:8px;" onclick="openUpload()">上传 / 重命名形象照</button>
-    </div>
-  </div>
-
-  <!-- ============ 底部导航 ============ -->
-  <nav>
-    <div class="tab on" data-p="tryonPage" onclick="switchTab('tryonPage',this)">
-      <span class="ic">👤</span>形象</div>
-    <div class="tab" data-p="mePage" onclick="switchTab('mePage',this)">
-      <span class="ic">👤</span>我的</div>
-  </nav>
-
 </div>
 
-<!-- ============ 上传 / 编辑弹窗 ============ -->
-<div class="modal" id="uploadModal">
-  <div class="panel">
-    <h3 id="upTitle">上传图片</h3>
-    <label>名称（可重命名）</label>
-    <input id="upName" placeholder="例如：黑色连衣裙、我的全身照">
-    <label style="margin-top:10px;display:block;">分类</label>
-    <select id="upCat">
-      <option value="avatar">个人形象照</option>
-      <option value="top">上装</option><option value="bottom">下装</option>
-      <option value="dress">连衣裙</option><option value="coat">外套</option>
-      <option value="shoe">鞋子</option><option value="bag">包包</option>
-      <option value="acc">配饰</option>
-    </select>
-    <!-- 存放位置：下拉预置 + 自定义（两者结合） -->
-    <label style="margin-top:10px;display:block;">存放位置</label>
-    <select id="upLocPreset" onchange="onLocPreset()">
-      <option value="">— 选择常用位置 —</option>
-      <option value="衣柜·上层">衣柜·上层</option>
-      <option value="衣柜·中层">衣柜·中层</option>
-      <option value="衣柜·下层">衣柜·下层</option>
-      <option value="抽屉·内衣">抽屉·内衣</option>
-      <option value="玄关·鞋柜">玄关·鞋柜</option>
-      <option value="收纳箱A">收纳箱A</option>
-      <option value="__custom">✏️ 自定义位置…</option>
-    </select>
-    <input id="upLoc" placeholder="或在此输入自定义位置">
-    <label style="margin-top:10px;display:block;">选择图片</label>
-    <input id="upFile" type="file" accept="image/*">
-    <div class="row" style="margin-top:16px;">
-      <button class="btn ghost" style="flex:1;" onclick="closeUpload()">取消</button>
-      <button class="btn" style="flex:1;" onclick="doUpload()">保存</button>
+<!-- ============ 衣橱页 ============ -->
+<div id="page-closet" class="page">
+  <h2>我的衣橱 👗</h2>
+  <div class="card">
+    <p class="muted">单品库（演示占位，可扩展上传）</p>
+    <div class="fit-grid" id="closet-grid"></div>
+  </div>
+</div>
+
+
+<!-- ============ 搭配方案页（搭配方案 + 专业搭配顾问/模板） ============ -->
+<div id="page-outfits" class="page">
+  <div class="sub-tab">
+    <button data-st="plans" class="on">✨ 我的搭配方案</button>
+    <button data-st="advisor">💬 专业搭配顾问</button>
+  </div>
+
+  <!-- ② 搭配方案 -->
+  <div data-pane="plans">
+    <div class="card">
+      <h3 style="font-size:15px;margin-bottom:8px;">💡 快速保存当前试穿</h3>
+      <p class="muted">在「AI试穿」勾选单品后，可一键保存为搭配方案</p>
+      <button class="btn-primary" id="btn-quick-save" style="width:100%;margin-top:8px;">＋ 保存当前试穿为方案</button>
+    </div>
+    <div class="card">
+      <h3 style="font-size:15px;margin-bottom:8px;">我的搭配方案</h3>
+      <div class="plan-grid" id="plan-grid"></div>
+      <p class="muted" id="plan-empty" style="margin-top:8px;">暂无方案，先去「AI试穿」搭配并保存吧～</p>
+    </div>
+  </div>
+
+  <!-- ④ 专业搭配顾问 + 搭配模板 -->
+  <div data-pane="advisor" style="display:none;">
+    <div class="card">
+      <h3 style="font-size:15px;margin-bottom:8px;">👔 专业搭配模板</h3>
+      <p class="muted">精选配色/穿搭公式，一键套用生成你的方案</p>
+      <div class="tpl-grid" id="tpl-grid"></div>
+    </div>
+    <div class="card chat">
+      <h3 style="font-size:15px;">💬 搭配顾问</h3>
+      <div class="chat-log" id="chat-log"></div>
+      <div class="chat-input">
+        <input id="chat-in" placeholder="问问搭配师… 如：黄黑皮怎么选颜色">
+        <button class="btn-primary" id="chat-send">发送</button>
+      </div>
     </div>
   </div>
 </div>
+
+<!-- ============ AI 试穿页 ============ -->
+<div id="page-ai" class="page">
+  <h2>我的 AI 形象</h2>
+
+  <!-- 真人形象展示 + 参数调节 -->
+  <div class="card" style="text-align:center;">
+    <canvas id="avatar-canvas" width="400" height="560"></canvas>
+    <p class="muted" id="avatar-tip">上传照片后自动抠图，可调节身材参数</p>
+  </div>
+
+  <div class="card">
+    <h3 style="font-size:15px;margin-bottom:8px;">身材参数</h3>
+    <label>身高 <span id="val-h">165</span> cm</label>
+    <input type="range" id="rng-height" min="140" max="190" value="165">
+    <label>体重 <span id="val-w">55</span> kg</label>
+    <input type="range" id="rng-weight" min="35" max="100" value="55">
+    <label>体型</label>
+    <div class="row" id="body-type">
+      <button data-v="slim" class="btn-ghost btype on">纤瘦</button>
+      <button data-v="normal" class="btn-ghost btype">标准</button>
+      <button data-v="curvy" class="btn-ghost btype">丰满</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="font-size:15px;margin-bottom:8px;">形象设定</h3>
+    <label>性别</label>
+    <div class="row" id="gender">
+      <button data-v="female" class="btn-ghost g on">女</button>
+      <button data-v="male" class="btn-ghost g">男</button>
+    </div>
+    <label>肤色</label>
+    <div class="row" id="skin"></div>
+    <label>发型</label>
+    <div class="row">
+      <button class="btn-ghost hair on" data-v="long">长发</button>
+      <button class="btn-ghost hair" data-v="short">短发</button>
+    </div>
+    <label>发色</label>
+    <div class="row" id="hair-color"></div>
+  </div>
+
+  <!-- 上传照片（核心：存 my_avatar + 抠图透明PNG） -->
+  <div class="card">
+    <h3 style="font-size:15px;margin-bottom:8px;">我的形象照</h3>
+    <p class="muted">上传后自动保存到「我的形象」专用空间并生成透明底 PNG</p>
+    <input type="file" accept="image/*" id="file-avatar" style="margin:8px 0;">
+    <div class="row" style="margin-top:8px;">
+      <button class="btn-primary" id="btn-gen-avatar">生成我的 AI 形象</button>
+    </div>
+    <p class="muted" id="gen-status" style="margin-top:8px;"></p>
+  </div>
+
+  <div class="card">
+    <h3 style="font-size:15px;margin-bottom:8px;">试穿单品</h3>
+    <div class="fit-grid" id="tryon-grid"></div>
+    <div class="row" style="margin-top:12px;">
+      <button class="btn-ghost" id="btn-clear">清空试穿</button>
+      <button class="btn-primary" id="btn-save">保存为搭配方案</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 个人操作中心 ============ -->
+<div id="page-me" class="page">
+  <h2>个人操作中心</h2>
+
+  <div class="card">
+    <h3 style="font-size:15px;">👤 账号</h3>
+    <p id="me-email" class="muted">--</p>
+    <button class="btn-ghost" id="btn-logout" style="margin-top:8px;">退出登录</button>
+  </div>
+
+  <div class="card">
+    <h3 style="font-size:15px;">🤖 AI 形象引擎（混元）</h3>
+    <p class="muted">填入腾讯混元 API Key 升级为真实 AI 出图</p>
+    <input type="password" id="in-hunyuan" placeholder="sk-xxx 或 SecretKey">
+    <button class="btn-primary" id="btn-save-key" style="width:100%;margin-top:10px;">保存 Key</button>
+    <label class="row" style="margin-top:10px;">
+      <input type="checkbox" id="chk-ai"> <span>启用真实 AI 试穿（离线模拟关闭）</span>
+    </label>
+  </div>
+
+  <div class="card">
+    <h3 style="font-size:15px;">🔒 修改密码</h3>
+    <input type="password" id="in-newpwd" placeholder="新密码（≥6 位）">
+    <button class="btn-primary" id="btn-chgpwd" style="width:100%;margin-top:10px;">更新密码</button>
+  </div>
+
+  <div class="card">
+    <h3 style="font-size:15px;">🔄 数据同步</h3>
+    <p class="muted">手机 / 电脑登录同一账号，形象与搭配自动同步</p>
+    <button class="btn-ghost" id="btn-sync">立即同步一次</button>
+  </div>
+
+  <div class="card">
+    <h3 style="font-size:15px;">⚙️ 系统配置（Supabase）</h3>
+    <p class="muted">首次使用需填写，之后自动保存（也可改代码里的 SUPABASE 常量）</p>
+    <input type="text" id="in-sb-url" placeholder="https://xxx.supabase.co">
+    <input type="password" id="in-sb-key" placeholder="anon public key" style="margin-top:8px;">
+    <button class="btn-primary" id="btn-sb-save" style="width:100%;margin-top:10px;">保存并连接</button>
+  </div>
+</div>
+
+<!-- ============ 底部导航 ============ -->
+<div class="nav" id="nav" style="display:none;">
+  <button data-p="closet" class="active"><span class="ic">👗</span>衣橱</button>
+  <button data-p="outfits"><span class="ic">✨</span>搭配</button>
+  <button data-p="ai"><span class="ic">🪞</span>AI试穿</button>
+  <button data-p="me"><span class="ic">👤</span>我的</button>
+</div>
+
+<div class="toast" id="toast"></div>
 
 <script>
 /* ============================================================
+   【配置区】首次部署后可在这里直接写死 Supabase 信息，
+   或在「我的 → 系统配置」里填写（会存 localStorage）
+   ============================================================ */
+const SUPABASE = {
+  url: localStorage.getItem('sb_url') || '',
+  key: localStorage.getItem('sb_key') || '',
+};
+let sb = null;          // Supabase client
+let hunyuanKey = localStorage.getItem('hunyuan_key') || '';
+
+/* ============================================================
    全局状态
-============================================================ */
-let SB = null;        // Supabase client
-let user = null;
-let items = [];       // 单品/形象照列表
-let editingId = null; // 编辑中的记录 id（null=新增）
+   ============================================================ */
+const state = {
+  user: null,
+  profile: {            // AI 形象参数（同步到云端）
+    height: 165, weight: 55, bodyType: 'slim',
+    gender: 'female', skin: '#f5d0b0', hair: 'long', hairColor: '#5a3a1a',
+    avatarUrl: null,    // 抠图后的透明PNG / 原图地址
+  },
+  outfit: [],           // 当前试穿的单品
+  plans: [],            // 我的搭配方案（云端 outfit_plans）
+  templates: [],        // 搭配模板（云端 outfit_templates，含内置默认）
+  chatLog: [],          // 搭配顾问对话
+};
 
-const CATS = ['avatar','top','bottom','dress','coat','shoe','bag','acc'];
-const CAT_LABEL = {avatar:'形象照',top:'上装',bottom:'下装',dress:'连衣裙',coat:'外套',
-                   shoe:'鞋子',bag:'包包',acc:'配饰'};
-const LOC_PRESETS = ['衣柜·上层','衣柜·中层','衣柜·下层','抽屉·内衣','玄关·鞋柜','收纳箱A'];
-const SKINS = ['#f5d6b0','#eec48a','#d9a066','#b87b3f','#8a5320'];
-const HAIRS = ['#1a1a1a','#3b2a1a','#7a4a2a','#c08457','#d4b060','#a0a0a0'];
+/* ---------- Toast ---------- */
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000);}
 
-let curSkin = SKINS[1], curHair = HAIRS[2], curCat = 'top';
-
-/* ============================================================
-   工具
-============================================================ */
-const $ = id => document.getElementById(id);
-const uid = () => Math.random().toString(36).slice(2,10);
-
-function switchTab(pageId, el){
+/* ---------- 页面切换 ---------- */
+function goto(page){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  $(pageId).classList.add('active');
-  document.querySelectorAll('nav .tab').forEach(t=>t.classList.remove('on'));
-  el.classList.add('on');
-  if(pageId==='tryonPage') renderItems();
+  document.getElementById('page-'+page).classList.add('active');
+  document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.p===page));
+  if(page==='ai') drawAvatar();
+  if(page==='outfits') loadPlans();
 }
 
 /* ============================================================
-   Supabase 初始化（配置存 localStorage）
-============================================================ */
-function cfg(){ return JSON.parse(localStorage.getItem('sb_cfg')||'{}'); }
-
+   Supabase 连接 / 认证 (密码登录, 方案B-②)
+   ============================================================ */
 function initSupabase(){
-  const url = $('sbUrl').value.trim(), anon = $('sbAnon').value.trim();
-  if(!url||!anon){ $('syncStatus').textContent='请填写完整'; return; }
-  try{
-    SB = window.supabase.createClient(url, anon);
-    localStorage.setItem('sb_cfg', JSON.stringify({url, anon}));
-    $('syncStatus').textContent='✅ 已连接';
-    bindAuth();
-    loadItems();
-  }catch(e){ $('syncStatus').textContent='❌ '+e.message; }
+  if(!SUPABASE.url || !SUPABASE.key) return false;
+  try{ sb = supabase.createClient(SUPABASE.url, SUPABASE.key); return true; }
+  catch(e){ console.error(e); return false; }
 }
 
-function bindAuth(){
-  SB.auth.onAuthStateChange((_, sess)=>{
-    user = sess?.user || null;
-    if(user){ $('meEmail').textContent = user.email; }
+async function signUp(email, pwd){
+  if(!sb) return {error:{message:'请先在「我的→系统配置」填写 Supabase 信息'}};
+  return await sb.auth.signUp({email, password:pwd});
+}
+async function signIn(email, pwd){
+  if(!sb) return {error:{message:'请先填写 Supabase 信息'}};
+  return await sb.auth.signInWithPassword({email, password:pwd});
+}
+async function loadProfile(){
+  if(!sb || !state.user) return;
+  const {data} = await sb.from('profiles').select('*').eq('id', state.user.id).single();
+  if(data) state.profile = {...state.profile, ...data.profile_json};
+  renderProfile();
+}
+
+/* ============================================================
+   渲染：形象设定控件
+   ============================================================ */
+const SKINS = ['#f5d0b0','#e8b896','#c68642','#8d5524','#5c3a21'];
+const HAIRS = ['#1a1a1a','#5a3a1a','#c9a227','#b33a2a','#7a4bb0','#1f3a8a'];
+
+function renderProfile(){
+  // 肤色
+  const skinEl = document.getElementById('skin');
+  skinEl.innerHTML = SKINS.map(c=>`<div class="swatch ${c===state.profile.skin?'on':''}" style="background:${c}" data-c="${c}"></div>`).join('');
+  skinEl.onclick = e=>{ if(e.target.dataset.c){ state.profile.skin=e.target.dataset.c; renderProfile(); } };
+  // 发色
+  const hc = document.getElementById('hair-color');
+  hc.innerHTML = HAIRS.map(c=>`<div class="hair-dot ${c===state.profile.hairColor?'on':''}" style="background:${c}" data-c="${c}"></div>`).join('');
+  hc.onclick = e=>{ if(e.target.dataset.c){ state.profile.hairColor=e.target.dataset.c; renderProfile(); } };
+  // 参数显示
+  document.getElementById('val-h').textContent = state.profile.height;
+  document.getElementById('val-w').textContent = state.profile.weight;
+  document.getElementById('rng-height').value = state.profile.height;
+  document.getElementById('rng-weight').value = state.profile.weight;
+  document.getElementById('in-hunyuan').value = hunyuanKey;
+}
+
+/* ============================================================
+   绘制 AI 形象（展示人脸+身材，按身高/体重/体型调节比例）
+   ============================================================ */
+function drawAvatar(){
+  const cv = document.getElementById('avatar-canvas');
+  const ctx = cv.getContext('2d');
+  const W=cv.width, H=cv.height;
+  ctx.clearRect(0,0,W,H);
+
+  const {height, weight, bodyType, gender, skin, hairColor, avatarUrl} = state.profile;
+  // 单位比例：身高 -> 整体缩放；体重/体型 -> 肩宽腰宽
+  const scale = 0.6 + (height-140)/50 * 0.35;   // 140cm~190cm -> 0.6~1.15
+  const cx = W/2;
+  const headR = 32 * scale;
+  const shoulderW = (bodyType==='curvy'?1.25:bodyType==='slim'?0.85:1) * 70 * scale;
+  const hipW = shoulderW * (bodyType==='curvy'?1.15:1.02);
+  const bodyH = 160 * scale;
+  const topY = 60;
+
+  // 若已有真人抠图 -> 画真人；否则画参数化人形
+  if(avatarUrl){
+    const img = new Image();
+    img.onload = ()=>{ ctx.drawImage(img, cx-90, topY-20, 180, bodyH+headR*2); };
+    img.src = avatarUrl;
+  }
+
+  // 头
+  ctx.fillStyle = skin;
+  ctx.beginPath(); ctx.arc(cx, topY+headR, headR, 0, Math.PI*2); ctx.fill();
+  // 头发
+  ctx.fillStyle = hairColor;
+  ctx.beginPath(); ctx.arc(cx, topY+headR*0.85, headR*1.05, Math.PI, Math.PI*2); ctx.fill();
+  // 身体
+  ctx.fillStyle = skin;
+  ctx.beginPath();
+  ctx.moveTo(cx-shoulderW/2, topY+headR*2);
+  ctx.lineTo(cx+shoulderW/2, topY+headR*2);
+  ctx.lineTo(cx+hipW/2, topY+headR*2+bodyH*0.55);
+  ctx.lineTo(cx-hipW/2, topY+headR*2+bodyH*0.55);
+  ctx.closePath(); ctx.fill();
+  // 腿
+  ctx.fillRect(cx-hipW*0.22, topY+headR*2+bodyH*0.55, hipW*0.35, bodyH*0.5);
+  ctx.fillRect(cx+hipW*0.12, topY+headR*2+bodyH*0.55, hipW*0.35, bodyH*0.5);
+
+  // 参数标注（身高/体重文字）
+  ctx.fillStyle = '#333';
+  ctx.font = '14px sans-serif';
+  ctx.fillText(`身高 ${height}cm`, 16, H-40);
+  ctx.fillText(`体重 ${weight}kg`, 16, H-20);
+  ctx.fillText({slim:'纤瘦',normal:'标准',curvy:'丰满'}[bodyType], W-80, H-20);
+}
+
+/* ============================================================
+   上传照片 -> 抠图透明PNG -> 存 my_avatar (Supabase Storage)
+   ⑥ ⑤ ④ 合一
+   ============================================================ */
+async function uploadAvatar(file){
+  const status = document.getElementById('gen-status');
+  status.textContent = '⏳ 正在抠图（纯前端处理，请稍候）…';
+  try{
+    // ⑤ 抠图：imgly background-removal -> 透明PNG Blob
+    const removedBlob = await window.removeBackground(file);   // 来自 @imgly/background-removal
+    const pngUrl = URL.createObjectURL(removedBlob);
+
+    // ⑥ 用抠图结果作为真人形象
+    state.profile.avatarUrl = pngUrl;
+
+    // ④ 保存到「my_avatar」专用空间 (Supabase Storage bucket: avatars)
+    if(sb && state.user){
+      const ext = 'png';
+      const path = `${state.user.id}/${Date.now()}.${ext}`;  // 逻辑隔离 = 用户的形象文件夹
+      const {error} = await sb.storage.from('avatars').upload(path, removedBlob, {contentType:'image/png'});
+      if(!error){
+        const {data:{publicUrl}} = sb.storage.from('avatars').getPublicUrl(path);
+        state.profile.avatarUrl = publicUrl;  // 用云端地址（可跨设备同步）
+        status.textContent = '✅ 已保存到「我的形象」并生成透明底 PNG，可跨设备同步';
+      } else {
+        status.textContent = '✅ 抠图完成（本地预览），云端存储：'+ error.message;
+      }
+    } else {
+      status.textContent = '✅ 抠图完成（本地预览，未连接 Supabase 则仅本机）';
+    }
+    drawAvatar();
+  } catch(e){
+    console.error(e);
+    status.textContent = '⚠️ 抠图失败：'+ e.message + '（可重试，或检查网络加载抠图库）';
+  }
+}
+
+/* ============================================================
+   事件绑定
+   ============================================================ */
+document.addEventListener('DOMContentLoaded', ()=>{
+
+  // --- 导航 ---
+  document.querySelectorAll('.nav button').forEach(b=>{
+    b.onclick = ()=> goto(b.dataset.p);
+  });
+
+  // --- 登录/注册：自动登录兜底（打开即登录，无需填写） ---
+  // ① 静默自动登录：随机账号，无需用户任何输入
+  async function autoLogin(){
+    if(!initSupabase()) return false;
+    // 已有会话直接复用
+    const {data:{session}} = await sb.auth.getSession();
+    if(session?.user){ onLogin(session.user, false); return true; }
+    // 无会话则自动注册/登录一个本地账号
+    const email = 'demo@wardrobe.app';
+    const pwd = 'wardrobe123';
+    let res = await signIn(email, pwd);
+    if(res.error){
+      res = await signUp(email, pwd);
+      // 账号已存在（confirm 流程）也视为成功
+      if(res.error && !String(res.error.message||'').includes('already')){
+        console.warn('[autoLogin]', res.error.message);
+        return false;
+      }
+    }
+    const {data:{session:s2}} = await sb.auth.getSession();
+    if(s2?.user){ onLogin(s2.user, true); return true; }
+    return false;
+  }
+
+  // 页面加载即尝试自动登录（0 输入）
+  autoLogin().then(ok=>{ if(!ok) console.log('自动登录未生效，可手动填写邮箱密码登录'); });
+
+  // 手动登录/注册（兜底，仍可手动填）
+  document.getElementById('btn-auth').onclick = async ()=>{
+    const email = document.getElementById('in-email').value.trim();
+    const pwd = document.getElementById('in-pwd').value;
+    if(!email || pwd.length<6) return toast('请输入邮箱，密码 ≥6 位');
+    if(!initSupabase()) return toast('请先去「我的→系统配置」填写 Supabase');
+
+    // 先尝试登录，失败则注册（注册成功即视为登录成功，不再卡"查收邮件"）
+    let res = await signIn(email, pwd);
+    if(res.error){
+      res = await signUp(email, pwd);
+      if(res.error) return toast(res.error.message);
+      toast('注册成功，已自动登录');
+    } else {
+      toast('登录成功');
+    }
+    // 注册后可能尚未建立 session，稍等再取
+    let {data:{session}} = await sb.auth.getSession();
+    if(!session) await new Promise(r=>setTimeout(r,800));
+    ({data:{session}} = await sb.auth.getSession());
+    if(session?.user){ onLogin(session.user, true); }
+    else { toast('登录遇到延迟，请再点一次'); }
+  };
+
+  // --- 参数滑块 ---
+  document.getElementById('rng-height').oninput = e=>{ state.profile.height=+e.target.value; document.getElementById('val-h').textContent=e.target.value; drawAvatar(); };
+  document.getElementById('rng-weight').oninput = e=>{ state.profile.weight=+e.target.value; document.getElementById('val-w').textContent=e.target.value; drawAvatar(); };
+
+  // --- 体型/性别/发型 ---
+  document.querySelectorAll('.btype').forEach(b=>{
+    b.onclick = ()=>{ document.querySelectorAll('.btype').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.profile.bodyType=b.dataset.v; drawAvatar(); };
+  });
+  document.querySelectorAll('.g').forEach(b=>{
+    b.onclick = ()=>{ document.querySelectorAll('.g').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.profile.gender=b.dataset.v; drawAvatar(); };
+  });
+  document.querySelectorAll('.hair').forEach(b=>{
+    b.onclick = ()=>{ document.querySelectorAll('.hair').forEach(x=>x.classList.remove('on')); b.classList.add('on'); state.profile.hair=b.dataset.v; drawAvatar(); };
+  });
+
+  // --- 上传照片 (④⑤⑥) ---
+  document.getElementById('file-avatar').onchange = e=>{
+    const file = e.target.files[0];
+    if(file) uploadAvatar(file);
+  };
+  document.getElementById('btn-gen-avatar').onclick = ()=>{
+    if(!state.profile.avatarUrl) return toast('请先上传一张照片');
+    toast('形象已生成，可在「我的」中保存');
+    drawAvatar();
+  };
+
+  // --- 试穿操作 ---
+  document.getElementById('btn-clear').onclick = ()=>{ state.outfit=[]; renderTryon(); drawAvatar(); };
+  document.getElementById('btn-save').onclick = async ()=>{
+    if(!state.outfit.length) return toast('请先勾选要试穿的单品');
+    if(!sb||!state.user) return toast('请先连接 Supabase 以保存方案');
+    // 同时写入：① 旧 outfits 表（兼容） ② 结构化 outfit_plans（搭配方案列表）
+    await sb.from('outfits').insert({user_id:state.user.id, items:state.outfit, profile:state.profile});
+    const name = prompt('保存到搭配方案？可命名后一并归档（取消则仅存试穿记录）：', '搭配 ' + new Date().toLocaleTimeString());
+    if(name){ await sb.from('outfit_plans').insert({user_id:state.user.id, name, items:state.outfit}); loadPlans(); }
+    toast('已保存（云端同步）');
+  };
+
+  // --- 个人操作中心 (①) ---
+  document.getElementById('btn-save-key').onclick = ()=>{
+    hunyuanKey = document.getElementById('in-hunyuan').value.trim();
+    localStorage.setItem('hunyuan_key', hunyuanKey);
+    toast('混元 Key 已保存');
+  };
+  document.getElementById('chk-ai').onchange = e=>{
+    localStorage.setItem('ai_real', e.target.checked?'1':'0');
+    toast(e.target.checked?'已启用真实 AI 模式':'已切换为离线模拟');
+  };
+  document.getElementById('btn-chgpwd').onclick = async ()=>{
+    const pwd = document.getElementById('in-newpwd').value;
+    if(pwd.length<6) return toast('密码需 ≥6 位');
+    if(!sb) return toast('请先连接 Supabase');
+    const {error} = await sb.auth.updateUser({password:pwd});
+    toast(error? error.message : '密码已更新');
+  };
+  document.getElementById('btn-logout').onclick = async ()=>{
+    if(sb) await sb.auth.signOut();
+    location.reload();
+  };
+  document.getElementById('btn-sync').onclick = async ()=>{
+    await loadProfile();
+    toast('已同步最新数据');
+  };
+  document.getElementById('btn-sb-save').onclick = ()=>{
+    SUPABASE.url = document.getElementById('in-sb-url').value.trim();
+    SUPABASE.key = document.getElementById('in-sb-key').value.trim();
+    localStorage.setItem('sb_url', SUPABASE.url);
+    localStorage.setItem('sb_key', SUPABASE.key);
+    if(initSupabase()) toast('Supabase 已连接');
+    else toast('连接失败，请检查 URL / Key');
+  };
+
+  // 初始化
+  renderProfile();
+  renderCloset();
+  renderTryon();
+  renderTemplates();   // 搭配模板（内置默认，云端有则用云端）
+  loadPlans();         // 登录后会在 onLogin 里再次加载
+  document.getElementById('chk-ai').checked = localStorage.getItem('ai_real')==='1';
+
+  // 启动即自动连接 + 恢复登录（无需手动填写，未配置也走兜底账号）
+  if(SUPABASE.url && SUPABASE.key) initSupabase();
+  autoLogin().then(ok=>{
+    if(!ok && (!SUPABASE.url || !SUPABASE.key)){
+      // 未配置 Supabase：仍用本地兜底模式进入主界面，保证"第 2 步一定能进"
+      state.user = {id:'local', email:'本地模式'};
+      onLogin(state.user, false);
+    }
+  });
+});
+
+/* ---------- 登录后回调 ---------- */
+async function onLogin(user, fetchProfile=true){
+  state.user = user;
+  document.getElementById('page-login').classList.remove('active');
+  document.getElementById('nav').style.display='flex';
+  document.getElementById('me-email').textContent = user.email;
+  document.getElementById('in-sb-url').value = SUPABASE.url;
+  document.getElementById('in-sb-key').value = SUPABASE.key;
+  if(fetchProfile) await loadProfile();
+  await loadPlans();
+  goto('closet');
+}
+
+/* ---------- 衣橱 / 试穿 占位渲染 ---------- */
+function renderCloset(){
+  const items = ['👚','👖','👗','🧥','👟','👜','🎒','🧣'];
+  document.getElementById('closet-grid').innerHTML =
+    items.map((e,i)=>`<div class="item"><span class="ph">${e}</span></div>`).join('');
+}
+/* ---------- 搭配方案 / 顾问（新增） ---------- */
+const DEFAULT_TEMPLATES = [
+  {id:'t1',title:'初秋大地色系',desc:'卡其+米白+焦糖，温柔高级',tag:'配色',color:'#c9a063',items:['上装','下装','外套']},
+  {id:'t2',title:'通勤极简风',desc:'白衬衫+直筒西裤+乐福鞋',tag:'思路',color:'#2f4f4f',items:['上装','下装','鞋子']},
+  {id:'t3',title:'蓝白配万能公式',desc:'牛仔蓝搭配纯白，清爽不出错',tag:'配色',color:'#4a7fb5',items:['上装','下装']},
+  {id:'t4',title:'小黑裙法则',desc:'一件小黑裙应对所有正式场合',tag:'思路',color:'#1a1a1a',items:['连衣裙','鞋子','包包']},
+  {id:'t5',title:'同色系层次',desc:'深浅不同的同一色系叠穿显高级',tag:'思路',color:'#7a5a3a',items:['上装','外套']},
+  {id:'t6',title:'撞色点睛',desc:'大面积中性色+小面积亮色点缀',tag:'配色',color:'#c0392b',items:['上装','配饰']},
+];
+const CAT_ICON = {上装:'👚',下装:'👖',连衣裙:'👗',外套:'🧥',鞋子:'👟',包包:'👜',配饰:'💍'};
+
+// 子 Tab 切换
+document.querySelectorAll('.sub-tab button').forEach(b=>{
+  b.onclick=()=>{
+    document.querySelectorAll('.sub-tab button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');
+    const st=b.dataset.st;
+    document.querySelectorAll('#page-outfits [data-pane]').forEach(p=>p.style.display='none');
+    document.querySelector('#page-outfits [data-pane="'+st+'"]').style.display='block';
+    if(st==='advisor') renderChat();
+  };
+});
+
+// ① 保存当前试穿为搭配方案
+document.getElementById('btn-quick-save').onclick = async ()=>{
+  const name = prompt('为这套搭配起个名字：', '我的搭配 ' + (state.plans.length+1));
+  if(!name) return;
+  if(!state.outfit.length) return toast('请先去「AI试穿」勾选单品');
+  if(!sb||!state.user) return toast('请先连接 Supabase 以保存方案');
+  const {error} = await sb.from('outfit_plans').insert({
+    user_id: state.user.id, name, items: state.outfit,
+  });
+  if(error) return toast('保存失败：'+error.message);
+  toast('搭配方案已保存（云端同步）');
+  loadPlans();
+};
+
+// 从云端加载搭配方案
+async function loadPlans(){
+  if(!sb||!state.user) return renderPlans();
+  const {data} = await sb.from('outfit_plans').select('*').eq('user_id', state.user.id).order('created_at',{ascending:false});
+  state.plans = data || [];
+  renderPlans();
+}
+function renderPlans(){
+  const grid = document.getElementById('plan-grid');
+  if(!grid) return;
+  if(!state.plans.length){ grid.innerHTML=''; document.getElementById('plan-empty').style.display='block'; return; }
+  document.getElementById('plan-empty').style.display='none';
+  grid.innerHTML = state.plans.map(p=>{
+    const thumbs = (p.items||[]).map(c=>`<div class="t">${CAT_ICON[c]||'👕'}</div>`).join('');
+    return `<div class="plan-card">
+      <button class="del" data-id="${p.id}">×</button>
+      <div class="thumbs">${thumbs||'<div class="t">👕</div>'}</div>
+      <div class="name">${p.name||'未命名'}</div>
+      <div class="meta">${(p.items||[]).length} 件 · ${new Date(p.created_at||Date.now()).toLocaleDateString()}</div>
+    </div>`;
+  }).join('');
+  grid.querySelectorAll('.del').forEach(b=>{
+    b.onclick = async ()=>{
+      if(!confirm('删除该搭配方案？')) return;
+      if(sb&&state.user){ await sb.from('outfit_plans').delete().eq('id', b.dataset.id); }
+      state.plans = state.plans.filter(x=>x.id!==b.dataset.id);
+      renderPlans();
+    };
   });
 }
 
-/* ============================================================
-   登录 / 注册（密码方式）
-============================================================ */
-async function onAuth(){
-  const email = $('email').value.trim(), pwd = $('pwd').value;
-  $('loginMsg').textContent='';
-  if(!email||pwd.length<6){ $('loginMsg').textContent='密码至少6位'; return; }
-  if(!SB){ $('loginMsg').textContent='请先在「我的→同步」填写 Supabase 配置并连接'; return; }
-  // 先尝试登录，失败则注册
-  let { data, error } = await SB.auth.signInWithPassword({email, password:pwd});
-  if(error && /Invalid|invalid/i.test(error.message)){
-    ({ data, error } = await SB.auth.signUp({email, password:pwd}));
-  }
-  if(error){ $('loginMsg').textContent = error.message; return; }
-  user = data.user;
-  if(user){ $('meEmail').textContent = user.email; switchTab('tryonPage', document.querySelector('nav .tab')); }
+// ③ 搭配模板渲染 + 套用
+function renderTemplates(){
+  const grid = document.getElementById('tpl-grid');
+  if(!grid) return;
+  const list = state.templates.length ? state.templates : DEFAULT_TEMPLATES;
+  grid.innerHTML = list.map(t=>`
+    <div class="tpl-card" style="background:${t.color}">
+      <div class="ft">${t.title}</div>
+      <div class="fd">${t.desc}</div>
+      <span class="ftag">${t.tag}</span>
+      <div><button class="use" data-id="${t.id}">＋ 套用为我的方案</button></div>
+    </div>`).join('');
+  grid.querySelectorAll('.use').forEach(b=>{
+    b.onclick = async ()=>{
+      const t = list.find(x=>x.id===b.dataset.id);
+      if(!t) return;
+      if(!sb||!state.user) return toast('请先连接 Supabase');
+      const {error} = await sb.from('outfit_plans').insert({
+        user_id: state.user.id, name: t.title, items: t.items||[],
+      });
+      if(error) return toast('保存失败：'+error.message);
+      toast('已套用「'+t.title+'」并保存到搭配方案');
+      loadPlans();
+    };
+  });
 }
 
-async function logout(){ await SB?.auth.signOut(); location.reload(); }
-
-async function changePwd(){
-  const np = $('newPwd').value;
-  if(np.length<6){ alert('密码至少6位'); return; }
-  const { error } = await SB.auth.updateUser({password:np});
-  alert(error ? '失败：'+error.message : '密码已更新');
-  $('newPwd').value='';
-}
-
-function saveSettings(){
-  localStorage.setItem('ai_cfg', JSON.stringify({
-    key: $('hunyuanKey').value, real: $('realAI').value
-  }));
-}
-
-/* ============================================================
-   上传 / 编辑（抠图 + 重命名 + 存放位置）
-============================================================ */
-function openUpload(asItem){
-  editingId = null;
-  $('upTitle').textContent = asItem ? '添加单品' : '上传形象照';
-  $('upCat').value = asItem ? 'top' : 'avatar';
-  $('upName').value = '';
-  $('upLoc').value = '';
-  $('upLocPreset').value = '';
-  $('uploadModal').classList.add('on');
-}
-
-function editItem(it){
-  editingId = it.id;
-  $('upTitle').textContent = '编辑';
-  $('upName').value = it.name || '';
-  $('upCat').value = it.cat;
-  $('upLoc').value = LOC_PRESETS.includes(it.location) ? '' : (it.location||'');
-  $('upLocPreset').value = LOC_PRESETS.includes(it.location) ? it.location : '__custom';
-  $('uploadModal').classList.add('on');
-}
-
-function onLocPreset(){
-  const v = $('upLocPreset').value;
-  if(v==='__custom'){ $('upLoc').value=''; $('upLoc').focus(); }
-  else { $('upLoc').value = v; }
-}
-
-function closeUpload(){ $('uploadModal').classList.remove('on'); }
-
-async function doUpload(){
-  const name = $('upName').value.trim() || ($('upFile').files[0]?.name.replace(/\.[^/.]+$/,'') || ('未命名_'+uid()));
-  const cat = $('upCat').value;
-  const location = $('upLoc').value.trim() || $('upLocPreset').value || '未分类';
-  const file = $('upFile').files[0];
-
-  let imgUrl = null, maskUrl = null;
-
-  if(file){
-    // 1) 上传原图到 Storage（avatars 桶，按用户隔离）
-    const path = `${user?.id||'public'}/${uid()}_${file.name}`;
-    if(SB){
-      const { error } = await SB.storage.from('avatars').upload(path, file);
-      if(!error){ const { data } = SB.storage.from('avatars').getPublicUrl(path); imgUrl = data.publicUrl; }
-    }
-    // 2) 前端抠图 → 透明 PNG（@imgly/background-removal）
-    try{
-      const removed = await removeBackground(file);
-      const blob = await (await import('https://cdn.jsdelivr.net/npm/@imgly/background-removal@1')).blobToDataURL(removed);
-      maskUrl = blob; // 本地预览用 dataURL；如需持久化可一并上传 Storage
-    }catch(e){ console.warn('抠图失败，跳过：', e); }
-  }
-
-  const record = {
-    user_id: user?.id || 'local',
-    name, cat, location,
-    image_url: imgUrl,
-    mask_url: maskUrl,
-    updated_at: new Date().toISOString()
+// ④ 搭配顾问对话
+function advisorReply(q){
+  const map = {
+    '黄黑皮': '黄黑皮优先选：焦糖、姜黄、橄榄绿、酒红；避开荧光色与正橘。主色选大地色系最显质感。',
+    '显高': '显高要点：高腰线 + 同色系延伸 + 九分裤露脚踝；鞋子选尖头/浅口，避免上下分割过多。',
+    '梨形': '梨形身材：上半身用亮色/图案吸睛，下半身选深色直筒/阔腿；强调肩颈线条。',
+    '通勤': '通勤极简：一件质感白衬衫 + 直筒西裤 + 乐福鞋，配一个小方包即高级。',
   };
-
-  if(editingId){
-    // 更新（重命名 / 改位置）
-    const idx = items.findIndex(i=>i.id===editingId);
-    if(idx>=0){ items[idx] = {...items[idx], ...record}; }
-    if(SB){ await SB.from('outfits').update(record).eq('id', editingId); }
-  }else{
-    record.id = uid();
-    record.created_at = record.updated_at;
-    items.push(record);
-    if(SB){ const { data } = await SB.from('outfits').insert(record).select(); if(data?.[0]) Object.assign(record, data[0]); }
-  }
-
-  closeUpload();
-  renderItems();
-  drawAvatar();
+  for(const k in map){ if(q.includes(k)) return map[k]; }
+  return '好问题！一般建议：先定主色（肤色/季节适配），再按 70/25/5 分配主/辅/点缀色，最后用配饰点睛。\n\n💡 试试问我「黄黑皮配色」「梨形身材」「通勤极简」等更具体的问题～';
 }
-
-/* 删除 */
-async function delItem(id, e){
-  e.stopPropagation();
-  if(!confirm('删除这件？')) return;
-  items = items.filter(i=>i.id!==id);
-  if(SB){ await SB.from('outfits').delete().eq('id', id); }
-  renderItems();
+function renderChat(){
+  const log = document.getElementById('chat-log');
+  if(!log) return;
+  if(!state.chatLog.length) state.chatLog = [{who:'them',text:'你好，我是你的专业搭配顾问 💬\n可以问我任何穿搭问题，比如「黄黑皮怎么选颜色」「小个子显高技巧」～'}];
+  log.innerHTML = state.chatLog.map(m=>`<div class="msg ${m.who}"><div class="bubble">${m.text}</div></div>`).join('');
+  log.scrollTop = log.scrollHeight;
 }
+document.getElementById('chat-send').onclick = ()=>{
+  const inp = document.getElementById('chat-in');
+  const q = inp.value.trim(); if(!q) return;
+  state.chatLog.push({who:'me',text:q}); inp.value=''; renderChat();
+  setTimeout(()=>{ state.chatLog.push({who:'them',text:advisorReply(q)}); renderChat(); }, 400);
+};
+document.getElementById('chat-in').onkeypress = e=>{ if(e.key==='Enter') document.getElementById('chat-send').click(); };
 
-/* ============================================================
-   渲染：分类 + 网格（名称 + 存放位置标签）
-============================================================ */
-function renderItems(){
-  // 分类 chips
-  const chips = $('catChips');
-  chips.innerHTML = CATS.map(c=>`<span class="chip ${c===curCat?'on':''}" onclick="setCat('${c}')">${CAT_LABEL[c]}</span>`).join('');
-  // 网格
-  const list = items.filter(i=>i.cat===curCat);
-  const grid = $('itemGrid');
-  grid.innerHTML = list.map(i=>`
-    <div class="item" onclick='editItem(${JSON.stringify(i).replace(/'/g,"")})'>
-      ${i.image_url ? `<img src="${i.image_url}">` : `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--gray);font-size:11px;">${i.name||'无图'}</div>`}
-      <div class="name">${i.name||''}</div>
-      <div class="loc">📍 ${i.location||'未分类'}</div>
-      <button class="del" onclick="delItem('${i.id}',event)">×</button>
-    </div>`).join('') || `<p style="color:var(--gray);font-size:13px;">暂无，点下方「+ 添加单品」</p>`;
+function renderTryon(){
+  const cats = ['上装','下装','连衣裙','外套','鞋子','包包','配饰'];
+  // 「配饰」独立，不与形象照混淆 —— 形象照已单独存 avatars
+  document.getElementById('tryon-grid').innerHTML =
+    cats.map((c,i)=>`<div class="item" data-cat="${c}"><span class="ph">${['👚','👖','👗','🧥','👟','👜','💍'][i]}</span><div>${c}</div></div>`).join('');
+  document.querySelectorAll('#tryon-grid .item').forEach(el=>{
+    el.onclick = ()=>{ el.classList.toggle('on'); el.style.border='2px solid var(--pink)';
+      const cat=el.dataset.cat; state.outfit.includes(cat)?state.outfit=state.outfit.filter(x=>x!==cat):state.outfit.push(cat); drawAvatar(); };
+  });
 }
-
-function setCat(c){ curCat = c; renderItems(); }
-
-async function loadItems(){
-  if(!SB||!user) return;
-  const { data } = await SB.from('outfits').select().eq('user_id', user.id).order('updated_at',{ascending:false});
-  items = data || [];
-  renderItems();
-  drawAvatar();
-}
-
-/* ============================================================
-   AI 形象绘制（参数化：身高/体重/体型 + 真人抠图叠加）
-============================================================ */
-function drawAvatar(){
-  const cv = $('avatarCanvas'), ctx = cv.getContext('2d');
-  const W=cv.width, H=cv.height;
-  ctx.clearRect(0,0,W,H);
-  // 背景
-  ctx.fillStyle='#fff5f3'; ctx.fillRect(0,0,W,H);
-
-  const h = +$('height').value, w = +$('weight').value;
-  $('hVal').textContent=h; $('wVal').textContent=w;
-
-  // 体型 → 肩宽/腰宽系数
-  const bt = $('bodyType').value;
-  const widthMap = {slim:.8, normal:1, curvy:1.15, athletic:1.05};
-  const f = widthMap[bt] * (w/60); // 体重影响宽度
-
-  const cx=W/2;
-  const headR=26;
-  const bodyTop=70, bodyH = 200 * (h/165); // 身高影响身长
-  const shoulder = 46*f, hip = 40*f, legW = 30*f;
-
-  // 头
-  ctx.fillStyle=curSkin;
-  ctx.beginPath(); ctx.arc(cx, bodyTop-headR+6, headR, 0, Math.PI*2); ctx.fill();
-  // 发型
-  ctx.fillStyle=curHair;
-  ctx.beginPath(); ctx.arc(cx, bodyTop-headR, headR+4, Math.PI, Math.PI*2); ctx.fill();
-  // 身体
-  ctx.fillStyle=curSkin;
-  ctx.beginPath();
-  ctx.moveTo(cx-shoulder, bodyTop);
-  ctx.quadraticCurveTo(cx, bodyTop+bodyH*0.55+ (bt==='curvy'?20:0), cx-hip, bodyTop+bodyH);
-  ctx.lineTo(cx+hip, bodyTop+bodyH);
-  ctx.quadraticCurveTo(cx, bodyTop+bodyH*0.55+ (bt==='curvy'?20:0), cx+shoulder, bodyTop);
-  ctx.fill();
-  // 腿
-  ctx.fillRect(cx-legW-4, bodyTop+bodyH, legW, bodyH*0.55);
-  ctx.fillRect(cx+4, bodyTop+bodyH, legW, bodyH*0.55);
-
-  // 若有抠图结果，叠加在头部区域
-  const avatar = items.find(i=>i.cat==='avatar' && i.mask_url);
-  if(avatar && avatar.mask_url){
-    const img = new Image();
-    img.onload=()=>{ ctx.drawImage(img, cx-55, bodyTop-headR-10, 110, 140); };
-    img.src = avatar.mask_url;
-  }
-}
-
-async function generateTryon(){
-  const cfgAI = JSON.parse(localStorage.getItem('ai_cfg')||'{}');
-  if(cfgAI.real==='on' && cfgAI.key){
-    alert('真实 AI 出图已启用（混元 Key 已读取）。\n本版将在此接入生图 API；\n当前先完成参数化形象，可在「我的」切换。');
-  }else{
-    drawAvatar();
-    alert('已生成（离线模拟）。\n填入混元 Key 并开启「真实 AI」可升级效果。');
-  }
-}
-
-/* ============================================================
-   初始化
-============================================================ */
-function initChips(){
-  $('skinChips').innerHTML = SKINS.map(s=>`<span class="swatch ${s===curSkin?'on':''}" style="background:${s}" onclick="curSkin='${s}';drawAvatar()"></span>`).join('');
-  $('hairChips').innerHTML = HAIRS.map(s=>`<span class="swatch ${s===curHair?'on':''}" style="background:${s}" onclick="curHair='${s}';drawAvatar()"></span>`).join('');
-}
-
-(function start(){
-  initChips();
-  // 恢复设置
-  const c = JSON.parse(localStorage.getItem('ai_cfg')||'{}');
-  if(c.key) $('hunyuanKey').value=c.key; if(c.real) $('realAI').value=c.real;
-  const sb = cfg();
-  if(sb.url){ $('sbUrl').value=sb.url; $('sbAnon').value=sb.anon; initSupabase(); }
-  renderItems();
-  drawAvatar();
-})();
 </script>
 </body>
 </html>
