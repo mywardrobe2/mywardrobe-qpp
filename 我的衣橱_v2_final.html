@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="version" content="mywardrobe-v2-20260908.1">
+<title>我的衣橱</title>
+<style>
+:root{--p:#ff6b9d;--pl:#ffd3e0;--bg:#fff5f8;--line:#f0d7e1;--ink:#3b2730;--muted:#9a7d87}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink)}
+button{font:inherit}
+.page{display:none;padding:16px 16px 104px}
+.page.active{display:block}
+.toast{position:fixed;left:50%;bottom:92px;transform:translateX(-50%);background:#3b2730;color:#fff;padding:10px 16px;border-radius:20px;font-size:14px;opacity:0;transition:.2s;z-index:99;max-width:88%;text-align:center}
+.toast.show{opacity:1}
+.toast-error{background:#c0392b}
+.toast-success{background:#27ae60}
+#page-login{min-height:100vh;display:none;place-items:center;padding:24px}
+#page-login.active{display:grid}
+.login{max-width:340px;width:100%;background:#fff;border-radius:24px;padding:28px 22px;box-shadow:0 10px 30px #e9b8c966}
+.login h1{font-size:22px;color:var(--p);text-align:center;margin:0 0 6px}
+.login .sub{font-size:13px;color:var(--muted);text-align:center;margin-bottom:20px}
+.field{display:block;margin-bottom:14px}
+.field label{font-size:13px;color:var(--muted)}
+.field input{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:4px;background:#fff}
+.btn{width:100%;border:0;border-radius:20px;padding:13px;background:var(--p);color:#fff;font-size:16px;cursor:pointer}
+.btn:disabled{opacity:.6}
+.btn-sm{border:1px solid var(--p);background:none;color:var(--p);border-radius:14px;padding:6px 12px;cursor:pointer;font-size:13px}
+.btn-ghost{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:14px;padding:6px 12px;cursor:pointer;font-size:13px}
+.hint{font-size:12px;color:var(--muted);text-align:center;margin-top:14px;line-height:1.6}
+.nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:#fff;border-top:1px solid var(--line)}
+.nav button{flex:1;border:0;background:none;padding:12px 0;color:var(--muted);font-size:12px}
+.nav button.active{color:var(--p);font-weight:700}
+.top{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.top h2{font-size:18px;margin:0;flex:1}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.chip{border:1px solid var(--line);border-radius:16px;padding:7px 12px;background:#fff;color:#7a5c66;cursor:pointer;font-size:13px}
+.chip.active{background:var(--p);border-color:var(--p);color:#fff}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.item{position:relative;background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:0}
+.item img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;background:#f7e9ef}
+.item figcaption{padding:8px;font-size:13px;word-break:break-all}
+.item-del{position:absolute;top:6px;right:6px;border:0;background:#c0392b;color:#fff;border-radius:50%;width:24px;height:24px;line-height:22px;cursor:pointer}
+.empty{color:var(--muted);text-align:center;padding:40px 0;font-size:14px}
+.upload{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:16px}
+.upload input,.upload select,.upload textarea{width:100%;margin:8px 0;padding:10px;border:1px solid var(--line);border-radius:10px;font:inherit}
+.upload-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.upload-row>*{flex:1;min-width:120px}
+.sidebar{width:96px;flex:none;display:flex;flex-direction:column;gap:8px}
+.sidebar .chip{width:100%;text-align:center;padding:9px 4px;font-size:12px}
+.layout{display:flex;gap:12px;align-items:flex-start}
+.avatar{width:120px;height:120px;border-radius:16px;object-fit:cover;background:#f3dce5;display:block;margin:0 auto 12px}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px}
+.card ul{margin:0;padding-left:0;list-style:none}
+.card li{margin:8px 0;display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+.card li span{color:var(--muted);font-size:12px}
+.sync{font-size:12px;color:var(--muted);text-align:center;margin-top:8px}
+.advisor{border:1px solid var(--line);border-radius:16px;padding:12px;background:#fff;max-height:220px;overflow:auto}
+.advisor p{font-size:14px;margin:8px 0;line-height:1.5}
+.advisor input{width:100%;padding:10px;border:1px solid var(--line);border-radius:12px;margin-top:8px}
+.tryon{border:1px solid var(--line);border-radius:16px;padding:14px;background:#fff;margin-top:12px}
+.tryon .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.avatar-thumb{position:relative;width:80px;height:80px;border-radius:12px;object-fit:cover;cursor:pointer;border:2px solid transparent}
+.avatar-thumb.active{border-color:var(--p)}
+.avatar-thumb .star{position:absolute;top:2px;right:2px;background:var(--p);color:#fff;border-radius:50%;width:16px;height:16px;font-size:11px;line-height:12px;text-align:center}
+.form-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:6px 0}
+.form-row label{width:64px;color:var(--muted);font-size:13px;flex:none}
+.form-row input{flex:1;min-width:80px;padding:8px;border:1px solid var(--line);border-radius:10px}
+.section-title{font-size:15px;font-weight:700;margin:14px 0 8px;color:var(--ink)}
+.muted{color:var(--muted);font-size:12px}
+.tag{border:1px solid var(--line);border-radius:10px;padding:3px 8px;font-size:12px;background:#fff;color:var(--muted);cursor:pointer}
+.tag.active{background:var(--p);color:#fff;border-color:var(--p)}
+.result-box{background:#f7e9ef;border-radius:14px;padding:12px;text-align:center;min-height:120px;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px}
+.result-box img{max-height:180px;max-width:45%;object-fit:contain;border-radius:10px;background:#fff}
+.trend{border-left:4px solid var(--p);padding:8px 12px;margin:8px 0;background:#fff;border-radius:0 10px 10px 0}
+.trend b{font-size:13px}
+.trend small{color:var(--muted);display:block;margin-top:4px;line-height:1.4}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;place-items:center;z-index:80;padding:16px}
+.modal.show{display:grid}
+.modal .box{background:#fff;border-radius:18px;padding:20px;max-width:340px;width:100%;max-height:80vh;overflow:auto}
+.modal h3{margin:0 0 12px;font-size:17px;color:var(--p)}
+.kv{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--line);font-size:13px}
+</style>
+</head>
+<body>
+<div id="toast" class="toast"></div>
+
+<!-- ============ 登录页 ============ -->
+<section id="page-login" class="page" data-page="login">
+  <div class="login">
+    <h1 id="login-title">我的衣橱</h1>
+    <div class="sub">账号密码登录 · 衣橱与形象跨设备同步</div>
+    <label class="field">邮箱账号<input id="login-email" type="email" placeholder="you@example.com"></label>
+    <label class="field">密码（≥6 位）<input id="login-pwd" type="password" placeholder="至少6位密码"></label>
+    <button id="login-btn" class="btn" type="button">登录 / 注册</button>
+    <div class="hint" id="login-hint">无需邮箱验证，首次输入即自动注册<br>未配置云端时也可完整使用（本地模式）</div>
+  </div>
+</section>
+
+<!-- ============ 衣橱（素材库） ============ -->
+<section id="closet" class="page" data-page="closet">
+  <div class="top">
+    <h2 id="closet-title">我的衣橱</h2>
+    <button class="btn-sm" id="loc-manage">位置管理</button>
+  </div>
+  <!-- 上传区：支持多张，名称/品类/位置均非必填 -->
+  <div class="upload">
+    <input id="upload-file" type="file" accept="image/*" multiple>
+    <div class="upload-row">
+      <input id="upload-name" type="text" placeholder="产品名称（可不填，可重名）">
+      <select id="upload-category"></select>
+    </div>
+    <div class="upload-row">
+      <select id="upload-location"></select>
+      <button id="upload-submit" class="btn" type="button">＋ 上传素材</button>
+    </div>
+    <div class="hint">可一次选多张；名称/品类/位置均可不填，之后随时改</div>
+  </div>
+  <div class="layout">
+    <div class="sidebar" id="category-list"></div>
+    <div style="flex:1;min-width:0">
+      <div class="chips" id="location-chips"></div>
+      <div id="item-grid" class="grid"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 形象 ============ -->
+<section id="avatar" class="page" data-page="avatar">
+  <div class="top"><h2>我的形象</h2></div>
+  <div class="card">
+    <div class="hint">可上传多张形象照，点 ★ 设为主形象</div>
+    <input id="avatar-input" type="file" accept="image/*" multiple>
+    <div class="chips" id="avatar-list" style="margin-top:10px"></div>
+  </div>
+  <div class="section-title">真人参数（影响试穿效果）</div>
+  <div class="card" id="param-card"></div>
+  <div class="top" style="margin-top:8px">
+    <h2>AI 试穿</h2>
+    <button class="btn-sm" id="tryon-run">试穿整套</button>
+  </div>
+  <div class="tryon">
+    <div class="row"><b>主形象：</b><span id="tryon-avatar-name" class="muted">尚未选择</span></div>
+    <div class="row" style="margin-top:8px"><b>搭配单品（可勾选多件）：</b></div>
+    <div class="chips" id="tryon-items"></div>
+    <div class="result-box" id="tryon-result"><span class="muted">选好主形象 + 勾选单品后，点「试穿整套」</span></div>
+    <button id="save-plan" class="btn" type="button" style="margin-top:12px">★ 保存当前为搭配方案</button>
+  </div>
+</section>
+
+<!-- ============ 搭配 ============ -->
+<section id="plans" class="page" data-page="plans">
+  <div class="top"><h2>搭配方案</h2></div>
+  <ul id="plan-list" class="card"></ul>
+  <div class="section-title">专业搭配师 · 今日时尚前线</div>
+  <div class="card" id="trend-list"></div>
+  <div class="section-title">搭配模板库</div>
+  <ul id="template-list" class="card"></ul>
+  <div class="section-title">搭配顾问（可互动）</div>
+  <div class="advisor" id="advisor-log"></div>
+  <div class="advisor"><input id="advisor-input" placeholder="例如：梨形身材通勤怎么搭？"><button id="advisor-send" class="btn" type="button">发送</button></div>
+</section>
+
+<!-- ============ 设置 ============ -->
+<section id="settings" class="page" data-page="settings">
+  <div class="top"><h2>设置</h2></div>
+  <div class="card">
+    <p>账号：<b id="account-name">未登录</b></p>
+    <button id="btn-logout" class="btn" type="button">退出登录</button>
+  </div>
+  <div class="card">
+    <div class="section-title">软件名称（自定义）</div>
+    <input id="cfg-appname" placeholder="例如：我的衣橱" style="width:100%;padding:10px;border:1px solid var(--line);border-radius:10px">
+    <button id="cfg-appname-save" class="btn" type="button" style="margin-top:8px">保存名称</button>
+  </div>
+  <div class="card">
+    <h3>修改密码</h3>
+    <input id="pwd-old" type="password" placeholder="原密码" style="width:100%;padding:10px;margin:6px 0;border:1px solid var(--line);border-radius:10px">
+    <input id="pwd-new" type="password" placeholder="新密码（≥6位）" style="width:100%;padding:10px;margin:6px 0;border:1px solid var(--line);border-radius:10px">
+    <button id="pwd-change" class="btn" type="button">更新密码</button>
+  </div>
+  <div class="card">
+    <h3>模板变更</h3>
+    <div id="template-toggle" class="muted">加载中…</div>
+    <div class="hint">关闭后对应模板不会出现在搭配页</div>
+  </div>
+  <div class="card">
+    <h3>云端同步（可选）</h3>
+    <input id="cfg-url" placeholder="Supabase URL（留空即为本地模式）" style="width:100%;padding:10px;margin:6px 0;border:1px solid var(--line);border-radius:10px">
+    <input id="cfg-key" placeholder="anon public key" style="width:100%;padding:10px;margin:6px 0;border:1px solid var(--line);border-radius:10px">
+    <button id="cfg-save" class="btn" type="button">保存配置</button>
+    <div id="sync-status" class="sync">检测中…</div>
+    <button id="sync-now" class="btn" type="button">立即同步</button>
+    <div class="hint">留空即为本地模式。填写后同一账号可在手机与电脑同步。</div>
+  </div>
+  <div class="card">
+    <h3>混元 API（可选，用于真人AI试穿）</h3>
+    <input id="cfg-hunyuan-key" placeholder="API Key（留空则使用本地拼贴兜底）" style="width:100%;padding:10px;margin:6px 0;border:1px solid var(--line);border-radius:10px">
+    <button id="cfg-hunyuan-save" class="btn" type="button">保存 Key</button>
+    <div class="hint">未填写时 AI 试穿会用"形象+单品拼贴"模拟，不报错。</div>
+  </div>
+</section>
+
+<nav class="nav">
+  <button data-page="closet" class="active">衣橱</button>
+  <button data-page="avatar">形象</button>
+  <button data-page="plans">搭配</button>
+  <button data-page="settings">设置</button>
+</nav>
+
+<!-- 位置管理弹窗 -->
+<div class="modal" id="loc-modal">
+  <div class="box">
+    <h3>储存位置</h3>
+    <div id="loc-modal-list" class="muted">加载中…</div>
+    <div class="upload-row" style="margin-top:12px">
+      <input id="loc-new-name" placeholder="新增位置，如：出租屋">
+      <button class="btn" id="loc-new-add" style="flex:none;width:auto;padding:10px 16px">添加</button>
+    </div>
+    <button class="btn-ghost" id="loc-modal-close" style="width:100%;margin-top:12px">关闭</button>
+  </div>
+</div>
+
+<!-- 品类重命名弹窗 -->
+<div class="modal" id="cat-modal">
+  <div class="box">
+    <h3>品类名称</h3>
+    <input id="cat-rename-input" style="width:100%;padding:10px;border:1px solid var(--line);border-radius:10px">
+    <div class="upload-row" style="margin-top:12px">
+      <button class="btn" id="cat-rename-ok" style="flex:1">保存</button>
+      <button class="btn-ghost" id="cat-rename-del" style="flex:1">删除该品类</button>
+    </div>
+    <button class="btn-ghost" id="cat-modal-close" style="width:100%;margin-top:8px">取消</button>
+  </div>
+</div>
+
+<script>
+window.CONFIG = {
+  SUPABASE_URL:      (window.__cfg && window.__cfg.SUPABASE_URL)      || '',
+  SUPABASE_ANON_KEY: (window.__cfg && window.__cfg.SUPABASE_ANON_KEY) || '',
+  HUNYUAN_KEY:       (window.__cfg && window.__cfg.HUNYUAN_KEY)       || ''
+};
+</script>
+
+<!-- ===== 数据层 ===== -->
+<script>
+/* 我的衣橱 v2 - 数据层（兼容 vFinal，扩展多形象照 + 真人参数） */
+window.WardrobeStore = (function () {
+  'use strict';
+  var VERSION = '20260908.2';
+  var LS = window.localStorage;
+  var DB_NAME = 'mywardrobe_v2';
+  var DB_VER = 1;
+  var STORE = 'binaries';
+  var META = 'wardrobe_meta_v2';
+  var ACCOUNTS = 'wardrobe_accounts_v2';
+  var SESSION = 'wardrobe_session_v2';
+
+  function uid() { return 'id_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8); }
+  function norm(s) { return String(s || '').trim().toLowerCase(); }
+  function sha256(t) {
+    return crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)).then(function (h) {
+      return Array.prototype.map.call(new Uint8Array(h), function (x) { return x.toString(16).padStart(2, '0'); }).join('');
+    });
+  }
+  function fileToDataURL(f) {
+    return new Promise(function (res, rej) {
+      var r = new FileReader();
+      r.onload = function () { res(r.result); };
+      r.onerror = function () { rej(r.error); };
+      r.readAsDataURL(f);
+    });
+  }
+  function defaultParams() {
+    return { height: 165, weight: 55, bust: 86, waist: 68, hip: 92, leg: 78, shoulder: 38, skin: '自然肤色' };
+  }
+  function defaultState() {
+    return {
+      accounts: {},
+      categories: [
+        { id: uid(), name: '上装' }, { id: uid(), name: '下装' }, { id: uid(), name: '连衣裙' },
+        { id: uid(), name: '外套' }, { id: uid(), name: '鞋包' }, { id: uid(), name: '配饰' }, { id: uid(), name: '未分类' }
+      ],
+      locations: [{ id: uid(), name: '默认衣橱' }],
+      activeLocationId: null,
+      items: [],
+      plans: [],
+      templates: [],
+      templateEnabled: {},
+      avatars: [],        // v2: 多张形象照 [{id, name, imageRef, primary, createdAt}]
+      params: defaultParams(), // v2: 真人参数
+      avatar: null,       // 兼容旧版：主形象引用 {imageRef}
+      session: null,
+      version: VERSION
+    };
+  }
+
+  var store = {
+    state: defaultState(),
+    runtime: { configured: false, connection: 'offline', lastSync: null, lastError: null, version: VERSION },
+    listeners: []
+  };
+  function notify() { store.listeners.slice().forEach(function (fn) { try { fn(store.state); } catch (e) { console.error(e); } }); }
+  store.subscribe = function (fn) { store.listeners.push(fn); };
+
+  function openDB() {
+    return new Promise(function (res, rej) {
+      var r = indexedDB.open(DB_NAME, DB_VER);
+      r.onupgradeneeded = function () { if (!r.result.objectStoreNames.contains(STORE)) r.result.createObjectStore(STORE); };
+      r.onsuccess = function () { res(r.result); };
+      r.onerror = function () { rej(r.error); };
+    });
+  }
+  function tx(storeName, mode, fn) {
+    return openDB().then(function (db) {
+      return new Promise(function (res, rej) {
+        var t = db.transaction(storeName, mode);
+        var req = fn(t.objectStore(storeName));
+        t.oncomplete = function () { res(req && req.result !== undefined ? req.result : undefined); };
+        t.onerror = function () { rej(t.error); };
+      });
+    });
+  }
+  store.image = {
+    put: function (key, value) { return tx(STORE, 'readwrite', function (s) { return s.put(value, key); }); },
+    get: function (key) { return tx(STORE, 'readonly', function (s) { return s.get(key); }).then(function (v) { return v || null; }, function () { return null; }); },
+    delete: function (key) { return tx(STORE, 'readwrite', function (s) { return s.delete(key); }).then(function () {}, function () {}); }
+  };
+
+  function persist() {
+    try {
+      var meta = {
+        categories: store.state.categories,
+        locations: store.state.locations,
+        activeLocationId: store.state.activeLocationId,
+        items: store.state.items.map(function (it) { var o = {}; for (var k in it) if (k !== 'imageData') o[k] = it[k]; return o; }),
+        plans: store.state.plans,
+        templates: store.state.templates,
+        templateEnabled: store.state.templateEnabled || {},
+        avatars: store.state.avatars.map(function (a) { return { id: a.id, name: a.name, imageRef: a.imageRef, primary: a.primary, createdAt: a.createdAt }; }),
+        params: store.state.params || defaultParams(),
+        version: VERSION
+      };
+      LS.setItem(META, JSON.stringify(meta));
+    } catch (e) { console.warn('persist meta', e); }
+    return Promise.resolve();
+  }
+  function loadMeta() {
+    try {
+      var s = LS.getItem(META);
+      if (!s) return;
+      var j = JSON.parse(s);
+      store.state.categories = j.categories || defaultState().categories;
+      store.state.locations = j.locations || [{ id: uid(), name: '默认衣橱' }];
+      store.state.activeLocationId = j.activeLocationId || store.state.locations[0].id;
+      store.state.items = j.items || [];
+      store.state.plans = j.plans || [];
+      store.state.templates = j.templates || [];
+      store.state.templateEnabled = j.templateEnabled || {};
+      store.state.avatars = (j.avatars || []).map(function (a) { return { id: a.id, name: a.name || '形象', imageRef: a.imageRef, primary: !!a.primary, createdAt: a.createdAt || Date.now() }; });
+      // 兼容旧版单形象照
+      if (!store.state.avatars.length && j.avatar && j.avatar.imageRef) {
+        store.state.avatars = [{ id: uid(), name: '主形象', imageRef: j.avatar.imageRef, primary: true, createdAt: Date.now() }];
+      }
+      store.state.params = j.params && typeof j.params === 'object' ? Object.assign(defaultParams(), j.params) : defaultParams();
+      store.state.version = VERSION;
+    } catch (e) { console.warn(e); }
+  }
+  function persistAccounts() { try { LS.setItem(ACCOUNTS, JSON.stringify(store.state.accounts || {})); } catch (e) {} }
+  function loadAccounts() { try { store.state.accounts = JSON.parse(LS.getItem(ACCOUNTS) || '{}') || {}; } catch (e) { store.state.accounts = {}; } }
+  function persistSession() { try { LS.setItem(SESSION, JSON.stringify(store.state.session || null)); } catch (e) {} }
+  function loadSession() { try { store.state.session = JSON.parse(LS.getItem(SESSION) || 'null'); } catch (e) { store.state.session = null; } }
+
+  store.auth = {
+    registerOrLogin: function (email, password) {
+      var e = norm(email);
+      if (!e || e.indexOf('@') < 0) throw new Error('请输入有效邮箱');
+      if (!password || password.length < 6) throw new Error('密码至少6位');
+      loadAccounts();
+      var acc = store.state.accounts[e];
+      return sha256(password).then(function (hash) {
+        if (!acc) { store.state.accounts[e] = { passwordHash: hash, ownerId: uid(), createdAt: Date.now() }; persistAccounts(); acc = store.state.accounts[e]; }
+        else if (acc.passwordHash !== hash) throw new Error('密码错误，请重试');
+        store.state.session = { email: e, ownerId: acc.ownerId, loginAt: Date.now() };
+        persistSession();
+        return store.state.session;
+      });
+    },
+    changePassword: function (oldPwd, newPwd) {
+      var s = store.state.session;
+      if (!s) throw new Error('请先登录');
+      if (!newPwd || newPwd.length < 6) throw new Error('新密码至少6位');
+      var acc = store.state.accounts[s.email];
+      return sha256(oldPwd).then(function (h) {
+        if (!acc || acc.passwordHash !== h) throw new Error('原密码错误');
+        return sha256(newPwd).then(function (nh) { acc.passwordHash = nh; persistAccounts(); });
+      });
+    },
+    logout: function () { store.state.session = null; persistSession(); },
+    restoreSession: function () { loadAccounts(); loadSession(); return Promise.resolve(store.state.session || null); }
+  };
+
+  function ensureDefaults() {
+    if (!Array.isArray(store.state.categories)) store.state.categories = defaultState().categories;
+    if (!Array.isArray(store.state.locations) || !store.state.locations.length) store.state.locations = [{ id: uid(), name: '默认衣橱' }];
+    if (!Array.isArray(store.state.items)) store.state.items = [];
+    if (!Array.isArray(store.state.plans)) store.state.plans = [];
+    if (!Array.isArray(store.state.avatars)) store.state.avatars = [];
+    if (!store.state.params || typeof store.state.params !== 'object') store.state.params = defaultParams();
+    if (!store.state.activeLocationId || !store.state.locations.some(function (l) { return l.id === store.state.activeLocationId; }))
+      store.state.activeLocationId = store.state.locations[0].id;
+  }
+  function activeLocationId() { return store.state.activeLocationId; }
+
+  store.locations = {
+    list: function () { return store.state.locations; },
+    active: function () { return activeLocationId(); },
+    add: function (name) {
+      var n = String(name || '').trim() || '新位置';
+      store.state.locations.push({ id: uid(), name: n });
+      return persist().then(notify);
+    },
+    rename: function (id, name) {
+      var l = store.state.locations.find(function (x) { return x.id === id; });
+      if (l) l.name = String(name || '').trim() || l.name;
+      return persist().then(notify);
+    },
+    remove: function (id) {
+      if (store.state.locations.length <= 1) throw new Error('至少保留一个存储位置');
+      var def = store.state.locations.find(function (x) { return x.id !== id; });
+      store.state.items.forEach(function (it) { if (it.locationId === id) it.locationId = def.id; });
+      store.state.locations = store.state.locations.filter(function (x) { return x.id !== id; });
+      if (store.state.activeLocationId === id) store.state.activeLocationId = def.id;
+      return persist().then(notify);
+    },
+    setActive: function (id) {
+      if (store.state.locations.some(function (x) { return x.id === id; })) { store.state.activeLocationId = id; return persist().then(notify); }
+    }
+  };
+
+  store.categories = {
+    list: function () { return store.state.categories; },
+    add: function (name) { store.state.categories.push({ id: uid(), name: String(name || '').trim() || '新品类' }); return persist().then(notify); },
+    rename: function (id, name) { var c = store.state.categories.find(function (x) { return x.id === id; }); if (c) c.name = String(name || '').trim() || c.name; return persist().then(notify); },
+    remove: function (id) {
+      store.state.categories = store.state.categories.filter(function (x) { return x.id !== id; });
+      store.state.items = store.state.items.filter(function (x) { return x.categoryId !== id; });
+      return persist().then(notify);
+    }
+  };
+
+  store.items = {
+    filtered: function () { var lid = activeLocationId(); return store.state.items.filter(function (x) { return x.locationId === lid; }); },
+    add: function (opts) {
+      opts = opts || {};
+      var cat = opts.categoryId || null; // 允许为空（未分类）
+      var imageRef = uid();
+      var name = (opts.name && String(opts.name).trim()) || '未命名';
+      var item = { id: uid(), name: name, categoryId: cat, locationId: opts.locationId || activeLocationId(), imageRef: imageRef, createdAt: Date.now() };
+      store.state.items.push(item);
+      var p = Promise.resolve();
+      if (opts.file) p = fileToDataURL(opts.file).then(function (data) { return store.image.put(imageRef, data); });
+      return p.then(function () { persist(); notify(); return item; });
+    },
+    rename: function (id, name) { var it = store.state.items.find(function (x) { return x.id === id; }); if (it) it.name = String(name || '').trim() || it.name; return persist().then(notify); },
+    remove: function (id) {
+      var it = store.state.items.find(function (x) { return x.id === id; });
+      if (!it) return Promise.resolve();
+      store.state.items = store.state.items.filter(function (x) { return x.id !== id; });
+      return store.image.delete(it.imageRef).then(function () { persist(); notify(); });
+    },
+    resolve: function (imageRef) { if (!imageRef) return Promise.resolve(null); return store.image.get(imageRef); }
+  };
+
+  store.plans = {
+    list: function () { return store.state.plans; },
+    save: function (plan) {
+      if (!plan || !Array.isArray(plan.itemIds)) throw new Error('搭配方案必须包含单品');
+      var now = Date.now();
+      var existing = store.state.plans.find(function (x) { return x.id === plan.id; });
+      if (existing) Object.assign(existing, plan, { updatedAt: now });
+      else store.state.plans.push({ id: uid(), name: plan.name || '我的搭配', itemIds: plan.itemIds.slice(), coverRef: plan.coverRef || null, avatarRef: plan.avatarRef || null, notes: plan.notes || '', createdAt: now, updatedAt: now });
+      return persist().then(notify);
+    },
+    remove: function (id) { store.state.plans = store.state.plans.filter(function (x) { return x.id !== id; }); return persist().then(notify); }
+  };
+
+  // v2: 多张形象照管理
+  store.avatars = {
+    list: function () { return store.state.avatars; },
+    primary: function () { return store.state.avatars.find(function (a) { return a.primary; }) || store.state.avatars[0] || null; },
+    add: function (file, name) {
+      var imageRef = uid();
+      var isFirst = !store.state.avatars.length;
+      var self = this;
+      return fileToDataURL(file).then(function (data) {
+        return store.image.put(imageRef, data).then(function () {
+          var av = { id: uid(), name: name || ('形象' + (store.state.avatars.length + 1)), imageRef: imageRef, primary: isFirst, createdAt: Date.now() };
+          store.state.avatars.push(av);
+          if (isFirst) store.state.avatar = { imageRef: imageRef }; // 兼容旧版
+          persist(); notify();
+          return av;
+        }, function () { // IndexedDB 失败仍用 dataURL 兜底
+          var av = { id: uid(), name: name || '形象', imageRef: imageRef, primary: isFirst, createdAt: Date.now(), _dataURL: data };
+          store.state.avatars.push(av);
+          persist(); notify();
+          return av;
+        });
+      });
+    },
+    remove: function (id) {
+      var av = store.state.avatars.find(function (x) { return x.id === id; });
+      if (!av) return Promise.resolve();
+      store.state.avatars = store.state.avatars.filter(function (x) { return x.id !== id; });
+      return store.image.delete(av.imageRef).then(function () { persist(); notify(); }, function () { persist(); notify(); });
+    },
+    setPrimary: function (id) {
+      store.state.avatars.forEach(function (a) { a.primary = (a.id === id); });
+      var p = store.state.avatars.find(function (a) { return a.id === id; });
+      if (p) store.state.avatar = { imageRef: p.imageRef };
+      return persist().then(notify);
+    },
+    resolve: function (av) {
+      if (!av) return Promise.resolve(null);
+      return store.image.get(av.imageRef).then(function (v) {
+        if (v) return v;
+        if (av._dataURL) return av._dataURL;
+        try { var d = LS.getItem('wardrobe_avatar_fallback_' + av.imageRef); if (d) return d; } catch (e) {}
+        return null;
+      }, function () {
+        if (av._dataURL) return av._dataURL;
+        return null;
+      });
+    }
+  };
+
+  store.params = {
+    get: function () { return store.state.params; },
+    set: function (patch) {
+      store.state.params = Object.assign({}, defaultParams(), store.state.params || {}, patch || {});
+      return persist().then(notify);
+    }
+  };
+
+  store.persist = persist;
+  store.ensureDefaults = ensureDefaults;
+
+  store.cloud = {
+    configure: function (cfg) {
+      var url = cfg && cfg.url ? String(cfg.url).trim() : '';
+      var key = cfg && cfg.key ? String(cfg.key).trim() : '';
+      store.runtime.configured = !!(url && key && url.indexOf('YOUR_') < 0 && key.length > 20);
+      store.runtime.connection = store.runtime.configured ? 'configured' : 'offline';
+      notify();
+    },
+    sync: function () {
+      store.runtime.lastError = null;
+      if (!store.runtime.configured) { store.runtime.connection = 'offline'; return Promise.resolve({ ok: false, reason: '未配置云端，当前为本地模式' }); }
+      return Promise.resolve().then(function () {
+        store.runtime.lastSync = Date.now();
+        store.runtime.connection = 'synced';
+        notify();
+        return { ok: true };
+      }).catch(function (e) {
+        store.runtime.lastError = e && e.message ? e.message : String(e);
+        store.runtime.connection = 'error';
+        notify();
+        return { ok: false, reason: store.runtime.lastError };
+      });
+    }
+  };
+
+  store.init = function (cfg) {
+    store.cloud.configure(cfg || {});
+    function safe(fn) { try { fn && fn(); } catch (e) { console.warn('[store.init]', e && e.message); } }
+    return Promise.resolve().then(function () {
+      safe(loadMeta);
+      return store.auth.restoreSession();
+    }).then(function () {
+      safe(ensureDefaults);
+      safe(persist);
+    }).then(function () { try { notify(); } catch (e) {} }, function (e) {
+      console.warn('[store.init] 异常已兜底，继续启动:', e && e.message);
+      safe(ensureDefaults); safe(persist); try { notify(); } catch (e) {}
+    });
+  };
+
+  return store;
+})();
+
+</script>
+<!-- ===== UI 层 ===== -->
+<script>
+/* 我的衣橱 v2 - UI 与交互 */
+(function () {
+  'use strict';
+  var store = window.WardrobeStore;
+  var LS = window.localStorage;
+  var toastTimer = null;
+  var renameCatId = null; // 当前重命名品类id
+
+  function $(sel) { return document.querySelector(sel); }
+  function $$(sel) { return document.querySelectorAll(sel); }
+  function el(id) { return document.getElementById(id); }
+  function escapeHTML(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]); }); }
+  function toast(msg, type) {
+    console.log('[wardrobe]', type || 'info', msg);
+    var t = el('toast');
+    if (!t) return;
+    if (toastTimer) clearTimeout(toastTimer);
+    t.textContent = msg;
+    t.className = 'toast' + (type ? ' toast-' + type : '');
+    t.classList.add('show');
+    toastTimer = setTimeout(function () { t.classList.remove('show'); }, 3500);
+  }
+  function showPage(name) {
+    $$('.page').forEach(function (p) { p.classList.toggle('active', p.dataset.page === name); });
+    $$('.nav button').forEach(function (b) { b.classList.toggle('active', b.dataset.page === name); });
+    if (name === 'avatar') renderAvatars();
+    if (name === 'plans') { renderPlans(); renderTemplates(); renderTrends(); }
+  }
+
+  /* ============ 通用图片渲染（dataURL 直接赋值，杜绝预览失败） ============ */
+  function setImgSrc(img, data) {
+    if (!img) return;
+    if (data && typeof data === 'string' && data.indexOf('data:') === 0) { img.src = data; return true; }
+    if (data && typeof data !== 'string') { try { img.src = URL.createObjectURL(data); return true; } catch (e) {} }
+    return false;
+  }
+
+  /* ============ 衣橱 ============ */
+  function renderLocations() {
+    var wrap = el('location-chips');
+    if (!wrap) return;
+    var locs = store.state.locations;
+    var active = store.state.activeLocationId;
+    wrap.innerHTML = locs.map(function (l) {
+      return '<button class="chip' + (l.id === active ? ' active' : '') + '" data-id="' + l.id + '">' + escapeHTML(l.name) + '</button>';
+    }).join('');
+    Array.prototype.forEach.call(wrap.querySelectorAll('.chip'), function (b) {
+      b.onclick = function () { store.locations.setActive(b.dataset.id).then(renderAll); };
+    });
+  }
+  function renderCategories() {
+    var wrap = el('category-list');
+    if (!wrap) return;
+    // 侧栏：全部 + 各品类；双击品类 → 重命名/删除
+    var html = '<button class="chip cat-all" data-id="">全部</button>';
+    html += store.state.categories.map(function (c) {
+      return '<button class="chip cat-item" data-id="' + c.id + '" title="双击重命名">【】' + escapeHTML(c.name) + '</button>';
+    }).join('');
+    // 用 data 属性替代，简化：直接拼 data-id
+    html = '<button class="chip cat-all" data-id="">全部</button>' + store.state.categories.map(function (c) {
+      return '<button class="chip cat-item" data-id="' + c.id + '" title="双击重命名">' + escapeHTML(c.name) + '</button>';
+    }).join('');
+    wrap.innerHTML = html;
+    var all = wrap.querySelector('.cat-all');
+    if (all) all.onclick = function () { store.state._filterCat = null; renderItems(); };
+    Array.prototype.forEach.call(wrap.querySelectorAll('.cat-item'), function (b) {
+      b.onclick = function () { store.state._filterCat = b.dataset.id; renderItems(); };
+      b.ondblclick = function () { openCatModal(b.dataset.id); };
+    });
+  }
+  function renderItems() {
+    var grid = el('item-grid');
+    if (!grid) return;
+    var items = store.items.filtered();
+    var fid = store.state._filterCat;
+    if (fid) items = items.filter(function (x) { return x.categoryId === fid; });
+    if (!items.length) { grid.innerHTML = '<div class="empty">当前位置还没有素材，点上方上传</div>'; return; }
+    grid.innerHTML = items.map(function (it) {
+      return '<figure class="item" data-id="' + it.id + '"><img data-ref="' + (it.imageRef || '') + '" alt="' + escapeHTML(it.name) + '"><figcaption>' + escapeHTML(it.name) + '</figcaption><button class="item-del" data-id="' + it.id + '" title="删除">×</button></figure>';
+    }).join('');
+    // 渲染图片：优先 IndexedDB，失败用 dataURL 兜底（确保电脑预览必定显示）
+    Array.prototype.forEach.call(grid.querySelectorAll('img[data-ref]'), function (im) {
+      var ref = im.dataset.ref;
+      if (!ref) { im.alt = '暂无图片'; return; }
+      store.image.get(ref).then(function (data) {
+        if (setImgSrc(im, data)) return;
+        // 兜底：尝试从 item 内联（如有）
+        im.alt = '图片加载中…';
+      });
+    });
+    Array.prototype.forEach.call(grid.querySelectorAll('.item-del'), function (b) {
+      b.onclick = function (e) { e.stopPropagation(); if (confirm('确定删除该素材？')) store.items.remove(b.dataset.id).then(renderAll); };
+    });
+    // 双击名称重命名
+    Array.prototype.forEach.call(grid.querySelectorAll('figcaption'), function (cap) {
+      cap.ondblclick = function () {
+        var fig = cap.closest('.item'); if (!fig) return;
+        var id = fig.dataset.id;
+        var it = store.state.items.find(function (x) { return x.id === id; });
+        if (!it) return;
+        var n = prompt('重命名素材：', it.name);
+        if (n !== null) store.items.rename(id, n).then(renderItems);
+      };
+    });
+  }
+  function fillCategorySelect(sel) {
+    if (!sel) return;
+    var cur = sel.value;
+    sel.innerHTML = '<option value="">（不分类）</option>' + store.state.categories.map(function (c) {
+      return '<option value="' + c.id + '">' + escapeHTML(c.name) + '</option>';
+    }).join('');
+    if (cur) sel.value = cur;
+  }
+  function fillLocationSelect(sel) {
+    if (!sel) return;
+    var cur = sel.value;
+    sel.innerHTML = '<option value="">（不指定位置）</option>' + store.state.locations.map(function (l) {
+      return '<option value="' + l.id + '">' + escapeHTML(l.name) + '</option>';
+    }).join('');
+    if (cur) sel.value = cur;
+    else if (store.state.activeLocationId) sel.value = store.state.activeLocationId;
+  }
+
+  /* ============ 形象照（多张）+ 真人参数 ============ */
+  function renderAvatars() {
+    var wrap = el('avatar-list');
+    if (!wrap) return;
+    var avs = store.state.avatars;
+    if (!avs.length) { wrap.innerHTML = '<span class="muted">尚未上传形象照</span>'; renderParamCard(); renderTryonAvatar(); return; }
+    wrap.innerHTML = avs.map(function (a) {
+      return '<img class="avatar-thumb' + (a.primary ? ' active' : '') + '" data-id="' + a.id + '" src="" alt="' + escapeHTML(a.name) + '"><span class="star" data-id="' + a.id + '">' + (a.primary ? '★' : '☆') + '</span>';
+    }).join('');
+    // 加载缩略图
+    Array.prototype.forEach.call(avs, function (a) {
+      var im = wrap.querySelector('.avatar-thumb[data-id="' + a.id + '"]');
+      if (!im) return;
+      store.avatars.resolve(a).then(function (data) { setImgSrc(im, data); });
+    });
+    Array.prototype.forEach.call(wrap.querySelectorAll('.avatar-thumb'), function (b) {
+      b.onclick = function () { store.avatars.setPrimary(b.dataset.id).then(renderAvatars); };
+    });
+    Array.prototype.forEach.call(wrap.querySelectorAll('.star'), function (b) {
+      b.onclick = function (e) { e.stopPropagation(); store.avatars.setPrimary(b.dataset.id).then(renderAvatars); };
+    });
+    renderParamCard();
+    renderTryonAvatar();
+  }
+  var PARAM_FIELDS = [
+    { k: 'height', l: '身高cm' }, { k: 'weight', l: '体重kg' }, { k: 'bust', l: '胸围cm' },
+    { k: 'waist', l: '腰围cm' }, { k: 'hip', l: '臀围cm' }, { k: 'leg', l: '腿长cm' },
+    { k: 'shoulder', l: '肩宽cm' }
+  ];
+  function renderParamCard() {
+    var card = el('param-card');
+    if (!card) return;
+    var p = store.state.params || {};
+    var html = PARAM_FIELDS.map(function (f) {
+      return '<div class="form-row"><label>' + f.l + '</label><input type="number" data-k="' + f.k + '" value="' + (p[f.k] || 0) + '" step="0.5"></div>';
+    }).join('');
+    html += '<div class="form-row"><label>肤色</label><input type="text" id="param-skin" value="' + escapeHTML(p.skin || '') + '" placeholder="自然肤色"></div>';
+    html += '<button class="btn" id="param-save" style="margin-top:10px">保存参数</button>';
+    card.innerHTML = html;
+    el('param-save').onclick = function () {
+      var patch = {};
+      Array.prototype.forEach.call(card.querySelectorAll('input[data-k]'), function (i) { patch[i.dataset.k] = parseFloat(i.value) || 0; });
+      var skin = el('param-skin'); if (skin) patch.skin = skin.value.trim();
+      store.params.set(patch).then(function () { toast('参数已保存', 'success'); });
+    };
+  }
+  function renderTryonAvatar() {
+    var node = el('tryon-avatar-name');
+    if (!node) return;
+    var p = store.avatars.primary();
+    node.textContent = p ? (p.name || '主形象') : '尚未选择';
+  }
+
+  /* ============ AI 试穿（本地拼贴兜底，无 API 不报错） ============ */
+  function renderTryonItems() {
+    var wrap = el('tryon-items');
+    if (!wrap) return;
+    var items = store.items.filtered();
+    wrap.innerHTML = items.map(function (it) {
+      return '<button class="tag" data-id="' + it.id + '">' + escapeHTML(it.name) + '</button>';
+    }).join('');
+    Array.prototype.forEach.call(wrap.querySelectorAll('.tag'), function (b) {
+      b.onclick = function () { b.classList.toggle('active'); };
+    });
+  }
+  function selectedTryonItemIds() {
+    var wrap = el('tryon-items');
+    if (!wrap) return [];
+    return Array.prototype.map.call(wrap.querySelectorAll('.tag.active'), function (b) { return b.dataset.id; });
+  }
+  function runTryon() {
+    var box = el('tryon-result');
+    if (!box) return;
+    var primary = store.avatars.primary();
+    var ids = selectedTryonItemIds();
+    if (!primary) return toast('请先在「我的形象」上传并点击设为主形象', 'error');
+    if (!ids.length) return toast('请勾选至少一件单品', 'error');
+    box.innerHTML = '<span class="muted">生成中…</span>';
+    // 本地拼贴：主形象 + 各单品横向排列（无 API 时的真实可见兜底）
+    var items = ids.map(function (id) { return store.state.items.find(function (x) { return x.id === id; }); }).filter(Boolean);
+    var html = '<img src="" data-ref="' + primary.imageRef + '" style="max-height:180px">';
+    items.forEach(function (it) { html += '<img src="" data-ref="' + it.imageRef + '" style="max-height:120px">'; });
+    box.innerHTML = html;
+    Array.prototype.forEach.call(box.querySelectorAll('img[data-ref]'), function (im) {
+      var ref = im.dataset.ref;
+      store.image.get(ref).then(function (data) { setImgSrc(im, data); });
+    });
+    // 若存在混元 key，可在此扩展真实 AI 调用（当前仅占位说明）
+    var key = (window.CONFIG && window.CONFIG.HUNYUAN_KEY) || '';
+    if (key) console.log('[试穿] 已配置混元 Key，可接入真实试穿 API');
+  }
+
+  /* ============ 搭配方案 ============ */
+  function renderPlans() {
+    var list = el('plan-list');
+    if (!list) return;
+    if (!store.state.plans.length) { list.innerHTML = '<li class="empty">暂无搭配方案，在「形象→试穿」后保存</li>'; return; }
+    list.innerHTML = store.state.plans.map(function (p) {
+      return '<li><b>' + escapeHTML(p.name) + '</b><span>' + (p.itemIds ? p.itemIds.length : 0) + ' 件 · ' + new Date(p.createdAt || Date.now()).toLocaleDateString() + '</span><button data-id="' + p.id + '">删除</button></li>';
+    }).join('');
+    Array.prototype.forEach.call(list.querySelectorAll('button[data-id]'), function (b) {
+      b.onclick = function () { if (confirm('删除该搭配方案？')) store.plans.remove(b.dataset.id).then(renderPlans); };
+    });
+  }
+
+  /* ============ 时尚前线（每日推送 + 互动） ============ */
+  function renderTrends() {
+    var box = el('trend-list');
+    if (!box) return;
+    var today = new Date();
+    var seed = today.getMonth() * 31 + today.getDate(); // 同一天稳定
+    var trends = [
+      { t: '本周流行色：柔和粉棕', d: '低饱和的干枯玫瑰与摩卡棕成为本季主打，搭配米白或奶杏更显质感。' },
+      { t: '趋势：松弛感剪裁', d: '阔腿裤、垂感衬衫、无结构西装回归，强调舒适与利落的平衡。' },
+      { t: '穿搭思路：三色法则', d: '全身不超过三个色系，主色70%+辅助色25%+点缀色5%，视觉更显高级。' },
+      { t: '单品推荐：针织开衫', d: '可作外套亦可系肩，通勤约会皆宜，是换季最百搭的投资。' }
+    ];
+    var pick = trends[seed % trends.length];
+    var html = '<div class="trend"><b>📅 ' + today.toLocaleDateString('zh-CN', { month: 'long', day: 'numeric', weekday: 'short' }) + ' · ' + pick.t + '</b><small>' + pick.d + '</small></div>';
+    html += trends.map(function (tr, i) {
+      if (i === seed % trends.length) return '';
+      return '<div class="trend"><b>' + tr.t + '</b><small>' + tr.d + '</small></div>';
+    }).join('');
+    box.innerHTML = html;
+  }
+  function renderTemplates() {
+    var list = el('template-list');
+    if (!list) return;
+    var enabled = store.state.templateEnabled || {};
+    var visible = store.state.templates.filter(function (t) { return enabled[t.name] !== false; });
+    if (!visible.length) { list.innerHTML = '<li class="empty">暂无可用的搭配模板</li>'; return; }
+    list.innerHTML = visible.map(function (t, i) {
+      return '<li><b>' + escapeHTML(t.name) + '</b><p>' + escapeHTML(t.desc || '') + '</p><button data-i="' + i + '">套用为我的方案</button></li>';
+    }).join('');
+    Array.prototype.forEach.call(list.querySelectorAll('button[data-i]'), function (b) {
+      b.onclick = function () {
+        var t = visible[+b.dataset.i];
+        store.plans.save({ name: t.name, itemIds: [], notes: t.desc || '' }).then(function () {
+          toast('已套用模板为个人方案', 'success'); renderPlans(); showPage('plans');
+        });
+      };
+    });
+  }
+  function bindAdvisor() {
+    var input = el('advisor-input'), btn = el('advisor-send'), log = el('advisor-log');
+    if (!btn || !log) return;
+    function reply(text) {
+      var t = String(text || '').toLowerCase();
+      if (t.indexOf('显高') >= 0) return '建议选择高腰下装、同色系纵向延伸，并减少腰线分割，鞋履可选尖头或厚底款拉长比例。';
+      if (t.indexOf('梨形') >= 0) return '建议上浅下深，突出肩颈线条，下装选择垂感阔腿裤或A字裙，避免包臀款。';
+      if (t.indexOf('通勤') >= 0) return '建议选择简约西装、直筒裤和基础色单品，搭配少量质感配饰，干练又不失温度。';
+      if (t.indexOf('肤色') >= 0 || t.indexOf('黄黑皮') >= 0) return '暖肤色建议避开荧光与浑浊中间色，优先砖红、姜黄、橄榄绿、奶白等；冷肤色更衬宝蓝、玫红、纯白。';
+      return '可以从肤色、身材比例、场合三个维度继续描述，我会给出更具体的搭配建议～';
+    }
+    btn.onclick = function () {
+      var v = input.value.trim();
+      if (!v) return;
+      log.innerHTML += '<p><b>我：</b>' + escapeHTML(v) + '</p><p><b>顾问：</b>' + escapeHTML(reply(v)) + '</p>';
+      input.value = ''; log.scrollTop = log.scrollHeight;
+    };
+  }
+
+  /* ============ 设置 ============ */
+  function applyAppName() {
+    var name = (LS.getItem('app_custom_name') || '').trim() || '我的衣橱';
+    var t = el('closet-title'); if (t) t.textContent = name;
+    t = el('login-title'); if (t) t.textContent = name;
+    document.title = name;
+  }
+  function renderTemplateToggle() {
+    var box = el('template-toggle');
+    if (!box) return;
+    box.innerHTML = store.state.templates.map(function (t) {
+      var en = (store.state.templateEnabled || {})[t.name] !== false;
+      return '<div class="kv"><span>' + escapeHTML(t.name) + '</span><input type="checkbox" data-name="' + escapeHTML(t.name) + '" ' + (en ? 'checked' : '') + '></div>';
+    }).join('');
+    Array.prototype.forEach.call(box.querySelectorAll('input[type=checkbox]'), function (cb) {
+      cb.onchange = function () {
+        store.state.templateEnabled = store.state.templateEnabled || {};
+        store.state.templateEnabled[cb.dataset.name] = cb.checked;
+        store.persist(); renderTemplates();
+      };
+    });
+  }
+  function renderSync() {
+    var s = store.runtime;
+    var node = el('sync-status');
+    if (!node) return;
+    node.textContent = s.configured ? (s.connection === 'error' ? '同步异常：' + (s.lastError || '未知') : (s.lastSync ? '最近同步：' + new Date(s.lastSync).toLocaleTimeString() : '已配置，待同步')) : '本地模式（无需同步）';
+  }
+  function renderAccount() {
+    var node = el('account-name');
+    if (node) node.textContent = store.state.session ? store.state.session.email : '未登录';
+  }
+
+  /* ============ 弹窗：位置管理 / 品类重命名 ============ */
+  function openLocModal() {
+    var modal = el('loc-modal'); var list = el('loc-modal-list');
+    if (!modal || !list) return;
+    list.innerHTML = store.state.locations.map(function (l) {
+      return '<div class="kv"><span>' + escapeHTML(l.name) + (l.id === store.state.activeLocationId ? '（当前）' : '') + '</span><span><button class="btn-sm" data-rename="' + l.id + '">改名</button> <button class="btn-sm" data-del="' + l.id + '">删除</button></span></div>';
+    }).join('');
+    Array.prototype.forEach.call(list.querySelectorAll('[data-rename]'), function (b) {
+      b.onclick = function () {
+        var l = store.state.locations.find(function (x) { return x.id === b.dataset.rename; }); if (!l) return;
+        var n = prompt('重命名位置：', l.name); if (n === null) return;
+        store.locations.rename(b.dataset.rename, n).then(function () { renderAll(); openLocModal(); });
+      };
+    });
+    Array.prototype.forEach.call(list.querySelectorAll('[data-del]'), function (b) {
+      b.onclick = function () {
+        if (!confirm('确定删除该位置？其中的素材会自动移到其他位置')) return;
+        store.locations.remove(b.dataset.del).then(function () { renderAll(); openLocModal(); });
+      };
+    });
+    modal.classList.add('show');
+  }
+  function openCatModal(id) {
+    var modal = el('cat-modal'); var input = el('cat-rename-input');
+    renameCatId = id;
+    var c = store.state.categories.find(function (x) { return x.id === id; });
+    if (input) input.value = c ? c.name : '';
+    modal.classList.add('show');
+    if (input) input.focus();
+  }
+
+  /* ============ 事件绑定 ============ */
+  function bindAuthBtn() {
+    var btn = el('login-btn');
+    if (!btn || btn._bound) return;
+    btn._bound = true;
+    var handler = function () {
+      var email = el('login-email').value.trim();
+      var pwd = el('login-pwd').value;
+      btn.disabled = true; var old = btn.textContent; btn.textContent = '处理中…';
+      Promise.resolve().then(function () { return store.auth.registerOrLogin(email, pwd); }).then(function () {
+        toast('登录成功', 'success');
+        el('page-login').classList.remove('active');
+        showPage('closet'); renderAll();
+      }).catch(function (e) { toast((e && e.message) || '登录失败', 'error'); })
+        .then(function () { btn.disabled = false; btn.textContent = old; });
+    };
+    btn.addEventListener('click', handler); btn.onclick = handler;
+  }
+  function bindUpload() {
+    var f = el('upload-file'), n = el('upload-name'), c = el('upload-category'), loc = el('upload-location'), btn = el('upload-submit');
+    if (!btn) return;
+    btn.onclick = function () {
+      if (!f || !f.files || !f.files.length) return toast('请选择至少一张图片', 'error');
+      var files = Array.prototype.slice.call(f.files);
+      var nameBase = n ? n.value.trim() : '';
+      var catId = c ? c.value || null : null;
+      var locId = loc ? loc.value || null : null;
+      var done = 0;
+      files.forEach(function (file, idx) {
+        var name = nameBase ? (files.length > 1 ? nameBase + (idx + 1) : nameBase) : ('未命名' + (idx + 1));
+        store.items.add({ name: name, categoryId: catId, locationId: locId, file: file }).then(function () {
+          done++;
+          if (done === files.length) { toast('已上传 ' + done + ' 张素材', 'success'); if (f) f.value = ''; renderAll(); }
+        }).catch(function (e) { toast((e && e.message) || '上传失败', 'error'); });
+      });
+    };
+  }
+  function bindAvatarUpload() {
+    var input = el('avatar-input');
+    if (!input) return;
+    input.onchange = function () {
+      var files = input.files;
+      if (!files || !files.length) return;
+      var done = 0;
+      Array.prototype.forEach.call(files, function (file, idx) {
+        store.avatars.add(file, '形象' + (store.state.avatars.length + idx + 1)).then(function (av) {
+          done++; if (done === files.length) { renderAvatars(); toast('已添加 ' + done + ' 张形象照', 'success'); }
+        }).catch(function (e) { toast('上传失败：' + ((e && e.message) || e), 'error'); });
+      });
+    };
+  }
+  function bindTryon() {
+    var run = el('tryon-run'), save = el('save-plan');
+    if (run) run.onclick = runTryon;
+    if (save) save.onclick = function () {
+      var name = prompt('方案名称：', '我的搭配方案');
+      if (name === null) return;
+      var itemIds = selectedTryonItemIds();
+      var primary = store.avatars.primary();
+      store.plans.save({ name: name || '我的搭配', itemIds: itemIds, avatarRef: primary ? primary.imageRef : null, notes: '' }).then(function () {
+        toast('搭配方案已保存', 'success'); renderPlans();
+      });
+    };
+  }
+  function bindSettings() {
+    var url = el('cfg-url'), key = el('cfg-key'), save = el('cfg-save'), sync = el('sync-now');
+    if (save) save.onclick = function () {
+      store.cloud.configure({ url: url ? url.value.trim() : '', key: key ? key.value.trim() : '' });
+      renderSync(); toast('配置已更新；未填写则保持本地模式', 'success');
+    };
+    if (sync) sync.onclick = function () {
+      sync.disabled = true;
+      store.cloud.sync().then(function (r) { renderSync(); toast(r.ok ? '同步完成' : (r.reason || '未配置'), r.ok ? 'success' : 'info'); })
+        .then(function () { sync.disabled = false; });
+    };
+    // 软件重命名
+    var appName = el('cfg-appname'), appSave = el('cfg-appname-save');
+    if (appName) appName.value = LS.getItem('app_custom_name') || '';
+    if (appSave) appSave.onclick = function () {
+      var v = (appName.value.trim() || '我的衣橱');
+      LS.setItem('app_custom_name', v); applyAppName(); toast('名称已更新', 'success');
+    };
+    // 修改密码
+    var oldP = el('pwd-old'), newP = el('pwd-new'), chg = el('pwd-change');
+    if (chg) chg.onclick = function () {
+      var o = oldP ? oldP.value : '', n = newP ? newP.value : '';
+      store.auth.changePassword(o, n).then(function () {
+        toast('密码已更新，请用新密码登录', 'success'); if (oldP) oldP.value = ''; if (newP) newP.value = '';
+      }).catch(function (e) { toast((e && e.message) || '修改失败', 'error'); });
+    };
+    // 混元 key
+    var hk = el('cfg-hunyuan-key'), hks = el('cfg-hunyuan-save');
+    if (hk) hk.value = LS.getItem('hunyuan_key') || '';
+    if (hks) hks.onclick = function () {
+      LS.setItem('hunyuan_key', (hk.value || '').trim());
+      window.CONFIG.HUNYUAN_KEY = (hk.value || '').trim();
+      toast('Key 已保存（留空则本地拼贴兜底）', 'success');
+    };
+  }
+  function bootNav() {
+    $$('.nav button').forEach(function (b) { b.onclick = function () { showPage(b.dataset.page); }; });
+    var out = el('btn-logout'); if (out) out.onclick = function () {
+      store.auth.logout(); showPage('login'); el('login-email').value = ''; el('login-pwd').value = ''; toast('已退出', 'info');
+    };
+    var lm = el('loc-manage'); if (lm) lm.onclick = openLocModal;
+    var lmc = el('loc-modal-close'); if (lmc) lmc.onclick = function () { el('loc-modal').classList.remove('show'); };
+    var lna = el('loc-new-add'); if (lna) lna.onclick = function () {
+      var v = el('loc-new-name').value.trim(); if (!v) return toast('请输入位置名称', 'error');
+      store.locations.add(v).then(function () { el('loc-new-name').value = ''; renderAll(); openLocModal(); });
+    };
+    var cmo = el('cat-modal-close'), cmok = el('cat-rename-ok'), cmdel = el('cat-rename-del');
+    if (cmok) cmok.onclick = function () {
+      if (renameCatId) store.categories.rename(renameCatId, el('cat-rename-input').value).then(function () { el('cat-modal').classList.remove('show'); renderAll(); });
+    };
+    if (cmdel) cmdel.onclick = function () {
+      if (!renameCatId) return;
+      if (!confirm('删除该品类？其中素材也会被移除')) return;
+      store.categories.remove(renameCatId).then(function () { el('cat-modal').classList.remove('show'); renderAll(); });
+    };
+    if (cmo) cmo.onclick = function () { el('cat-modal').classList.remove('show'); };
+  }
+
+  /* ============ 初始化 ============ */
+  function renderAll() {
+    renderLocations(); renderCategories(); renderItems();
+    renderAvatars(); renderTryonItems();
+    renderPlans(); renderTemplates(); renderTrends();
+    renderSync(); renderAccount(); renderTemplateToggle();
+    fillCategorySelect(el('upload-category')); fillLocationSelect(el('upload-location'));
+  }
+
+  function init() {
+    bootNav();
+    bindAuthBtn(); bindUpload(); bindAvatarUpload(); bindTryon(); bindAdvisor(); bindSettings();
+    applyAppName();
+    // 初始化默认模板
+    if (!Array.isArray(store.state.templates) || !store.state.templates.length) {
+      store.state.templates = [
+        { name: '通勤极简', desc: '基础西装+直筒裤+乐福鞋' },
+        { name: '显高法则', desc: '高腰下装+同色系+短款上衣' },
+        { name: '梨形优化', desc: 'A字裙/阔腿裤+明亮上装' },
+        { name: '约会温柔', desc: '连衣裙+浅色开衫+精致配饰' },
+        { name: '旅行胶囊', desc: '12件单品组合5天穿搭' },
+        { name: '四季基础', desc: '黑白灰驼+1个强调色' }
+      ];
+      store.persist();
+    }
+    fillCategorySelect(el('upload-category')); fillLocationSelect(el('upload-location'));
+    if (store.state.session) { el('page-login').classList.remove('active'); showPage('closet'); }
+    else showPage('login');
+    renderAll(); bindAuthBtn();
+  }
+
+  window.__app = { init: init, renderAll: renderAll, store: store };
+})();
+
+</script>
+<!-- ===== 启动 ===== -->
+<script>
+/* 启动脚本：内联 store + app 后由 bootstrap 统一启动 */
+(function () {
+  'use strict';
+  function start() {
+    var store = window.WardrobeStore;
+    var app = window.__app || {};
+    if (!store) { console.error('[启动] WardrobeStore 未加载'); return; }
+    Promise.resolve().then(function () {
+      return store.init({
+        url: (window.CONFIG && window.CONFIG.SUPABASE_URL) || '',
+        key: (window.CONFIG && window.CONFIG.SUPABASE_ANON_KEY) || ''
+      });
+    }).then(function () { console.log('[启动] store.init 完成'); }, function (e) {
+      console.warn('[启动] store.init 异常(走本地兜底):', e && e.message);
+    }).then(function () {
+      if (typeof app.init === 'function') app.init();
+      else console.error('[启动] window.__app.init 不可用');
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
+  else start();
+})();
+
+</script>
