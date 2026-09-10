@@ -40,6 +40,10 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
 .search-bar input{flex:1;border:none;outline:none;background:transparent;font-size:14px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px}
 .item-card{position:relative;padding:8px}.thumb{aspect-ratio:1;background:#f4f0ea;border-radius:10px;display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:6px}
+.item-card.sel{outline:2px solid var(--brand,#ff758c);border-radius:12px;background:#fff6f8}
+.item-card .chk{position:absolute;top:14px;left:14px;width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.94);border:1px solid var(--line,#e6ddd5);display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff;z-index:3;line-height:1}
+.item-card.sel .chk{background:var(--brand,#ff758c);border-color:var(--brand,#ff758c)}
+.batch-bar{position:sticky;bottom:8px;margin-top:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:#fff;border:1px solid var(--line,#e6ddd5);border-radius:12px;padding:10px 12px;box-shadow:0 -2px 14px rgba(0,0,0,.07);z-index:5}
 .thumb img,.picker-card img,.plan-card .thumb img,.avatar-card img{width:100%;height:100%;object-fit:contain}
 .ph{font-size:30px}.item-name{font-size:12px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .item-meta{text-align:center;margin-top:3px;color:var(--sub);font-size:11px}
@@ -174,6 +178,7 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
           <button id="btn-upload" class="btn">＋ 上传素材</button>
           <button id="btn-refine-all" class="btn sec">✨ 批量AI精修</button>
           <button id="btn-anime-all" class="btn sec">🎨 批量动漫化</button>
+          <button id="btn-batch" class="btn sec">☑ 批量管理</button>
           <input id="file-input" type="file" accept="image/*" multiple style="display:none">
           <select id="up-season" title="上传素材归入的季节" style="padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:#fff;font-size:13px"></select>
           <select id="up-sub" title="上传素材归入的文件夹" style="padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:#fff;font-size:13px;max-width:150px"></select>
@@ -190,6 +195,7 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
           <div id="subfolder-chips" style="margin-bottom:8px"></div>
           <div id="season-chips" style="margin-bottom:12px"></div>
           <div id="item-grid" class="grid"></div>
+          <div id="batch-bar"></div>
         </div>
       </div>
     </section>
@@ -363,7 +369,13 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     <section id="page-settings" style="display:none">
       <div class="view-head"><div><h2>设置</h2><div class="sub">云端同步 · 改密 · 软件重命名 · 模板变更 · AI 引擎</div></div></div>
       <div class="card" style="max-width:640px;display:grid;gap:12px">
-        <div><label class="sub">软件名称（自定义）</label><input id="set-appname" placeholder="我的衣橱"></div>
+        <div><label class="sub">软件名称（自定义）</label>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input id="set-appname" placeholder="我的衣橱" style="flex:1;min-width:0">
+            <button id="btn-save-appname" class="btn" style="flex:none;white-space:nowrap;padding:9px 14px">💾 保存名称</button>
+          </div>
+          <small id="set-appname-tip" class="sub" style="display:block;margin-top:6px"></small>
+        </div>
         <div><label class="sub">改密码</label><button id="btn-changepwd" class="btn sec">修改密码</button></div>
         <hr style="border:none;border-top:1px solid var(--line)">
         <div><label class="sub">云端同步（Supabase，可选）</label>
@@ -390,9 +402,15 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
 <!-- 素材库选择弹窗 -->
 <div class="modal" id="picker-modal">
   <div class="modal-box">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-      <h3 style="margin:0">选择素材（勾选整套：衣服+鞋子+配饰）</h3>
-      <span id="picker-close" style="cursor:pointer;font-size:20px">✕</span>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:8px">
+      <h3 style="margin:0;flex:1;min-width:0;font-size:15px">选择素材（勾选整套：衣服+鞋子+配饰）</h3>
+      <button id="picker-ok" class="btn" style="flex:none;white-space:nowrap;padding:8px 14px;font-size:13px">✔ 确认选择</button>
+      <span id="picker-close" style="cursor:pointer;font-size:20px;flex:none">✕</span>
+    </div>
+    <div class="picker-tools" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+      <select id="pk-cat" style="flex:1;min-width:110px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:#fff;font-size:13px"></select>
+      <select id="pk-sub" style="flex:1;min-width:110px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:#fff;font-size:13px"></select>
+      <input id="pk-search" placeholder="搜索元素，如：波点 / 牛仔" style="flex:1;min-width:130px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;font-size:13px">
     </div>
     <div id="picker-grid" class="grid"></div>
   </div>
@@ -556,7 +574,11 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     idbPut(id, dataUrl);                                   // ★主存：容量大，永不因配额丢图
     try {                                                   // 同步快取：只放小图，避免撑爆
       if (dataUrl.length < 120000) localStorage.setItem(IMG + '_' + id, dataUrl);
-      else localStorage.removeItem(IMG + '_' + id);
+      else if (_idbBad || typeof indexedDB === 'undefined') {
+        // ★IndexedDB 不可用（file:// 直开 / 隐私模式）时必须回退 localStorage，
+        //   否则大图既进不了 IDB 也不进 LS → 素材彻底丢失、显示成破损文件
+        localStorage.setItem(IMG + '_' + id, dataUrl);
+      } else localStorage.removeItem(IMG + '_' + id);
     } catch (e) {
       if (!_quotaWarned) { _quotaWarned = true; toast('浏览器快取已满，图片已存入本地数据库'); }
     }
@@ -655,6 +677,8 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
         el('page-login').style.display = '';
       }
     } catch (e) { console.error('[render]', e); }
+    // ★每次渲染后都补一次图（异步从 IndexedDB 取回的图会自动"长"到卡片上）
+    try { setTimeout(hydrateImages, 0); } catch (e) {}
   }
 
   /* ============ 登录页 ============ */
@@ -833,6 +857,21 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
       for (var i = 0; i < all.length; i++) all[i].textContent = nm;
     } catch (e) {}
   }
+  /* v21：只保存软件名称 —— 立即持久化 + 立刻全量生效（侧栏/登录页/浏览器标签） */
+  function saveAppNameOnly() {
+    var e = el('set-appname');
+    var nm = e ? String(e.value || '').trim() : '';
+    if (!nm) { toast('请输入软件名称'); if (e && e.focus) e.focus(); return false; }
+    state.appName = nm;
+    try { saveMeta(); } catch (err) { console.warn('saveMeta', err); }
+    try { applyAppName(); } catch (err2) { console.warn('applyAppName', err2); }
+    try { renderSidebar(); } catch (err3) {}
+    try { renderSettings(); } catch (err4) {}
+    var tip = el('set-appname-tip');
+    if (tip) tip.textContent = '✅ 已保存并生效：' + nm;
+    toast('软件名称已保存：' + nm + ' ✅');
+    return true;
+  }
   function showPage(name) {
     ['closet', 'avatar', 'tryon', 'canvas', 'plans', 'advisor', 'settings'].forEach(function (p) {
       var pg = el('page-' + p);
@@ -922,9 +961,13 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
       } else {
         grid.innerHTML = list.map(function (it) {
           var _src = itemSrc(it);
-          return '<div class="item-card" data-id="' + it.id + '">' +
+          var _sid = srcImgId(it);
+          return '<div class="item-card' + (batchSel[it.id] ? ' sel' : '') + '" data-id="' + it.id + '">' +
+            (batchMode ? '<div class="chk">' + (batchSel[it.id] ? '\u2713' : '') + '</div>' : '') +
             '<div class="thumb' + (it.hasAlpha ? ' alpha' : '') + '">' +
-            (_src ? '<img src="' + _src + '" onerror="this.src=\'\'">' : '<div class="ph">👕</div>') +
+            (_src
+              ? '<img src="' + _src + '" data-imgid="' + _sid + '" onerror="this.style.display=\'none\'">'
+              : '<img src="" data-imgid="' + _sid + '" style="display:none" onerror="this.style.display=\'none\'"><div class="ph">👕</div>') +
             (it.hasAlpha ? '<span class="alpha-badge">透明</span>' : '') + '</div>' +
             '<div class="item-name">' + escapeHtml(it.name || '未命名素材') + '</div>' +
             '<div class="item-meta"><span class="tag">' + escapeHtml(catName(it.categoryId) || '未分类') + '</span></div>' +
@@ -938,17 +981,223 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     // 搜索框
     var si = el('searchInput');
     if (si && si.value !== searchKeyword) si.value = searchKeyword;
+    // 批量管理工具条
+    try { renderBatchBar(); } catch (e) { console.warn('[batch-bar]', e); }
+  }
+
+  /* ============ v20：批量管理（改位置 / 改文件夹 / 改品类 / 改季节 / 删除）============ */
+  var batchMode = false;
+  var batchSel = {};
+  function batchSelectedIds() {
+    return state.items.filter(function (it) { return !!batchSel[it.id]; }).map(function (it) { return it.id; });
+  }
+  function toggleBatchSel(id) {
+    if (batchSel[id]) delete batchSel[id]; else batchSel[id] = 1;
+    renderCloset();
+  }
+  function toggleBatchMode(on) {
+    batchMode = !!on;
+    if (!batchMode) batchSel = {};
+    var b = el('btn-batch');
+    if (b) { b.textContent = batchMode ? '✔ 退出批量' : '☑ 批量管理'; b.className = batchMode ? 'btn' : 'btn sec'; }
+    renderCloset();
+  }
+  function renderBatchBar() {
+    var bar = el('batch-bar'); if (!bar) return;
+    if (!batchMode) { bar.innerHTML = ''; bar.className = ''; return; }
+    var n = batchSelectedIds().length, total = filteredItems().length;
+    bar.className = 'batch-bar';
+    bar.innerHTML =
+      '<b style="font-size:14px">已选 ' + n + ' 件</b>' +
+      '<button id="bb-all" class="btn sec">全选当前（' + total + '）</button>' +
+      '<button id="bb-none" class="btn sec">清空选择</button>' +
+      '<span style="flex:1 1 12px"></span>' +
+      '<button id="bb-loc" class="btn">📍 改位置</button>' +
+      '<button id="bb-sub" class="btn">🗂 改文件夹</button>' +
+      '<button id="bb-cat" class="btn">👗 改品类</button>' +
+      '<button id="bb-sea" class="btn">🍂 改季节</button>' +
+      '<button id="bb-del" class="btn sec" style="color:#e14b6a;border-color:#ffb3c1">🗑 删除</button>' +
+      '<button id="bb-exit" class="btn sec">退出批量</button>';
+    var a = el('bb-all'); if (a) a.onclick = function () { filteredItems().forEach(function (it) { batchSel[it.id] = 1; }); renderCloset(); };
+    var n2 = el('bb-none'); if (n2) n2.onclick = function () { batchSel = {}; renderCloset(); };
+    var e2 = el('bb-exit'); if (e2) e2.onclick = function () { toggleBatchMode(false); };
+    var l = el('bb-loc'); if (l) l.onclick = function () { batchPick('loc'); };
+    var sb = el('bb-sub'); if (sb) sb.onclick = function () { batchPick('sub'); };
+    var c = el('bb-cat'); if (c) c.onclick = function () { batchPick('cat'); };
+    var se = el('bb-sea'); if (se) se.onclick = function () { batchPick('sea'); };
+    var d = el('bb-del'); if (d) d.onclick = function () { batchDelete(); };
+  }
+  // 通用下拉选择弹窗（不手输文字；支持「＋ 新建…」）
+  function askPick(opt, cb) {
+    var items = opt.items || [];
+    var m = _mkModal(
+      '<h3 style="margin:0 0 8px;font-size:15px">' + escapeHtml(opt.title || '') + '</h3>' +
+      (opt.tip ? '<div style="font-size:12px;color:#8a8078;margin-bottom:8px;line-height:1.5">' + escapeHtml(opt.tip) + '</div>' : '') +
+      '<select id="_pk_sel" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box;background:#fff">' +
+      items.map(function (o) { return '<option value="' + String(o.v).replace(/"/g, '&quot;') + '">' + escapeHtml(o.t) + '</option>'; }).join('') +
+      (opt.allowAdd ? '<option value="__add">＋ 新建…</option>' : '') +
+      '</select>' +
+      '<div style="display:flex;gap:8px;margin-top:12px">' +
+      '<button id="_pk_cancel" style="flex:1;padding:10px;border:1px solid #ddd;background:#fff;border-radius:8px;font-size:14px">取消</button>' +
+      '<button id="_pk_ok" style="flex:1;padding:10px;border:0;background:var(--brand,#ff758c);color:#fff;border-radius:8px;font-size:14px;font-weight:600">' + escapeHtml(opt.okText || '确定') + '</button>' +
+      '</div>'
+    );
+    var sel = m.box.querySelector('#_pk_sel');
+    function ok() { var v = sel.value; m.close(); if (cb) cb(v); }
+    m.box.querySelector('#_pk_ok').onclick = ok;
+    m.box.querySelector('#_pk_cancel').onclick = function () { m.close(); };
+  }
+  function batchPick(kind) {
+    var ids = batchSelectedIds();
+    if (!ids.length) { toast('请先点击素材卡片选择（可多选）'); return; }
+    var n = ids.length;
+    if (kind === 'loc') {
+      askPick({ title: '批量改储存位置（' + n + ' 件）', items: state.locations.map(function (l) { return { v: l.id, t: l.name }; }), allowAdd: true }, function (v) {
+        if (v === '__add') { askInput({ title: '新建储存位置', placeholder: '如：出租屋', okText: '创建并应用' }, function (nm) {
+          if (!nm || !nm.trim()) return;
+          addLocation(nm.trim());
+          var lid = state.locations[state.locations.length - 1].id; batchSetLocation(lid);
+        }); return; }
+        if (v) batchSetLocation(v);
+      });
+    } else if (kind === 'sub') {
+      var subs = currentCategoryId ? subFoldersOf(currentCategoryId) : (state.subFolders || []);
+      askPick({
+        title: '批量改文件夹（' + n + ' 件）',
+        tip: '文件夹属于某个品类，应用后素材会一并归入该品类。',
+        items: [{ v: '', t: '（不归入文件夹）' }].concat(subs.map(function (f) {
+          return { v: f.id, t: (currentCategoryId ? '' : (catName(f.categoryId) || '') + ' / ') + f.name };
+        })), allowAdd: true
+      }, function (v) {
+        if (v === '__add') { askInput({ title: '新建文件夹', placeholder: '如：冬装', okText: '创建并应用' }, function (nm) {
+          if (!nm || !nm.trim()) return;
+          addSubFolder(nm.trim());
+          var f2 = state.subFolders[state.subFolders.length - 1]; batchSetSubFolder(f2.id);
+        }); return; }
+        batchSetSubFolder(v);
+      });
+    } else if (kind === 'cat') {
+      askPick({ title: '批量改品类（' + n + ' 件）', items: state.categories.map(function (c) { return { v: c.id, t: c.name }; }), allowAdd: true }, function (v) {
+        if (v === '__add') { askInput({ title: '新建品类', placeholder: '如：西装', okText: '创建并应用' }, function (nm) {
+          if (!nm || !nm.trim()) return;
+          addCategory(nm.trim());
+          var cid = state.categories[state.categories.length - 1].id; batchSetCategory(cid);
+        }); return; }
+        if (v) batchSetCategory(v);
+      });
+    } else if (kind === 'sea') {
+      askPick({ title: '批量改季节（' + n + ' 件）', items: SEASONS.map(function (x) { return { v: x, t: x }; }) }, function (v) {
+        if (v) batchSetSeason(v);
+      });
+    }
+  }
+  function batchSetLocation(v) {
+    var ids = batchSelectedIds(), k = 0;
+    state.items.forEach(function (it) { if (ids.indexOf(it.id) >= 0) { it.locationId = v; k++; } });
+    notify(); toast('已把 ' + k + ' 件素材移到「' + (locName(v) || '-') + '」');
+  }
+  function batchSetCategory(v) {
+    var ids = batchSelectedIds(), k = 0;
+    state.items.forEach(function (it) { if (ids.indexOf(it.id) >= 0) { it.categoryId = v; it.subFolderId = ''; k++; } });
+    notify(); toast('已把 ' + k + ' 件素材改为「' + (catName(v) || '-') + '」');
+  }
+  function batchSetSubFolder(v) {
+    var ids = batchSelectedIds(), k = 0;
+    state.items.forEach(function (it) {
+      if (ids.indexOf(it.id) < 0) return;
+      if (!v) { it.subFolderId = ''; }
+      else {
+        var f = (state.subFolders || []).find(function (x) { return x.id === v; });
+        if (f) { it.subFolderId = v; it.categoryId = f.categoryId; }
+      }
+      k++;
+    });
+    notify(); toast('已把 ' + k + ' 件素材归入「' + (subName(v) || '未归入文件夹') + '」');
+  }
+  function batchSetSeason(v) {
+    var ids = batchSelectedIds(), k = 0;
+    state.items.forEach(function (it) { if (ids.indexOf(it.id) >= 0) { it.season = v || '不限'; k++; } });
+    notify(); toast('已把 ' + k + ' 件素材设为「' + (v || '不限') + '」');
+  }
+  function batchDelete() {
+    var ids = batchSelectedIds();
+    if (!ids.length) { toast('请先选择要删除的素材'); return; }
+    askConfirm('确定删除已选的 ' + ids.length + ' 件素材？（不可恢复）', function (ok) {
+      if (!ok) return;
+      state.items.forEach(function (it) { if (it && it.imgId) { try { localStorage.removeItem(IMG + '_' + it.imgId); } catch (e) {} } });
+      state.items = state.items.filter(function (it) { return ids.indexOf(it.id) < 0; });
+      batchSel = {};
+      notify(); toast('已删除 ' + ids.length + ' 件素材');
+    });
   }
 
   var imgCache = {};
+  /* ★修复「上传的素材显示成破损文件 / 只剩占位图标」：
+     ① 旧版只收集 imgId 与 transparentImgId，漏了 trimmedImgId(裁紧图)、refinedImgId(AI精修)、
+        animeImgId(动漫化) —— 而 itemSrc() 优先返回 trimmedImgId，于是刷新后这些图永远取不回，
+        itemSrc 返回空 → 卡片渲染成占位图标，看起来就是"素材破裂"。
+     ② 旧版 imgGet 是异步的，拿到图后只写进 imgCache，却不通知界面重绘，
+        页面早就渲染完了 → 图在内存里、界面上却是空的。
+     现在：收集全部图片字段 + 取回后防抖重渲染 + hydrateImages() 逐张补齐兜底。 */
+  var _hydrateTimer = null;
+  function _scheduleRender() {
+    if (_hydrateTimer) clearTimeout(_hydrateTimer);
+    _hydrateTimer = setTimeout(function () {
+      _hydrateTimer = null;
+      try { render(); } catch (e) { console.warn('[re-render]', e); }
+    }, 120);
+  }
   function refreshImages() {
     var ids = [];
-    (state.items || []).forEach(function (it) { if (it.imgId) ids.push(it.imgId); if (it.transparentImgId) ids.push(it.transparentImgId); });
-    (state.avatars || []).forEach(function (a) { if (a.imgId) ids.push(a.imgId); });
-    (state.plans || []).forEach(function (p) { if (p.coverImgId) ids.push(p.coverImgId); });
-    ids.forEach(function (id) {
-      if (id && !imgCache[id]) imgGet(id, function (v) { if (v) imgCache[id] = v; });
+    function add(id) { if (id && ids.indexOf(id) < 0) ids.push(id); }
+    (state.items || []).forEach(function (it) {
+      add(it.imgId); add(it.transparentImgId); add(it.trimmedImgId);
+      add(it.refinedImgId); add(it.animeImgId);
     });
+    (state.avatars || []).forEach(function (a) { add(a.imgId); add(a.transparentImgId); });
+    (state.plans || []).forEach(function (p) { add(p.coverImgId); });
+    var pending = 0;
+    ids.forEach(function (id) {
+      if (!id || imgCache[id]) return;
+      pending++;
+      imgGet(id, function (v) {
+        if (v) imgCache[id] = v;
+        pending--;
+        if (v) _scheduleRender();          // ★拿到图就重绘，界面才看得到
+      });
+    });
+    if (pending === 0) _scheduleRender();
+  }
+  /* 兜底：扫描页面上所有标记了 data-itemid / data-imgid 的图片，
+     凡是 src 还空着的，异步从 IndexedDB 取回后直接填进 img（并移除占位图标）。
+     这样哪怕渲染时机早于图片恢复，图也会自动"长"出来。 */
+  function hydrateImages() {
+    var imgs = [];
+    try { imgs = Array.prototype.slice.call(document.querySelectorAll('img[data-imgid]')); } catch (e) { return; }
+    imgs.forEach(function (im) {
+      var id = im.getAttribute('data-imgid');
+      if (!id) return;
+      if (im.getAttribute('data-hydrated')) return;
+      var cur = im.getAttribute('src') || '';
+      if (cur && cur !== 'null') return;            // 已有图，不管
+      if (imgCache[id]) { _applyImg(im, imgCache[id]); return; }
+      im.setAttribute('data-hydrated', '1');
+      imgGet(id, function (v) {
+        if (!v) return;
+        imgCache[id] = v;
+        _applyImg(im, v);
+      });
+    });
+  }
+  function _applyImg(im, src) {
+    if (!im || !src) return;
+    im.setAttribute('src', src);
+    im.style.display = '';
+    try {
+      var p = im.parentNode;
+      var ph = p ? p.querySelector('.ph') : null;
+      if (ph && ph.parentNode) ph.parentNode.removeChild(ph);
+    } catch (e) {}
   }
 
   /* ---- 品类：增 / 重命名 / 删除 ---- */
@@ -996,12 +1245,19 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
      ★修复3：全程有进度提示与缩略图预览，不再无反馈
      ★新增：每张图可单独决定是否抠图（生成空白底透明 PNG）                       */
   var _pendingUploads = [];   // [{dataUrl, name, cutout}]
+  var _uploadModal = null;    // 当前打开的上传弹窗
+
+  /* 上传入口 v17
+     ★旧做法：点按钮 → 代码里 hiddenInput.click() → 在很多环境被拦（微信 X5 / iOS Safari /
+       部分安卓 WebView 会静默拦截"程序化触发"的文件选择），点了没反应就是它。
+     ★新做法：点按钮 → 直接打开上传弹窗，弹窗里放一个【看得见的真实 file input】，
+       用户点的是 input 本身 —— 真实用户手势，任何浏览器都 100% 能唤起选择。
+       另外支持：拖拽图片进来、Ctrl/⌘+V 粘贴。                                   */
   function uploadFiles(files) {
     var arr = [];
     try { arr = [].slice.call(files || []); } catch (e) { arr = []; }
     arr = arr.filter(function (f) { return f && (!f.type || /^image\//.test(f.type)); });
     if (!arr.length) { toast('请选择图片文件'); return; }
-    _pendingUploads = [];
     var left = arr.length, done = 0;
     toast('正在读取图片 0/' + arr.length + '…');
     arr.forEach(function (f) {
@@ -1017,11 +1273,16 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
       });
     });
   }
+
   function _readUploadOne(f, cb) {
     var nm = (f.name || '').replace(/\.[^.]+$/, '').slice(0, 40);
     var reader = new FileReader();
     reader.onload = function (e) {
-      compressImage(e.target.result, 1400, 'image/jpeg', 0.88, function (d) { cb(d, nm); });
+      var raw = e.target.result;
+      // ★压缩失败也要回退到原图，绝不静默丢弃（旧版会 cb(' ') → 图没了）
+      try {
+        compressImage(raw, 1400, 'image/jpeg', 0.88, function (d) { cb(d || raw, nm); });
+      } catch (er) { cb(raw, nm); }
     };
     reader.onerror = function () { cb('', nm); };
     try { reader.readAsDataURL(f); } catch (e) { cb('', nm); }
@@ -1030,32 +1291,52 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
   function renderUploadList() {
     var box = document.getElementById('up-list');
     if (!box) return;
-    box.innerHTML = _pendingUploads.map(function (p, i) {
-      return '<div style="border:1px solid var(--line);border-radius:10px;padding:6px;text-align:center">' +
-        '<div style="position:relative">' +
-          '<img src="' + p.dataUrl + '" style="width:100%;height:74px;object-fit:cover;border-radius:6px;display:block">' +
-          '<span data-rm="' + i + '" style="position:absolute;top:2px;right:2px;width:20px;height:20px;line-height:19px;' +
-            'text-align:center;background:#fff;border-radius:50%;cursor:pointer;font-size:12px;box-shadow:0 1px 3px rgba(0,0,0,.2)">✕</span>' +
-        '</div>' +
-        '<label style="display:flex;align-items:center;justify-content:center;gap:4px;font-size:11px;margin-top:6px;cursor:pointer;color:var(--sub)">' +
-          '<input type="checkbox" data-cut="' + i + '"' + (p.cutout ? ' checked' : '') + ' style="width:14px;height:14px">抠图</label>' +
-      '</div>';
-    }).join('');
+    if (!_pendingUploads.length) {
+      box.innerHTML = '<div class="sub" style="grid-column:1/-1;text-align:center;padding:18px 0;font-size:12px">' +
+        '还没有选择图片 —— 点上面「选择图片」，或把图片拖进虚线框</div>';
+    } else {
+      box.innerHTML = _pendingUploads.map(function (p, i) {
+        return '<div style="border:1px solid var(--line);border-radius:10px;padding:6px;text-align:center">' +
+          '<div style="position:relative">' +
+            '<img src="' + p.dataUrl + '" style="width:100%;height:74px;object-fit:cover;border-radius:6px;display:block">' +
+            '<span data-rm="' + i + '" style="position:absolute;top:2px;right:2px;width:20px;height:20px;line-height:19px;' +
+              'text-align:center;background:#fff;border-radius:50%;cursor:pointer;font-size:12px;box-shadow:0 1px 3px rgba(0,0,0,.2)">✕</span>' +
+          '</div>' +
+          '<label style="display:flex;align-items:center;justify-content:center;gap:4px;font-size:11px;margin-top:6px;cursor:pointer;color:var(--sub)">' +
+            '<input type="checkbox" data-cut="' + i + '"' + (p.cutout ? ' checked' : '') + ' style="width:14px;height:14px">抠图</label>' +
+        '</div>';
+      }).join('');
+    }
     var n = document.getElementById('up-count');
     if (n) n.textContent = _pendingUploads.length;
+    var ok = document.getElementById('up-ok');
+    if (ok) {
+      ok.textContent = _pendingUploads.length ? ('确认上传（' + _pendingUploads.length + '）') : '确认上传';
+      ok.style.opacity = _pendingUploads.length ? '1' : '.5';
+    }
   }
 
   function openUploadModal() {
-    if (!_pendingUploads.length) return;
-    // ★默认跟随当前筛选，保证上传后在当前视图里能立刻看到
+    // ★弹窗已开着：只刷新列表，不重复弹
+    if (_uploadModal && _uploadModal.wrap && _uploadModal.wrap.parentNode) {
+      try { renderUploadList(); } catch (e) {}
+      return;
+    }
     var defCat = currentCategoryId || (state.categories[0] || {}).id || '';
     var defLoc = currentLocationId || (state.locations[0] || {}).id || '';
     var defSea = currentSeason || uploadSeason || '不限';
     var defSub = currentSubFolderId || uploadSubId || '';
     var selCss = 'width:100%;border:1px solid var(--line);border-radius:10px;padding:9px 10px;margin-top:4px;background:#fff';
     var inner =
-      '<h3 style="margin:0 0 6px;font-size:16px">上传素材（<span id="up-count">' + _pendingUploads.length + '</span> 张）</h3>' +
+      '<h3 style="margin:0 0 6px;font-size:16px">上传素材（<span id="up-count">0</span> 张）</h3>' +
       '<div class="sub" style="font-size:12px;margin-bottom:10px">每张可单独勾选「抠图」→ 生成空白底透明 PNG，便于试穿与拼图；不勾选则保留原图</div>' +
+      // ★看得见的真实 file input：真实用户点击，iOS / 微信 / 安卓 WebView 都能唤起
+      '<div id="up-drop" style="border:2px dashed var(--brand,#ff758c);border-radius:12px;padding:14px;text-align:center;background:#fff7f9;margin-bottom:12px">' +
+        '<div style="font-size:14px;font-weight:600;margin-bottom:8px">📷 选择图片（可多选）</div>' +
+        '<input id="up-file" type="file" accept="image/*" multiple ' +
+          'style="display:block;width:100%;font-size:15px;padding:10px;background:#fff;border:1px solid var(--line);border-radius:8px;box-sizing:border-box">' +
+        '<div class="sub" style="font-size:11px;margin-top:8px">选完还能继续加；电脑可把图片拖进这个框，或按 Ctrl / ⌘ + V 粘贴</div>' +
+      '</div>' +
       '<div id="up-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px;margin-bottom:12px"></div>' +
       '<div style="margin-bottom:10px"><label class="sub">名称（可留空，多张按顺序编号）</label>' +
         '<input id="up-name" type="text" placeholder="未命名素材" style="width:100%;border:1px solid var(--line);border-radius:10px;padding:9px 10px;margin-top:4px"></div>' +
@@ -1075,6 +1356,9 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
         '<button class="btn" id="up-ok" style="flex:1">确认上传</button></div>';
 
     var m = _mkModal(inner);
+    _uploadModal = m;
+    var _origClose = m.close;
+    m.close = function () { _uploadModal = null; _pendingUploads = []; try { _origClose(); } catch (e) {} };
     renderUploadList();
 
     function fillSel(id, arr, cur, allowEmpty, emptyText) {
@@ -1093,6 +1377,38 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     fillSel('up-sub2', subFoldersOf(defCat), defSub, true, '（未建文件夹）');
     if (sCat) sCat.onchange = function () { fillSel('up-sub2', subFoldersOf(sCat.value), '', true, '（未建文件夹）'); };
 
+    // ★可见 input：真实用户点击，一定能唤起
+    var upFile = document.getElementById('up-file');
+    if (upFile) {
+      upFile.onchange = function () {
+        var picked = [];
+        try { picked = [].slice.call(upFile.files || []); } catch (e) { picked = []; }
+        try { upFile.value = ''; } catch (e) {}
+        if (picked.length) uploadFiles(picked);
+      };
+      // 桌面端点开弹窗后自动唤起一次（省一次点击）；触屏设备不自动，避免怪异弹层
+      var isTouch = false;
+      try { isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0); } catch (e) {}
+      if (!isTouch) setTimeout(function () { try { upFile.click(); } catch (e) {} }, 160);
+    }
+    // ★拖拽上传
+    var drop = document.getElementById('up-drop');
+    if (drop) {
+      ['dragenter', 'dragover'].forEach(function (ev) {
+        drop.addEventListener(ev, function (e) { try { e.preventDefault(); } catch (er) {} drop.style.background = '#ffe6ee'; });
+      });
+      ['dragleave'].forEach(function (ev) {
+        drop.addEventListener(ev, function (e) { drop.style.background = '#fff7f9'; });
+      });
+      drop.addEventListener('drop', function (e) {
+        try { e.preventDefault(); } catch (er) {}
+        drop.style.background = '#fff7f9';
+        var fs = (e.dataTransfer && e.dataTransfer.files) || [];
+        var picked = []; try { picked = [].slice.call(fs); } catch (er) {}
+        if (picked.length) uploadFiles(picked);
+      });
+    }
+
     var list = document.getElementById('up-list');
     if (list) list.addEventListener('click', function (e) {
       var t = e.target;
@@ -1100,7 +1416,6 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
       if (rm !== null && rm !== undefined) {
         _pendingUploads.splice(parseInt(rm, 10), 1);
         renderUploadList();
-        if (!_pendingUploads.length) m.close();
         return;
       }
     });
@@ -1119,8 +1434,9 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
       renderUploadList();
     };
 
-    document.getElementById('up-cancel').onclick = function () { _pendingUploads = []; m.close(); };
+    document.getElementById('up-cancel').onclick = function () { m.close(); };
     document.getElementById('up-ok').onclick = function () {
+      if (!_pendingUploads.length) { toast('请先选择图片'); return; }
       var nm = (document.getElementById('up-name').value || '').trim();
       var catId = (document.getElementById('up-cat2') || {}).value || (state.categories[0] || {}).id || '';
       var locId = (document.getElementById('up-loc2') || {}).value || (state.locations[0] || {}).id || '';
@@ -1133,8 +1449,7 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
       _pendingUploads = [];
       m.close();
       uploadSeason = sea; uploadSubId = sub;
-      // ★清掉可能遮住新素材的搜索词
-      searchKeyword = '';
+      searchKeyword = '';   // 清掉可能遮住新素材的搜索词
 
       batch.forEach(function (p, i2) {
         var id = uid();
@@ -1147,7 +1462,7 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
           categoryId: catId,
           locationId: locId,
           imgId: id,
-          transparentImgId: '',   // 抠图完成后才有
+          transparentImgId: '',
           refinedImgId: '',
           trimmedImgId: '',
           animeImgId: '',
@@ -1162,7 +1477,6 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
       notify();
       toast('已添加 ' + batch.length + ' 张' + (cutN ? '，其中 ' + cutN + ' 张正在抠图…' : '（保留原图）'));
 
-      // ★逐张抠图（串行，避免一次性卡死）
       var idx = 0;
       function nextCut() {
         while (idx < batch.length && !batch[idx].cutout) idx++;
@@ -1176,6 +1490,21 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
       if (cutN) setTimeout(nextCut, 300);
     };
   }
+
+  // ★粘贴上传：Ctrl/⌘ + V（截图、复制的图片都能直接进来）
+  try {
+    document.addEventListener('paste', function (e) {
+      try {
+        var cd = e.clipboardData || (window && window.clipboardData);
+        var its = (cd && cd.items) || [];
+        var fs = [];
+        for (var i = 0; i < its.length; i++) {
+          if (its[i] && its[i].kind === 'file') { var f = its[i].getAsFile && its[i].getAsFile(); if (f) fs.push(f); }
+        }
+        if (fs.length) { try { e.preventDefault(); } catch (er) {} uploadFiles(fs); }
+      } catch (er) {}
+    });
+  } catch (e) {}
 
   // ★通用抠图：输入 dataURL，输出透明 PNG 的 dataURL（本地 canvas，去背景）
   function cutoutImage(dataUrl, cb) {
@@ -1478,6 +1807,15 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     if (it.transparentImgId && imgCache[it.transparentImgId]) return imgCache[it.transparentImgId];
     if (it.refinedImgId && imgCache[it.refinedImgId]) return imgCache[it.refinedImgId];
     return imgCache[it.imgId] || '';
+  }
+  // itemSrc 实际会用的那张图 id（用于 data-imgid，供 hydrateImages 异步补齐）
+  function srcImgId(it) {
+    if (!it) return '';
+    if (it.animeImgId) return it.animeImgId;
+    if (it.trimmedImgId) return it.trimmedImgId;
+    if (it.transparentImgId) return it.transparentImgId;
+    if (it.refinedImgId) return it.refinedImgId;
+    return it.imgId || '';
   }
   var editingItemId = null;
   function openItemEdit(id) {
@@ -1795,20 +2133,56 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
   /* ============ 搭配 / 试穿（奇迹暖暖式分层）============ */
   var selectedItemIds = [];
   var activeAvatarId = null;
+  /* ★v19：素材选择支持「文件夹筛选 + 元素搜索」，快速定位素材 */
+  var pkCatId = '', pkSubId = '', pkSearch = '';
+  function pkMatch(it, kw) {
+    if (!kw) return true;
+    var k = norm(kw);
+    var hay = [it.name, catName(it.categoryId), locName(it.locationId), subName(it.subFolderId), it.season, (it.tags || '')].join(' ').toLowerCase();
+    return hay.indexOf(k) >= 0;
+  }
+  function pickerFiltered() {
+    return state.items.filter(function (it) {
+      if (pkCatId && it.categoryId !== pkCatId) return false;
+      if (pkSubId && (it.subFolderId || '') !== pkSubId) return false;
+      if (!pkMatch(it, pkSearch)) return false;
+      return true;
+    });
+  }
+  function renderPickerTools() {
+    var cs = el('pk-cat');
+    if (cs) {
+      cs.innerHTML = '<option value="">全部品类</option>' + state.categories.map(function (c) {
+        return '<option value="' + c.id + '"' + (c.id === pkCatId ? ' selected' : '') + '>' + escapeHtml(c.name) + '</option>';
+      }).join('');
+    }
+    var ss = el('pk-sub');
+    if (ss) {
+      var subs = pkCatId ? subFoldersOf(pkCatId) : (state.subFolders || []);
+      ss.innerHTML = '<option value="">全部文件夹</option>' + subs.map(function (f) {
+        var label = pkCatId ? f.name : (catName(f.categoryId) ? catName(f.categoryId) + ' / ' + f.name : f.name);
+        return '<option value="' + f.id + '"' + (f.id === pkSubId ? ' selected' : '') + '>' + escapeHtml(label) + '</option>';
+      }).join('');
+    }
+    var si = el('pk-search');
+    if (si && si.value !== pkSearch) si.value = pkSearch;
+  }
   // ★素材库选品上身
   function openPicker() {
+    renderPickerTools();
     renderPicker();
     el('picker-modal').style.display = 'flex';
   }
   function renderPicker() {
+    renderPickerTools();
     var grid = el('picker-grid');
     if (!grid) return;
-    var list = state.items;
-    grid.innerHTML = (list.length ? '' : '<div class="empty-sm">衣橱还没有素材</div>') +
+    var list = pickerFiltered();
+    grid.innerHTML = (list.length ? '' : '<div class="empty-sm">没有符合条件的素材</div>') +
       list.map(function (it) {
         var on = selectedItemIds.indexOf(it.id) >= 0;
         return '<div class="picker-card' + (on ? ' on' : '') + '" data-id="' + it.id + '">' +
-          (it.imgId ? '<img src="' + (imgCache[it.imgId] || '') + '" onerror="this.src=\'\'">' : '<div class="ph">👕</div>') +
+          (itemSrc(it) ? '<img src="' + itemSrc(it) + '" data-imgid="' + srcImgId(it) + '" onerror="this.style.display=\'none\'">' : '<img src="" data-imgid="' + srcImgId(it) + '" style="display:none" onerror="this.style.display=\'none\'"><div class="ph">👕</div>') +
           '<small>' + escapeHtml(it.name || catName(it.categoryId)) + '</small></div>';
       }).join('');
   }
@@ -2438,7 +2812,7 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
   function toggleTemplate(id, on) { state.templateEnabled[id] = !!on; notify(); }
 
   /* ============ 设置 ============ */
-  var APP_VERSION = 'v2026.09.10-v15上传版';
+  var APP_VERSION = 'v2026.09.10-v21操作优化版';
   function renderSettings() {
     var c = state.config || {};
     // ★全量回填：保存后立刻能看到已存的值，不再"存了像没存"
@@ -2467,7 +2841,7 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
       var page = el('page-settings');
       if (page && page.firstChild) page.insertBefore(vb, page.firstChild);
     }
-    if (vb) vb.textContent = '✅ 当前版本：v2026.09.10-v15上传版（①上传素材修复：先预览再入库、上传后必可见 ②上传时可自行选择是否抠图，逐张可勾选 ③其他功能零改动）';
+    if (vb) vb.textContent = '✅ 当前版本：v2026.09.10-v21操作优化版（①试穿「选择素材」右上角新增「✔ 确认选择」②搭配卡片「确认添加」移到右上角 ③软件名称新增「💾 保存名称」按钮，点了立刻真实生效 ④其他功能零改动）';
   }
   function applySettings(form) {
     state.appName = form.appName || '我的衣橱';
@@ -2555,25 +2929,29 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
       si.oninput = function () { searchKeyword = si.value; renderCloset(); };
     }
 
-    // 上传
+    // ★上传 v17：点按钮直接打开「上传弹窗」，弹窗里有看得见的 file input
+    //   （旧版用 hiddenInput.click() 程序化唤起，微信 X5 / iOS Safari / 部分安卓 WebView 会拦 → 点了没反应）
     var uploadBtn = el('btn-upload');
     var fileInput = el('file-input');
-    if (uploadBtn && fileInput) {
-      uploadBtn.onclick = function () { fileInput.click(); };
-      fileInput.onchange = function () {
-        // ★先把 FileList 拷成真数组，再清空 value（否则 iOS Safari 会让文件失效 → 上传无反应）
-        var picked = [];
-        try { picked = [].slice.call(fileInput.files || []); } catch (e) { picked = []; }
-        fileInput.value = '';
-        if (picked.length) uploadFiles(picked);
-      };
+    if (uploadBtn) {
+      try { uploadBtn.setAttribute('type', 'button'); } catch (e) {}
+      var _openUp = function (ev) { if (ev) { try { ev.preventDefault(); } catch (e) {} } openUploadModal(); };
+      uploadBtn.onclick = _openUp;
+      uploadBtn.addEventListener('click', _openUp);
     }
+    if (fileInput) fileInput.onchange = function () {
+      var picked = [];
+      try { picked = [].slice.call(fileInput.files || []); } catch (e) { picked = []; }
+      try { fileInput.value = ''; } catch (e) {}
+      if (picked.length) uploadFiles(picked);
+    };
 
     // 卡片操作（委托）→ 弹出下拉编辑面板（不输入文字）
     var grid = el('item-grid');
     if (grid) {
       grid.onclick = function (e) {
         var card = e.target.closest('.item-card'); if (!card) return;
+        if (batchMode) { toggleBatchSel(card.dataset.id); return; }
         openItemEdit(card.dataset.id);
       };
     }
@@ -2589,6 +2967,7 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     var refineAllBtn = el('btn-refine-all');
     if (refineAllBtn) refineAllBtn.onclick = function () { aiRefineAll(); };
     var animeAllBtn = el('btn-anime-all'); if (animeAllBtn) animeAllBtn.onclick = function () { aiAnimeAll(); };
+    var batchBtn = el('btn-batch'); if (batchBtn) batchBtn.onclick = function () { toggleBatchMode(!batchMode); };
     var ieAnime = el('ie-anime'); if (ieAnime) ieAnime.onclick = function () { if (editingItemId) aiAnimeItem(editingItemId); };
     var ieRecut = el('ie-recut');
     if (ieRecut) ieRecut.onclick = function () {
@@ -2657,11 +3036,26 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     var pickBtn = el('btn-pick-items'); if (pickBtn) pickBtn.onclick = openPicker;
     var fitBtn = el('btn-autofit'); if (fitBtn) fitBtn.onclick = autoFitTryon;
     var closePicker = el('picker-close'); if (closePicker) closePicker.onclick = function () { el('picker-modal').style.display = 'none'; };
+    /* v21：右上角「确认选择」—— 关闭弹窗并把勾选的素材立刻穿到形象上 */
+    var okPicker = el('picker-ok');
+    if (okPicker) okPicker.onclick = function () {
+      var ids = selectedItemIds.slice();
+      if (!ids.length) { toast('还没勾选素材'); return; }
+      el('picker-modal').style.display = 'none';
+      try { doTryon(); } catch (e) { console.warn('doTryon', e); }
+      toast('已选择 ' + ids.length + ' 件素材，已上身 ✅');
+    };
     var pickGrid = el('picker-grid');
     if (pickGrid) pickGrid.onclick = function (e) {
       var c = e.target.closest('.picker-card'); if (!c) return;
       togglePickerItem(c.dataset.id);
     };
+    var pkCatSel = el('pk-cat');
+    if (pkCatSel) pkCatSel.onchange = function () { pkCatId = pkCatSel.value; pkSubId = ''; renderPicker(); };
+    var pkSubSel = el('pk-sub');
+    if (pkSubSel) pkSubSel.onchange = function () { pkSubId = pkSubSel.value; renderPicker(); };
+    var pkSearchInp = el('pk-search');
+    if (pkSearchInp) pkSearchInp.oninput = function () { pkSearch = pkSearchInp.value; renderPicker(); };
     var autoBtn = el('btn-auto-tryon'); if (autoBtn) autoBtn.onclick = function () {
       _tryonAnimate = true; doTryon(); _tryonAnimate = false;
     };
@@ -2710,6 +3104,13 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     bindAdvisorExtras();
 
     // 设置
+    /* v21：软件名称 —— 独立「保存名称」按钮，点了立刻保存并真实生效 */
+    var saveNameBtn = el('btn-save-appname');
+    if (saveNameBtn) saveNameBtn.onclick = function () { saveAppNameOnly(); };
+    var appNameInput = el('set-appname');
+    if (appNameInput) appNameInput.addEventListener('keydown', function (ev) {
+      if (ev.key === 'Enter') { ev.preventDefault(); saveAppNameOnly(); }
+    });
     var saveSet = el('btn-save-settings');
     if (saveSet) saveSet.onclick = function () {
       // ★安全取值：任一输入框不存在都不会再抛错（此前 set-proxy-url 缺失导致保存静默失败）
@@ -2747,6 +3148,7 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     try { bindV9(); } catch (e) { console.warn('bindV9', e); }
     render();
     try { renderSettings(); } catch (e) {}
+    try { setTimeout(hydrateImages, 30); } catch (e) {}
     if (state.session && state.session.email) showPage('closet');
     console.log('[我的衣橱] 初始化完成 v' + VERSION);
   }
@@ -3012,6 +3414,35 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     notify(); toast('已保存：' + name);
     showPage('plans');
   }
+  /* ★v19：搭配卡片素材选择同样支持「文件夹筛选 + 元素搜索」 */
+  var cvSelectedIds = [];
+  var cvPkCat = '', cvPkSub = '', cvPkSearch = '';
+  function cvPickerFiltered() {
+    return state.items.filter(function (it) {
+      if (cvPkCat && it.categoryId !== cvPkCat) return false;
+      if (cvPkSub && (it.subFolderId || '') !== cvPkSub) return false;
+      if (!pkMatch(it, cvPkSearch)) return false;
+      return true;
+    });
+  }
+  function renderCvPickerTools() {
+    var cs = el('cv-pk-cat');
+    if (cs) {
+      cs.innerHTML = '<option value="">全部品类</option>' + state.categories.map(function (c) {
+        return '<option value="' + c.id + '"' + (c.id === cvPkCat ? ' selected' : '') + '>' + escapeHtml(c.name) + '</option>';
+      }).join('');
+    }
+    var ss = el('cv-pk-sub');
+    if (ss) {
+      var subs = cvPkCat ? subFoldersOf(cvPkCat) : (state.subFolders || []);
+      ss.innerHTML = '<option value="">全部文件夹</option>' + subs.map(function (f) {
+        var label = cvPkCat ? f.name : (catName(f.categoryId) ? catName(f.categoryId) + ' / ' + f.name : f.name);
+        return '<option value="' + f.id + '"' + (f.id === cvPkSub ? ' selected' : '') + '>' + escapeHtml(label) + '</option>';
+      }).join('');
+    }
+    var si = el('cv-pk-search');
+    if (si && si.value !== cvPkSearch) si.value = cvPkSearch;
+  }
   var _cvPicker = null, _cvPickerGrid = null;
   function ensureCanvasPicker() {
     if (_cvPicker && _cvPickerGrid) return _cvPicker;
@@ -3020,41 +3451,63 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     var box = document.createElement('div'); box.className = 'modal-box';
     var hd = document.createElement('div');
     hd.style.display = 'flex'; hd.style.justifyContent = 'space-between'; hd.style.alignItems = 'center'; hd.style.marginBottom = '10px';
-    var h3 = document.createElement('h3'); h3.style.margin = '0'; h3.textContent = '添加到画布（可多选）';
+    var h3 = document.createElement('h3'); h3.style.margin = '0'; h3.style.flex = '1'; h3.style.minWidth = '0'; h3.style.fontSize = '15px'; h3.textContent = '添加到画布（可多选）';
+    /* v21：确认添加移到右上角，与标题同一行，方便操作 */
+    var okb = document.createElement('button'); okb.id = 'cv-picker-ok'; okb.className = 'btn';
+    okb.style.cssText = 'flex:none;white-space:nowrap;padding:8px 14px;font-size:13px';
+    okb.textContent = '✔ 确认添加';
     var cl = document.createElement('span'); cl.id = 'cv-picker-close'; cl.textContent = '✕';
-    cl.style.cursor = 'pointer'; cl.style.fontSize = '20px';
-    hd.appendChild(h3); hd.appendChild(cl);
+    cl.style.cursor = 'pointer'; cl.style.fontSize = '20px'; cl.style.flex = 'none';
+    hd.appendChild(h3); hd.appendChild(okb); hd.appendChild(cl);
+    var tb = document.createElement('div');
+    tb.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px';
+    var c1 = document.createElement('select'); c1.id = 'cv-pk-cat';
+    c1.style.cssText = 'flex:1;min-width:110px;padding:8px 10px;border:1px solid #e6ded2;border-radius:10px;background:#fff;font-size:13px';
+    var c2 = document.createElement('select'); c2.id = 'cv-pk-sub';
+    c2.style.cssText = c1.style.cssText;
+    var c3 = document.createElement('input'); c3.id = 'cv-pk-search'; c3.placeholder = '搜索元素，如：波点 / 牛仔';
+    c3.style.cssText = 'flex:1;min-width:130px;padding:8px 10px;border:1px solid #e6ded2;border-radius:10px;font-size:13px';
+    c1.onchange = function () { cvPkCat = c1.value; cvPkSub = ''; openCanvasPicker(); };
+    c2.onchange = function () { cvPkSub = c2.value; openCanvasPicker(); };
+    c3.oninput = function () { cvPkSearch = c3.value; openCanvasPicker(); };
+    tb.appendChild(c1); tb.appendChild(c2); tb.appendChild(c3);
     var g = document.createElement('div'); g.id = 'cv-picker-grid'; g.className = 'grid';
-    var okb = document.createElement('button'); okb.id = 'cv-picker-ok'; okb.className = 'btn block';
-    okb.style.marginTop = '12px'; okb.textContent = '确认添加';
-    box.appendChild(hd); box.appendChild(g); box.appendChild(okb);
+    box.appendChild(hd); box.appendChild(tb); box.appendChild(g);
     d.appendChild(box);
     document.body.appendChild(d);
     d.addEventListener('click', function (e) { if (e.target === d) d.style.display = 'none'; });
     cl.onclick = function () { d.style.display = 'none'; };
     g.onclick = function (e) {
       var c = e.target && e.target.closest ? e.target.closest('.picker-card') : null;
-      if (c) c.classList.toggle('on');
+      if (c) {
+        c.classList.toggle('on');
+        var id = c.dataset.id, i = cvSelectedIds.indexOf(id);
+        if (c.classList.contains('on')) { if (i < 0) cvSelectedIds.push(id); }
+        else if (i >= 0) cvSelectedIds.splice(i, 1);
+      }
     };
     _cvPicker = d; _cvPickerGrid = g;
     okb.onclick = function () {
-      var ids = [];
-      [].forEach.call(g.querySelectorAll('.picker-card.on'), function (c) { ids.push(c.dataset.id); });
+      var ids = cvSelectedIds.slice();
+      if (!ids.length) { [].forEach.call(g.querySelectorAll('.picker-card.on'), function (c) { ids.push(c.dataset.id); }); }
       if (!ids.length) { toast('还没选素材'); return; }
       addToCanvas(ids);
+      cvSelectedIds = [];
       d.style.display = 'none';
     };
     return d;
   }
   function openCanvasPicker() {
     ensureCanvasPicker();
-    ensureCanvasPicker();
     var g = _cvPickerGrid || el('cv-picker-grid');
     if (!g) return;
-    g.innerHTML = (state.items.length ? '' : '<div class="empty-sm">衣橱还没有素材</div>') +
-      state.items.map(function (it) {
-        return '<div class="picker-card" data-id="' + it.id + '">' +
-          (it.imgId ? '<img src="' + (imgCache[it.imgId] || '') + '" onerror="this.src=\'\'">' : '<div class="ph">👕</div>') +
+    renderCvPickerTools();
+    var list = cvPickerFiltered();
+    g.innerHTML = (list.length ? '' : '<div class="empty-sm">没有符合条件的素材</div>') +
+      list.map(function (it) {
+        var on = cvSelectedIds.indexOf(it.id) >= 0;
+        return '<div class="picker-card' + (on ? ' on' : '') + '" data-id="' + it.id + '">' +
+          (itemSrc(it) ? '<img src="' + itemSrc(it) + '" data-imgid="' + srcImgId(it) + '" onerror="this.style.display=\'none\'">' : '<img src="" data-imgid="' + srcImgId(it) + '" style="display:none" onerror="this.style.display=\'none\'"><div class="ph">👕</div>') +
           '<small>' + escapeHtml(it.name || catName(it.categoryId)) + '</small></div>';
       }).join('');
     (_cvPicker || el('cv-picker-modal')).style.display = 'flex';
@@ -3253,6 +3706,7 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     renderSettings: renderSettings,
     renderSidebar: renderSidebar,
     applyAppName: applyAppName,
+    saveAppNameOnly: saveAppNameOnly,
     askInput: askInput,
     askConfirm: askConfirm,
     askMovePlan: askMovePlan,
@@ -3298,6 +3752,15 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     deletePlan: deletePlan,
     movePlanToFolder: movePlanToFolder,
     filteredItems: filteredItems,
+    toggleBatchMode: toggleBatchMode,
+    toggleBatchSel: toggleBatchSel,
+    batchSelectedIds: batchSelectedIds,
+    batchPick: batchPick,
+    batchSetLocation: batchSetLocation,
+    batchSetSubFolder: batchSetSubFolder,
+    batchSetCategory: batchSetCategory,
+    batchSetSeason: batchSetSeason,
+    batchDelete: batchDelete,
     findItemsInWardrobe: findItemsInWardrobe,
     analyzeItems: analyzeItems,
     buildOutfitPlan: buildOutfitPlan,
