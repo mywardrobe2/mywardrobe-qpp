@@ -262,6 +262,25 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
       <div class="tryon-stage" id="tryon-stage">
         <div id="tryon-avatar-slot" style="text-align:center;color:var(--sub)">先在「形象」页选择主形象</div>
       </div>
+      <!-- ★v22：真人试穿页内联「混元 AI 引擎」配置（与设置页同一份数据，改哪边都行） -->
+      <div id="tryon-ai-box" style="margin-top:12px;border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
+          <div style="font-size:13px;font-weight:600">🤖 混元 AI 引擎（真人生成 / AI 合成试穿）</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button id="tryon-preset-hunyuan" class="btn sec" type="button">一键填充·腾讯混元</button>
+            <button id="tryon-save-ai" class="btn" type="button">💾 保存并生效</button>
+          </div>
+        </div>
+        <div id="tryon-ai-tip" class="sub" style="margin:8px 0"></div>
+        <div style="display:grid;gap:8px">
+          <input id="tryon-ai-base" placeholder="图像接口地址，如 https://api.hunyuan.cloud.tencent.com/v1" style="width:100%;border:1px solid var(--line);border-radius:10px;padding:9px">
+          <input id="tryon-ai-key" placeholder="API Key（sk- 开头，留空＝本地抠像兜底）" style="width:100%;border:1px solid var(--line);border-radius:10px;padding:9px">
+          <input id="tryon-ai-model" placeholder="模型名，如 hunyuan-image" style="width:100%;border:1px solid var(--line);border-radius:10px;padding:9px">
+        </div>
+        <div class="sub" style="margin-top:8px;font-size:12px;color:#888">
+          Console 报 <b>CORS / Failed to fetch</b> 时：在解压目录运行 <code>node hunyuan_proxy.js</code>，接口地址改填 <code>http://localhost:3001/v1</code>
+        </div>
+      </div>
     </section>
 
 
@@ -487,8 +506,33 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
 
   /* ============ 持久化 ============ */
   var state = defaultState();
+  /* ★v22 根因修复：软件名 / 设置"保存了却没生效"
+     真因：localStorage 总量约 5MB，imgPut 会把 <120KB 的图片快取也写进 localStorage。
+     素材一多，快取把配额占满 → 这里 setItem 抛 QuotaExceededError，
+     而原来的 catch(e){} 把它静默吞掉 → 名字/密钥/密码全都没真正落盘（刷新就回默认）。
+     修法：失败时先清掉图片快取（主存在 IndexedDB，删掉不影响图片显示）再重试；
+     仍失败则只写核心元数据；全都失败才返回 false 并让调用方提示用户。 */
   function saveMeta() {
-    try { localStorage.setItem(META, JSON.stringify(state)); } catch (e) {}
+    try { localStorage.setItem(META, JSON.stringify(state)); return true; } catch (e) {}
+    try {
+      var kill = [], i, k;
+      for (i = 0; i < localStorage.length; i++) {
+        k = localStorage.key(i);
+        if (k && k.indexOf(IMG + '_') === 0) kill.push(k);
+      }
+      for (i = 0; i < kill.length; i++) localStorage.removeItem(kill[i]);
+      localStorage.setItem(META, JSON.stringify(state));
+      return true;
+    } catch (e2) {}
+    try {
+      var slim = {}, keys = ['appName', 'accounts', 'categories', 'locations', 'activeLocationId',
+        'subFolders', 'items', 'plans', 'planFolders', 'activeFolderId', 'templates',
+        'templateEnabled', 'avatars', 'primaryAvatarId', 'params', 'config'];
+      for (var j = 0; j < keys.length; j++) { if (state[keys[j]] !== undefined) slim[keys[j]] = state[keys[j]]; }
+      localStorage.setItem(META, JSON.stringify(slim));
+      return true;
+    } catch (e3) {}
+    return false;
   }
   function loadMeta() {
     try {
@@ -851,6 +895,11 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     var e1 = el('brand-name'); if (e1) e1.textContent = nm;
     var e2 = el('brand-name-login'); if (e2) e2.textContent = nm;
     try { document.title = nm + ' · AI 穿搭'; } catch (e) {}
+    // 兜底：登录页里任何 h1（万一 id 被改动过）
+    try {
+      var lg = el('page-login');
+      if (lg && !e2) { var h = lg.querySelector('h1'); if (h) h.textContent = nm; }
+    } catch (e) {}
     // 兜底：页面上任何带 data-appname 的元素
     try {
       var all = document.querySelectorAll('[data-appname]');
@@ -863,14 +912,20 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     var nm = e ? String(e.value || '').trim() : '';
     if (!nm) { toast('请输入软件名称'); if (e && e.focus) e.focus(); return false; }
     state.appName = nm;
-    try { saveMeta(); } catch (err) { console.warn('saveMeta', err); }
+    var ok = true;
+    try { ok = saveMeta(); } catch (err) { console.warn('saveMeta', err); ok = false; }
     try { applyAppName(); } catch (err2) { console.warn('applyAppName', err2); }
     try { renderSidebar(); } catch (err3) {}
     try { renderSettings(); } catch (err4) {}
     var tip = el('set-appname-tip');
-    if (tip) tip.textContent = '✅ 已保存并生效：' + nm;
-    toast('软件名称已保存：' + nm + ' ✅');
-    return true;
+    if (ok) {
+      if (tip) tip.textContent = '✅ 已保存并生效：' + nm;
+      toast('软件名称已保存：' + nm + ' ✅');
+    } else {
+      if (tip) tip.textContent = '⚠️ 浏览器存储已满，未能保存到本地（刷新会恢复默认）。请删掉一些素材后重试';
+      toast('⚠️ 存储已满，保存失败');
+    }
+    return ok;
   }
   function showPage(name) {
     ['closet', 'avatar', 'tryon', 'canvas', 'plans', 'advisor', 'settings'].forEach(function (p) {
@@ -2384,6 +2439,43 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
         : '<option value="">（先去形象页生成）</option>';
       sel.onchange = function () { activeAvatarId = sel.value; renderTryon(); doTryon(); };
     }
+    try { renderTryonAI(); } catch (e) {}
+  }
+
+  /* ★v22：试穿页内联混元配置 —— 回填 / 状态提示 / 一键填充 / 保存（与设置页共用同一份 config） */
+  function renderTryonAI() {
+    var c = state.config || {};
+    var sv = function (id, v) { var e = el(id); if (e) e.value = v || ''; };
+    sv('tryon-ai-base', c.proxyUrl);
+    sv('tryon-ai-key', c.hunyuanKey);
+    sv('tryon-ai-model', c.imgModel);
+    var g = getImgGenConfig();
+    var tip = el('tryon-ai-tip');
+    if (tip) tip.textContent = (g.base && g.key)
+      ? '✅ 已配置：' + g.base + '（模型 ' + g.model + '）→ 可生成真人 AI 形象 / AI 合成试穿'
+      : '⚠️ 未配置 →「生成 AI 形象」只做本地抠像，「AI 合成试穿」不可用（可先用「自动贴合」手动摆位）';
+  }
+  function bindTryonAI() {
+    var p = el('tryon-preset-hunyuan');
+    if (p) p.onclick = function () {
+      var b = el('tryon-ai-base'), m = el('tryon-ai-model');
+      if (b) b.value = 'https://api.hunyuan.cloud.tencent.com/v1';
+      if (m) m.value = 'hunyuan-image';
+      toast('已填入混元预设，请补 API Key 后点「保存并生效」');
+    };
+    var s = el('tryon-save-ai');
+    if (s) s.onclick = function () {
+      var gv = function (id) { var e = el(id); return e ? String(e.value || '').trim() : ''; };
+      state.config = Object.assign({}, state.config, {
+        proxyUrl: gv('tryon-ai-base'),
+        hunyuanKey: gv('tryon-ai-key'),
+        imgModel: gv('tryon-ai-model')
+      });
+      var ok = saveMeta();
+      try { renderTryonAI(); } catch (e) {}
+      try { renderSettings(); } catch (e) {}
+      toast(ok ? '混元配置已保存 ✅' : '⚠️ 存储已满，保存失败');
+    };
   }
 
   /* ============ 方案（自定义名字 + 多文件夹）============ */
@@ -2739,49 +2831,73 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     renderBloggerBox();
   }
 
-  /* ============ v14 博主穿搭经验（真实可点链接）============ */
-  var BLOGGERS = [
-    { name: '三木三木呢', tag: '莫兰迪色·轻熟通勤', plat: '小红书',
-      exp: '同色系叠穿是她的招牌：用深浅不同的莫兰迪色做层次，配质感配饰提气，通勤日常都大气，轻熟龄很好抄。',
-      url: 'https://www.xiaohongshu.com/search_result?keyword=' + encodeURIComponent('三木三木呢') },
-    { name: '梨梨 Liz', tag: '日韩清新·学生党友好', plat: '小红书',
-      exp: '淡蓝+浅粉+米白为主，棉麻衬衫、针织开衫、碎花长裙，配小白鞋或乐福鞋，甜而不腻、预算友好。',
-      url: 'https://www.xiaohongshu.com/search_result?keyword=' + encodeURIComponent('梨梨Liz 穿搭') },
-    { name: '夏 ouba', tag: '浅色系韩系·上班族', plat: '小红书',
-      exp: '米白、淡蓝、燕麦色打底，直筒西装裤配乐福鞋或玛丽珍鞋，质感在线又平价，通勤直接照搬。',
-      url: 'https://www.xiaohongshu.com/search_result?keyword=' + encodeURIComponent('夏ouba 穿搭') },
-    { name: '腻腻 ninii', tag: '低饱和·氛围感', plat: 'B站',
-      exp: '低饱和马卡龙色 + 棉麻针织，碎花裙或宽松针织配阔腿裤，妆容清淡，出片氛围感强。',
-      url: 'https://search.bilibili.com/all?keyword=' + encodeURIComponent('腻腻ninii 穿搭') },
-    { name: '原来是西门大嫂', tag: '莫兰迪·职场轻熟', plat: '微博',
-      exp: '衬衫配缎面半裙、针织套装，兼顾气场与柔美，想穿得有质感又不过分用力就参考她。',
-      url: 'https://s.weibo.com/weibo?q=' + encodeURIComponent('原来是西门大嫂 穿搭') },
-    { name: 'imjoo_', tag: '温柔质感·低饱和', plat: 'Instagram',
-      exp: '奶白、浅杏、雾霾蓝为主，针织开衫+雪纺衬衫+丝绒半裙叠穿，配饰极简，通勤约会都适配。',
-      url: 'https://www.instagram.com/imjoo_/' },
-    { name: '车静媛 cha_jungwon', tag: '简约高级·通勤', plat: 'Instagram',
-      exp: '浅卡其风衣、牛仔衬衫、直筒裤，高低价位混搭，版型利落，追求质感的职场人很适用。',
-      url: 'https://www.instagram.com/cha_jungwon/' },
-    { name: 'anneorion', tag: '法式松弛', plat: 'Instagram',
+  /* ============ 穿搭参考：按风格关键词跳转平台官方搜索页 ============ */
+  function _enc(k) { return encodeURIComponent(k); }
+  var XHS = function (k) { return 'https://www.xiaohongshu.com/search_result?keyword=' + _enc(k); };
+  var BILI = function (k) { return 'https://search.bilibili.com/all?keyword=' + _enc(k); };
+  var WEIBO = function (k) { return 'https://s.weibo.com/weibo?q=' + _enc(k); };
+  var DOUYIN = function (k) { return 'https://www.douyin.com/search/' + _enc(k); };
+  var ZHIHU = function (k) { return 'https://www.zhihu.com/search?type=content&q=' + _enc(k); };
+
+  /* 说明：以下为"风格流派 + 关键词"，跳转各平台官方搜索页，内容实时最新。
+     不再写死某个博主主页（账号会改名/注销，写死必然失效；按风格关键词搜索永远有内容）。 */
+  var STYLE_GUIDES = [
+    { name: '莫兰迪 · 轻熟通勤', plat: '小红书', tag: '职场 / 25-35 岁',
+      exp: '同色系叠穿是核心：用深浅不同的灰调、燕麦、雾霾蓝做层次，配质感配饰提气，通勤日常都大气。',
+      kw: '莫兰迪色系 通勤穿搭', url: XHS('莫兰迪色系 通勤穿搭') },
+    { name: '日韩清新 · 学生党', plat: '小红书', tag: '甜而不腻 / 平价',
+      exp: '淡蓝+浅粉+米白为主，棉麻衬衫、针织开衫、碎花长裙，配小白鞋或乐福鞋，预算友好。',
+      kw: '日系清新 学生党穿搭', url: XHS('日系清新 学生党穿搭') },
+    { name: '低饱和 · 氛围感', plat: 'B站', tag: '视频教程多 / 出片',
+      exp: '低饱和马卡龙色 + 棉麻针织，碎花裙或宽松针织配阔腿裤，妆容清淡，氛围感强。',
+      kw: '低饱和 氛围感穿搭', url: BILI('低饱和 氛围感穿搭') },
+    { name: '法式松弛', plat: '小红书', tag: '棕蓝白 / 不臃肿',
       exp: '棕、蓝、白三色招牌，宽松针织 + 直筒牛仔 + 简约衬衫，冬天也不臃肿，日常感强。',
-      url: 'https://www.instagram.com/anneorion/' }
+      kw: '法式松弛感穿搭', url: XHS('法式松弛感穿搭') },
+    { name: '简约高级 · 高街通勤', plat: '微博', tag: '质感 / 高低价混搭',
+      exp: '浅卡其风衣、牛仔衬衫、直筒裤，高低价位混搭，版型利落，追求质感的职场人适用。',
+      kw: '简约高级感通勤穿搭', url: WEIBO('简约高级感通勤穿搭') },
+    { name: '新中式 · 东方感', plat: '抖音', tag: '近期热度高',
+      exp: '改良旗袍、盘扣上衣、马面裙配简约针织或西装外套，中西混搭，节日与日常都出彩。',
+      kw: '新中式穿搭', url: DOUYIN('新中式穿搭') }
   ];
   var PLAT_LINKS = [
-    { n: '小红书 · 今日热门穿搭', u: 'https://www.xiaohongshu.com/search_result?keyword=' + encodeURIComponent('穿搭') },
-    { n: '微博 · 穿搭话题', u: 'https://s.weibo.com/weibo?q=' + encodeURIComponent('穿搭') },
-    { n: '抖音 · 穿搭榜', u: 'https://www.douyin.com/search/' + encodeURIComponent('穿搭') },
-    { n: 'B站 · 穿搭视频', u: 'https://search.bilibili.com/all?keyword=' + encodeURIComponent('穿搭') },
-    { n: '知乎 · 穿搭讨论', u: 'https://www.zhihu.com/search?type=content&q=' + encodeURIComponent('穿搭') },
-    { n: '小红书 · 梨形身材穿搭', u: 'https://www.xiaohongshu.com/search_result?keyword=' + encodeURIComponent('梨形身材穿搭') },
-    { n: '小红书 · 小个子显高', u: 'https://www.xiaohongshu.com/search_result?keyword=' + encodeURIComponent('小个子穿搭显高') },
-    { n: '小红书 · 通勤穿搭', u: 'https://www.xiaohongshu.com/search_result?keyword=' + encodeURIComponent('通勤穿搭') }
+    { n: '小红书 · 今日热门穿搭', u: XHS('穿搭') },
+    { n: 'B站 · 穿搭视频教程', u: BILI('穿搭') },
+    { n: '抖音 · 穿搭榜', u: DOUYIN('穿搭') },
+    { n: '微博 · 穿搭话题', u: WEIBO('穿搭') },
+    { n: '知乎 · 穿搭讨论', u: ZHIHU('穿搭') },
+    { n: '小红书 · 梨形身材穿搭', u: XHS('梨形身材穿搭') },
+    { n: '小红书 · 小个子显高', u: XHS('小个子穿搭显高') },
+    { n: '小红书 · 通勤穿搭', u: XHS('通勤穿搭') }
   ];
+  function fallbackCopy(t, cb) {
+    try {
+      var ta = document.createElement('textarea');
+      ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      document.execCommand('copy'); document.body.removeChild(ta);
+      if (cb) cb();
+    } catch (e) { if (cb) cb(); }
+  }
+  function copyKw(kw, btn) {
+    if (!kw) return;
+    var done = function () {
+      if (btn) { var o = btn.getAttribute('data-o') || btn.textContent; btn.setAttribute('data-o', o); btn.textContent = '✅ 已复制'; setTimeout(function () { btn.textContent = o; }, 1500); }
+    };
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(kw).then(done, function () { fallbackCopy(kw, done); });
+      } else { fallbackCopy(kw, done); }
+    } catch (e) { fallbackCopy(kw, done); }
+  }
+  window.copyKw = copyKw;
+
   function renderBloggerBox() {
     var bb = el('blogger-box');
     if (!bb || bb.dataset.rendered) return;
     var seedDay = new Date().getDate();
-    var list = BLOGGERS.slice();
-    // 每天轮换展示顺序，但内容真实固定
+    var list = STYLE_GUIDES.slice();
     var rot = seedDay % list.length;
     list = list.slice(rot).concat(list.slice(0, rot));
     var cards = list.map(function (b) {
@@ -2792,15 +2908,20 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
         '<span style="font-size:11px;color:#888">' + b.tag + '</span>' +
         '</div>' +
         '<div style="margin:5px 0 7px;color:#555">' + b.exp + '</div>' +
-        '<a href="' + b.url + '" target="_blank" rel="noopener noreferrer" style="font-size:12px;color:var(--brand,#ff758c);text-decoration:none;font-weight:600">去看 TA 的最新穿搭 →</a>' +
-        '</div>';
+        '<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">' +
+        '<a href="' + b.url + '" target="_blank" rel="noopener noreferrer" style="font-size:12px;color:var(--brand,#ff758c);text-decoration:none;font-weight:600">在' + b.plat + '看「' + b.kw + '」→</a>' +
+        '<button type="button" data-kw="' + b.kw + '" onclick="copyKw(this.dataset.kw,this)" style="font-size:11px;color:#666;background:#fff;border:1px solid var(--line,#eee);border-radius:12px;padding:3px 9px;cursor:pointer">📋 复制关键词</button>' +
+        '</div></div>';
     }).join('');
     var chips = PLAT_LINKS.map(function (x) {
       return '<a href="' + x.u + '" target="_blank" rel="noopener noreferrer" style="display:inline-block;margin:4px 6px 0 0;padding:6px 11px;border:1px solid var(--line,#eee);border-radius:16px;font-size:12px;color:#555;text-decoration:none;background:#fff">' + x.n + ' ↗</a>';
     }).join('');
     bb.innerHTML =
       '<div style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--line,#eee)">' +
-      '<div style="font-size:13px;font-weight:600;margin-bottom:6px">👗 博主真实穿搭经验（点链接直接看）</div>' +
+      '<div style="font-size:13px;font-weight:600;margin-bottom:6px">👗 穿搭参考 · 按风格逛平台（内容实时最新）</div>' +
+      '<div style="font-size:11px;color:#999;margin-bottom:8px;line-height:1.6">' +
+      '链接跳转的是各平台<b>官方搜索页</b>。小红书 / 微博网页版需登录，抖音建议用手机打开；' +
+      '若打不开，点「📋 复制关键词」粘贴到对应 App 搜索框即可。</div>' +
       cards +
       '<div style="margin-top:10px;font-size:12px;color:#888">按主题逛平台（实时最新内容）：</div>' +
       '<div style="margin-top:4px">' + chips + '</div>' +
@@ -2812,7 +2933,7 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
   function toggleTemplate(id, on) { state.templateEnabled[id] = !!on; notify(); }
 
   /* ============ 设置 ============ */
-  var APP_VERSION = 'v2026.09.10-v21操作优化版';
+  var APP_VERSION = 'v2026.09.10-v23穿搭参考版';
   function renderSettings() {
     var c = state.config || {};
     // ★全量回填：保存后立刻能看到已存的值，不再"存了像没存"
@@ -2841,7 +2962,8 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
       var page = el('page-settings');
       if (page && page.firstChild) page.insertBefore(vb, page.firstChild);
     }
-    if (vb) vb.textContent = '✅ 当前版本：v2026.09.10-v21操作优化版（①试穿「选择素材」右上角新增「✔ 确认选择」②搭配卡片「确认添加」移到右上角 ③软件名称新增「💾 保存名称」按钮，点了立刻真实生效 ④其他功能零改动）';
+    if (vb) vb.textContent = '✅ 当前版本：v2026.09.10-v22修复版（①修复软件名保存后不生效：localStorage 被图片快取占满导致 saveMeta 静默失败，现自动清理快取后重试 ②真人试穿页底部补回「混元 AI 引擎」配置区 ③其他功能零改动）';
+    try { renderTryonAI(); } catch (e) {}
   }
   function applySettings(form) {
     state.appName = form.appName || '我的衣橱';
@@ -3142,10 +3264,12 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
   /* ============ 初始化 ============ */
   function init() {
     loadMeta();
+    try { applyAppName(); } catch (e) {}   // ★v22：启动时立刻应用软件名（刷新后仍是新名字）
     restoreSession();   // ★刷新恢复会话
     refreshImages();
     bindAll();
     try { bindV9(); } catch (e) { console.warn('bindV9', e); }
+    try { bindTryonAI(); } catch (e) { console.warn('bindTryonAI', e); }
     render();
     try { renderSettings(); } catch (e) {}
     try { setTimeout(hydrateImages, 30); } catch (e) {}
