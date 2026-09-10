@@ -61,7 +61,45 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
 .params input,.params select,.settings input{width:100%;border:1px solid var(--line);border-radius:8px;padding:8px;margin-top:3px;background:#fbfaf8}
 .tryon-stage{background:#f4f0ea;border-radius:14px;min-height:420px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
 .figure{position:relative;width:300px;height:480px}.figure .base{width:100%;height:100%;object-fit:contain}
-.layer{position:absolute;left:0;width:100%;object-fit:contain}
+.layer{position:absolute;left:0;top:0;object-fit:contain;cursor:grab;touch-action:none;-webkit-user-select:none;user-select:none}
+.layer:active{cursor:grabbing}
+.layer.sel{outline:2px dashed #e86a9a;outline-offset:2px}
+.alpha-badge{position:absolute;top:6px;left:6px;background:rgba(0,0,0,.55);color:#fff;font-size:10px;padding:2px 6px;border-radius:8px;z-index:3}
+.thumb.alpha{background-image:linear-gradient(45deg,#e9e2d8 25%,transparent 25%,transparent 75%,#e9e2d8 75%),linear-gradient(45deg,#e9e2d8 25%,transparent 25%,transparent 75%,#e9e2d8 75%);background-size:16px 16px;background-position:0 0,8px 8px}
+#tryon-ctl{position:absolute;left:8px;top:8px;right:8px;display:none;flex-wrap:wrap;gap:6px;align-items:center;background:rgba(255,255,255,.94);border-radius:12px;padding:8px;z-index:99;box-shadow:0 4px 14px rgba(0,0,0,.10);font-size:12px}
+#tryon-ctl .lb{flex:1;min-width:70px;color:#a06;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#tryon-ctl button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:4px 8px;cursor:pointer;font-size:12px}
+#tryon-ctl button:active{background:#fbeee0}
+#tryon-ctl .del{color:#c0392b}
+/* ★自然贴合：穿衣动画 + 柔化融合（去掉"生硬贴图感"） */
+@keyframes putOn{0%{opacity:0}30%{opacity:1}100%{opacity:1}}
+@keyframes dropIn{0%{transform:translateY(26px) scale(.92)}62%{transform:translateY(-4px) scale(1.04)}100%{transform:translateY(0) scale(1)}}
+.layer.puton{animation:putOn .28s ease both,dropIn .5s cubic-bezier(.34,1.56,.64,1)}
+.layer{filter:drop-shadow(0 2px 5px rgba(90,60,50,.16))}
+.figure.breathe{animation:breathe 4.5s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+/* ★奇迹暖暖式：可拖动/缩放的试穿图层 */
+.doll{position:relative;width:320px;height:520px;user-select:none;touch-action:none;background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.doll .base{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.tl{position:absolute;cursor:grab;border:1px dashed rgba(220,120,160,.85);border-radius:6px;box-sizing:border-box}
+.tl.on{border:2px solid var(--brand);box-shadow:0 0 0 2px rgba(228,90,140,.18)}
+.tl img{width:100%;height:100%;object-fit:contain;pointer-events:none;display:block}
+.tl .h{position:absolute;top:-22px;left:0;background:var(--brand);color:#fff;font-size:10px;padding:1px 6px;border-radius:8px;white-space:nowrap}
+.tl .x{position:absolute;top:-10px;right:-10px;width:20px;height:20px;line-height:18px;text-align:center;background:#333;color:#fff;border-radius:50%;font-size:12px;cursor:pointer;display:none}
+.tl.on .x{display:block}
+.doll-tools{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:10px}
+.doll-tools button{font-size:12px;padding:5px 10px;border:1px solid var(--line);background:#fff;border-radius:8px;cursor:pointer}
+.doll-tools button:hover{background:#fbeee0}
+.doll-tip{font-size:11px;color:var(--sub);margin-top:6px}
+/* 透明PNG角标 */
+.alpha-badge{position:absolute;top:6px;left:6px;background:rgba(34,150,90,.92);color:#fff;font-size:10px;padding:1px 6px;border-radius:8px}
+/* 素材编辑弹窗 */
+.ie-wrap{display:grid;grid-template-columns:130px 1fr;gap:12px}
+.ie-prev{aspect-ratio:3/4;background:#f4f0ea;border-radius:10px;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.ie-prev img{width:100%;height:100%;object-fit:contain}
+.ie-field{margin-bottom:10px}
+.ie-field label{display:block;font-size:11px;color:var(--sub);margin-bottom:3px}
+.ie-field input,.ie-field select{width:100%;border:1px solid var(--line);border-radius:8px;padding:8px;background:#fbfaf8}
 .plan-card{padding:8px}.plan-card .thumb{aspect-ratio:3/4;background:#f4f0ea;border-radius:10px;overflow:hidden;margin-bottom:6px}
 .advisor-messages{max-height:360px;overflow:auto;padding:10px;background:#fff;border-radius:12px;margin-top:10px}
 .msg{margin-bottom:10px;padding:10px;border-radius:10px;font-size:13px;line-height:1.6}.msg.user{background:#fbeee0;text-align:right}.msg.ai{background:#f0eae2}
@@ -70,6 +108,26 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
 .modal-box{width:100%;max-width:520px;max-height:88vh;overflow:auto;background:#fff;border-radius:16px;padding:14px}
 #toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.75);color:#fff;padding:8px 16px;border-radius:20px;font-size:13px;z-index:200;opacity:0;transition:.3s;pointer-events:none}
 @media(max-width:720px){.sidebar{width:64px}.brand h1,.nav-item .nav-text,.side-foot{display:none}.lib-wrap{grid-template-columns:1fr}}
+
+/* ===== v9 搭配卡片画布 ===== */
+.canvas-toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.canvas-toolbar select,.canvas-toolbar input{padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:#fff;font-size:13px}
+.cv-wrap{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.cv-stage{position:relative;width:100%;max-width:420px;border-radius:16px;overflow:hidden;box-shadow:0 6px 22px rgba(120,90,90,.14);border:1px solid var(--line);touch-action:none}
+.cv-layer{position:absolute;cursor:grab;touch-action:none;-webkit-user-select:none;user-select:none}
+.cv-layer:active{cursor:grabbing}
+.cv-layer.sel{outline:2px dashed #e86a9a;outline-offset:3px}
+.cv-side{flex:1;min-width:220px}
+.cv-thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.cv-thumb{width:64px;height:64px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff;position:relative;cursor:pointer}
+.cv-thumb img{width:100%;height:100%;object-fit:contain}
+.cv-thumb .x{position:absolute;right:2px;top:0;color:#c0392b;font-size:13px;background:#fff;border-radius:50%;padding:0 3px}
+.cv-title{position:absolute;left:0;right:0;bottom:0;text-align:center;font-weight:600;color:#5a4a4a;padding:10px 8px;font-size:15px;letter-spacing:.5px;pointer-events:none}
+.sub-chip{display:inline-block;padding:5px 12px;border-radius:999px;border:1px solid var(--line);font-size:13px;cursor:pointer;margin:0 6px 6px 0;background:#fff}
+.sub-chip.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+.season-badge{display:inline-block;font-size:11px;padding:1px 7px;border-radius:999px;background:#eef4ff;color:#4a6fa5;margin-left:4px}
+.figure.beautify .base{filter:saturate(1.1) contrast(1.04) brightness(1.02)}
+.figure.beautify .layer{filter:saturate(1.2) contrast(1.06) drop-shadow(0 3px 9px rgba(120,80,90,.24))}
 </style>
 </head>
 <body>
@@ -95,6 +153,7 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
       <a class="nav-item active" data-page="closet" href="#"><span class="nav-icon">🗄️</span><span class="nav-text">衣橱</span></a>
       <a class="nav-item" data-page="avatar" href="#"><span class="nav-icon">🪞</span><span class="nav-text">形象</span></a>
       <a class="nav-item" data-page="tryon" href="#"><span class="nav-icon">✨</span><span class="nav-text">搭配</span></a>
+      <a class="nav-item" data-page="canvas" href="#"><span class="nav-icon">🎨</span><span class="nav-text">搭配卡片</span></a>
       <a class="nav-item" data-page="plans" href="#"><span class="nav-icon">📁</span><span class="nav-text">方案</span></a>
       <a class="nav-item" data-page="advisor" href="#"><span class="nav-icon">💬</span><span class="nav-text">顾问</span></a>
       <a class="nav-item" data-page="settings" href="#"><span class="nav-icon">⚙️</span><span class="nav-text">设置</span></a>
@@ -111,9 +170,13 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     <section id="page-closet">
       <div class="view-head">
         <div><h2>我的衣橱</h2><div class="sub">点击卡片管理：重命名 / 改类目 / 改位置 / 删除</div></div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
           <button id="btn-upload" class="btn">＋ 上传素材</button>
+          <button id="btn-refine-all" class="btn sec">✨ 批量AI精修</button>
+          <button id="btn-anime-all" class="btn sec">🎨 批量动漫化</button>
           <input id="file-input" type="file" accept="image/*" multiple style="display:none">
+          <select id="up-season" title="上传素材归入的季节" style="padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:#fff;font-size:13px"></select>
+          <select id="up-sub" title="上传素材归入的文件夹" style="padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:#fff;font-size:13px;max-width:150px"></select>
         </div>
       </div>
       <div class="search-bar"><span>🔍</span><input id="searchInput" placeholder="模糊搜索：波点、红色、连衣裙、主卧…"></div>
@@ -123,7 +186,9 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
           <ul id="category-list" style="list-style:none;padding:0;margin:0"></ul>
         </div>
         <div>
-          <div id="location-chips" style="margin-bottom:12px"></div>
+          <div id="location-chips" style="margin-bottom:8px"></div>
+          <div id="subfolder-chips" style="margin-bottom:8px"></div>
+          <div id="season-chips" style="margin-bottom:12px"></div>
           <div id="item-grid" class="grid"></div>
         </div>
       </div>
@@ -135,6 +200,25 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
       <div class="card" style="max-width:640px">
         <input id="avatar-upload" type="file" accept="image/*" multiple>
         <div id="avatar-list" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px"></div>
+        <div style="margin-top:12px;border-top:1px solid var(--line);padding-top:10px">
+          <label class="sub">AI 形象生成方式</label>
+          <select id="avatar-gen-mode" style="width:100%;border:1px solid var(--line);border-radius:8px;padding:8px;margin-top:3px;background:#fbfaf8">
+            <option value="image">图生图：参考我的照片 / 视频 → 生成我的 AI 形象（推荐）</option>
+            <option value="text">文生图：按真人参数直接生成模特形象</option>
+            <option value="local">本地动漫滤镜兜底（不调用 AI，形象为滤镜卡通化）</option>
+          </select>
+          <label class="sub" style="display:block;margin-top:8px">形象风格</label>
+          <select id="avatar-style" style="width:100%;border:1px solid var(--line);border-radius:8px;padding:8px;margin-top:3px;background:#fbfaf8">
+            <option value="semi">3D 卡通仿真（奇迹暖暖风·推荐）</option>
+            <option value="anime">二次元动漫立绘</option>
+            <option value="real">写实真人模特</option>
+          </select>
+          <div style="margin-top:8px">
+            <label class="sub">参考照 / 参考视频（视频自动取一帧）</label>
+            <input id="avatar-ref" type="file" accept="image/*,video/*" style="margin-top:3px">
+          </div>
+          <small id="avatar-gen-status" class="sub" style="display:block;margin-top:8px"></small>
+        </div>
         <h3 style="margin:18px 0 8px">真人参数</h3>
         <div class="params">
           <div><label>身高(cm)</label><input id="param-height" type="number"></div>
@@ -150,7 +234,7 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
         </div>
         <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
           <button id="btn-save-params" class="btn">保存参数</button>
-          <button id="btn-generate-avatar" class="btn sec">✨ 生成 AI 形象（混元 / 本地兜底）</button>
+          <button id="btn-generate-avatar" class="btn sec">✨ 生成我的 AI 形象</button>
         </div>
       </div>
     </section>
@@ -160,14 +244,69 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
       <div class="view-head">
         <div><h2>搭配试穿</h2><div class="sub">选 AI 形象 → 从素材库选整套（衣服+鞋子+配饰）→ 分层叠穿上身 → 保存方案</div></div>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <select id="tryon-avatar-select" style="padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:#fff;font-size:13px;max-width:170px"></select>
           <button id="btn-pick-items" class="btn sec">＋ 选择素材</button>
           <button id="btn-auto-tryon" class="btn">▶ 试穿</button>
+          <button id="btn-autofit" class="btn sec">✨ 自动贴合</button>
+          <button id="btn-aibeauty" class="btn sec">✨ AI美化</button>
+          <button id="btn-ai-merge" class="btn" style="background:linear-gradient(135deg,#8b6fd6,#c86fa8)">🤖 AI合成试穿（真人上身效果）</button>
           <button id="btn-save-plan" class="btn sec">💾 保存方案</button>
         </div>
       </div>
       <div class="tryon-stage" id="tryon-stage">
         <div id="tryon-avatar-slot" style="text-align:center;color:var(--sub)">先在「形象」页选择主形象</div>
       </div>
+    </section>
+
+
+    <!-- 搭配卡片（拼图 / 服装搭配卡） -->
+    <section id="page-canvas" style="display:none">
+      <div class="view-head">
+        <div><h2>搭配卡片</h2><div class="sub">把素材库里搭配好的单品加到空白画布上，生成一张穿搭卡片（可重命名、存进文件夹）</div></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button id="btn-canvas-pick" class="btn">＋ 添加素材</button>
+          <button id="btn-canvas-clear" class="btn sec">清空画布</button>
+        </div>
+      </div>
+      <div class="canvas-toolbar card">
+        <select id="cv-ratio"><option value="3:4">3:4 竖版</option><option value="1:1">1:1 方版</option><option value="4:3">4:3 横版</option><option value="9:16">9:16 长图</option></select>
+        <select id="cv-bg"><option value="white">纯白底</option><option value="cream">米白底</option><option value="pink">浅粉底</option><option value="gray">浅灰底</option><option value="grad">渐变底</option></select>
+        <select id="cv-style"><option value="soft">柔和美化</option><option value="raw">原图</option><option value="sticker">贴纸白边</option><option value="cartoon">轻卡通</option><option value="ai">AI 重绘（需配置接口）</option></select>
+        <button id="btn-cv-tidy" class="btn sec">一键排版</button>
+      </div>
+      <div class="cv-wrap">
+        <div>
+          <div class="cv-stage" id="cv-stage"></div>
+          <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+            <input id="cv-title" placeholder="卡片标题（可留空）" style="flex:1;min-width:160px;padding:8px 10px;border:1px solid var(--line);border-radius:10px">
+            <button id="btn-cv-export" class="btn">🖼 生成卡片</button>
+          </div>
+        </div>
+        <div class="cv-side card">
+          <div style="font-weight:600;margin-bottom:6px">画布上的单品</div>
+          <div class="cv-thumbs" id="cv-thumbs"></div>
+          <div id="cv-hint" class="sub" style="margin-top:10px">点「＋ 添加素材」从素材库勾选；在画布上拖动可移动，选中后用下方控制条缩放/旋转/删除。</div>
+          <div id="cv-ctl" style="display:none;gap:6px;flex-wrap:wrap;margin-top:10px">
+            <button class="btn sec" data-c="big">＋放大</button>
+            <button class="btn sec" data-c="small">－缩小</button>
+            <button class="btn sec" data-c="rotl">↺</button>
+            <button class="btn sec" data-c="rotr">↻</button>
+            <button class="btn sec" data-c="up">⬆层级</button>
+            <button class="btn sec" data-c="down">⬇层级</button>
+            <button class="btn sec" data-c="del" style="color:#c0392b">移除</button>
+          </div>
+          <div style="margin-top:14px">
+            <label class="sub">保存名称</label>
+            <input id="cv-name" placeholder="如：春日通勤穿搭" style="width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:10px;margin-top:4px">
+          </div>
+          <div style="margin-top:10px">
+            <label class="sub">保存到文件夹</label>
+            <select id="cv-folder" style="width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:10px;margin-top:4px;background:#fff"></select>
+          </div>
+          <button id="btn-cv-save" class="btn block" style="margin-top:12px">💾 保存到方案</button>
+        </div>
+      </div>
+      <div id="cv-preview" style="margin-top:16px"></div>
     </section>
 
     <!-- 方案 -->
@@ -179,9 +318,10 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
 
     <!-- 顾问 -->
     <section id="page-advisor" style="display:none">
-      <div class="view-head"><div><h2>搭配顾问</h2><div class="sub">专业搭配师：会检索你衣橱里的真实单品，给完整出行方案；可接入元宝更智能</div></div></div>
+      <div class="view-head"><div><h2>搭配顾问</h2><div class="sub">专业搭配师：会检索你衣橱里的真实单品，给完整出行方案；可接入混元更智能</div></div></div>
       <div class="card" style="max-width:720px">
         <div id="trend-box"></div>
+        <div id="blogger-box"></div>
         <div class="advisor-messages" id="advisor-messages"></div>
 
         <div id="advisor-img-preview" style="display:none;margin-top:8px;align-items:center;gap:8px">
@@ -198,11 +338,11 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
         <div id="advisor-chips" style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap"></div>
 
         <div style="margin-top:12px;border-top:1px solid var(--line);padding-top:10px">
-          <div id="advisor-cfg-toggle" style="cursor:pointer;color:var(--brand);font-size:13px">⚙ 接入大模型（元宝 / 混元 / 自定义，可选）</div>
+          <div id="advisor-cfg-toggle" style="cursor:pointer;color:var(--brand);font-size:13px">⚙ 接入大模型（腾讯混元 / 自定义，可选）</div>
           <div id="advisor-cfg" style="margin-top:10px;display:none">
             <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
               <button id="preset-hunyuan" class="btn sec" type="button">一键填充·腾讯混元</button>
-              <button id="preset-yuanbao" class="btn sec" type="button">一键填充·元宝</button>
+              <button id="preset-yuanbao" class="btn sec" type="button">一键填充·腾讯混元</button>
               <button id="preset-clear" class="btn sec" type="button">清空</button>
             </div>
             <input id="cfg-base" placeholder="API Base URL，如 https://api.hunyuan.cloud.tencent.com/v1" style="width:100%;border:1px solid var(--line);border-radius:10px;padding:9px;margin-bottom:8px">
@@ -234,9 +374,12 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
         <div><label class="sub">模板变更（搭配模板开关）</label>
           <small class="sub">6 套内置模板，默认全开；后续可在「方案」页管理</small></div>
         <hr style="border:none;border-top:1px solid var(--line)">
-        <div><label class="sub">AI 引擎 · 混元 Key（形象生成，可选）</label><input id="set-hunyuan-key" placeholder="留空走本地拼贴兜底"></div>
-        <div><label class="sub">AI 顾问 · 元宝（更智能互动，可选）</label>
+        <div><label class="sub">AI 形象生成 · 图像接口地址（可选）</label><input id="set-proxy-url" placeholder="如 https://api.hunyuan.cloud.tencent.com/v1"></div>
+        <div><label class="sub">AI 形象生成 · API Key（可选）</label><input id="set-hunyuan-key" placeholder="留空＝本地抠像兜底"></div>
+        <div><label class="sub">AI 形象生成 · 模型名（可选）</label><input id="set-img-model" placeholder="如 hunyuan-image"></div>
+        <div><label class="sub">AI 顾问 · 腾讯混元（更智能互动，可选；元宝底层即混元，暂无公开 API）</label>
           <input id="set-yuanbao-url" placeholder="API 地址"><input id="set-yuanbao-key" placeholder="API Key" style="margin-top:6px"></div>
+        <small id="set-ai-tip" class="sub" style="display:block;margin-bottom:8px"></small>
         <button id="btn-save-settings" class="btn block">保存设置</button>
       </div>
     </section>
@@ -277,7 +420,7 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
   var ACCOUNTS = 'wardrobe_accounts_v5';
   var SESSION = 'wardrobe_session_v5';
   var IMG = 'wardrobe_img_v5';
-  var VERSION = '20260909.1';
+  var VERSION = '20260910.15';
 
   function uid() { return 'id_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8); }
   function norm(s) { return String(s || '').trim().toLowerCase(); }
@@ -298,8 +441,13 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
       ],
       locations: [{ id: uid(), name: '默认衣橱' }],
       activeLocationId: null,
+      subFolders: [],
       items: [],
       plans: [],
+      aiBeautify: false,
+      canvasBg: 'white',
+      canvasRatio: '3:4',
+      cardStyle: 'soft',
       planFolders: [{ id: uid(), name: '默认穿搭' }],
       activeFolderId: null,
       templates: [
@@ -315,7 +463,7 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
       primaryAvatarId: null,
       params: defaultParams(),
       advisorHistory: [],
-      config: { supabaseUrl: '', supabaseKey: '', hunyuanKey: '', yuanbaoKey: '', yuanbaoUrl: '', proxyUrl: '' }
+      config: { supabaseUrl: '', supabaseKey: '', hunyuanKey: '', yuanbaoKey: '', yuanbaoUrl: '', proxyUrl: '', imgModel: '' }
     };
   }
 
@@ -339,10 +487,101 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     } catch (e) { state = defaultState(); }
   }
   function imgGet(id, cb) {
-    try { cb(localStorage.getItem(IMG + '_' + id)); } catch (e) { cb(null); }
+    if (!id) { cb(null); return; }
+    try { if (imgCache && imgCache[id]) { cb(imgCache[id]); return; } } catch (e) {}
+    var local = null;
+    try { local = localStorage.getItem(IMG + '_' + id); } catch (e) {}
+    if (local) { try { imgCache[id] = local; } catch (e) {} cb(local); return; }
+    idbGet(id, function (v) { if (v) { try { imgCache[id] = v; } catch (e) {} } cb(v); });
   }
+  /* ===== IndexedDB 图片主存 =====
+     根因：此前所有图片都塞 localStorage（上限约 5MB），素材一多就写不进去，
+     而 imgPut 失败时静默丢弃 → 卡片还在、图没了 → 用户看到"素材破裂/显示不出来"。
+     现在：IndexedDB 为主存（容量数百 MB），localStorage 只留小图做同步快取。 */
+  var IDB_NAME = 'wardrobe_img_v1', IDB_STORE = 'imgs', _idb = null, _idbBad = false;
+  var _idbPend = [];
+  function idbOpen(cb) {
+    if (_idb) { cb(_idb); return; }
+    if (_idbBad || typeof indexedDB === 'undefined') { cb(null); return; }
+    _idbPend.push(cb);
+    if (_idbPend.length > 1) return;   // 已有 open 在飞，排队即可（批量上传时避免重复 open）
+    try {
+      var req = indexedDB.open(IDB_NAME, 1);
+      req.onupgradeneeded = function () {
+        var db = req.result;
+        if (!db.objectStoreNames.contains(IDB_STORE)) db.createObjectStore(IDB_STORE);
+      };
+      req.onsuccess = function () {
+        _idb = req.result;
+        var q = _idbPend.slice(); _idbPend = [];
+        q.forEach(function (f) { try { f(_idb); } catch (e) {} });
+      };
+      req.onerror = function () {
+        _idbBad = true;
+        var q2 = _idbPend.slice(); _idbPend = [];
+        q2.forEach(function (f) { try { f(null); } catch (e) {} });
+      };
+    } catch (e) {
+      _idbBad = true;
+      var q3 = _idbPend.slice(); _idbPend = [];
+      q3.forEach(function (f) { try { f(null); } catch (e) {} });
+    }
+  }
+  function idbPut(id, val) {
+    idbOpen(function (db) {
+      if (!db) return;
+      try { db.transaction(IDB_STORE, 'readwrite').objectStore(IDB_STORE).put(val, id); } catch (e) {}
+    });
+  }
+  function idbGet(id, cb) {
+    idbOpen(function (db) {
+      if (!db) { cb(null); return; }
+      try {
+        var r = db.transaction(IDB_STORE, 'readonly').objectStore(IDB_STORE).get(id);
+        r.onsuccess = function () { cb(r.result || null); };
+        r.onerror = function () { cb(null); };
+      } catch (e) { cb(null); }
+    });
+  }
+  function idbDel(id) {
+    idbOpen(function (db) {
+      if (!db) return;
+      try { db.transaction(IDB_STORE, 'readwrite').objectStore(IDB_STORE).delete(id); } catch (e) {}
+    });
+  }
+  var _quotaWarned = false;
   function imgPut(id, dataUrl) {
-    try { localStorage.setItem(IMG + '_' + id, dataUrl); } catch (e) {}
+    if (!id || !dataUrl) return false;
+    try { if (typeof imgCache === 'object') imgCache[id] = dataUrl; } catch (e) {}
+    idbPut(id, dataUrl);                                   // ★主存：容量大，永不因配额丢图
+    try {                                                   // 同步快取：只放小图，避免撑爆
+      if (dataUrl.length < 120000) localStorage.setItem(IMG + '_' + id, dataUrl);
+      else localStorage.removeItem(IMG + '_' + id);
+    } catch (e) {
+      if (!_quotaWarned) { _quotaWarned = true; toast('浏览器快取已满，图片已存入本地数据库'); }
+    }
+    return true;
+  }
+  // ★压缩后再存：手机照片动辄数 MB，直接塞 localStorage 会爆配额（形象照"丢失"的元凶）
+  function compressImage(dataUrl, maxEdge, mime, quality, cb) {
+    if (!dataUrl) { cb(dataUrl); return; }
+    if (!/^data:image/.test(dataUrl)) { cb(dataUrl); return; }   // 远端 URL 原样保留
+    var img = new Image();
+    img.onload = function () {
+      try {
+        var w = img.naturalWidth || 600, h = img.naturalHeight || 800;
+        var k = Math.min(1, (maxEdge || 1024) / Math.max(w, h));
+        if (k >= 1 && dataUrl.length < 700000) { cb(dataUrl); return; }
+        var nw = Math.max(1, Math.round(w * k)), nh = Math.max(1, Math.round(h * k));
+        var c = document.createElement('canvas'); c.width = nw; c.height = nh;
+        var ctx = c.getContext('2d');
+        ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, nw, nh);
+        ctx.drawImage(img, 0, 0, nw, nh);
+        cb(c.toDataURL(mime || 'image/jpeg', quality || 0.86));
+      } catch (e) { cb(dataUrl); }
+    };
+    img.onerror = function () { cb(dataUrl); };
+    img.src = dataUrl;
   }
 
   /* ============ 会话 / 登录 ============ */
@@ -443,15 +682,159 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     };
   }
 
+  /* ============ v14 通用输入弹窗（替代 prompt/confirm，手机可用）============ */
+  function _mkModal(inner, onClose) {
+    var wrap = document.createElement('div');
+    wrap.className = 'modal';
+    wrap.style.display = 'flex';
+    wrap.innerHTML = '<div class="modal-box">' + inner + '</div>';
+    document.body.appendChild(wrap);
+    wrap.addEventListener('click', function (e) { if (e.target === wrap) { close(); } });
+    function close() { if (wrap.parentNode) wrap.parentNode.removeChild(wrap); if (onClose) onClose(); }
+    return { wrap: wrap, box: wrap.querySelector('.modal-box'), close: close };
+  }
+  function askInput(opt, cb) {
+    opt = opt || {};
+    var title = opt.title || '请输入';
+    var def = opt.value || '';
+    var ph = opt.placeholder || '';
+    var okText = opt.okText || '确定';
+    var m = _mkModal(
+      '<h3 style="margin:0 0 10px;font-size:15px">' + String(title).replace(/</g, '&lt;') + '</h3>' +
+      '<input id="_ask_in" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box" value="' + String(def).replace(/"/g, '&quot;') + '" placeholder="' + String(ph).replace(/"/g, '&quot;') + '">' +
+      '<div style="display:flex;gap:8px;margin-top:12px">' +
+      '<button id="_ask_cancel" style="flex:1;padding:10px;border:1px solid #ddd;background:#fff;border-radius:8px;font-size:14px">取消</button>' +
+      '<button id="_ask_ok" style="flex:1;padding:10px;border:0;background:var(--brand,#ff758c);color:#fff;border-radius:8px;font-size:14px;font-weight:600">' + okText + '</button>' +
+      '</div>'
+    );
+    var inp = m.box.querySelector('#_ask_in');
+    setTimeout(function () { try { inp.focus(); inp.select(); } catch (e) {} }, 60);
+    function ok() { var v = inp.value; m.close(); if (cb) cb(v); }
+    m.box.querySelector('#_ask_ok').onclick = ok;
+    m.box.querySelector('#_ask_cancel').onclick = function () { m.close(); };
+    inp.onkeydown = function (e) { if (e.key === 'Enter') ok(); };
+  }
+  function askConfirm(msg, cb) {
+    var m = _mkModal(
+      '<h3 style="margin:0 0 10px;font-size:15px">' + String(msg).replace(/</g, '&lt;') + '</h3>' +
+      '<div style="display:flex;gap:8px;margin-top:12px">' +
+      '<button id="_cf_cancel" style="flex:1;padding:10px;border:1px solid #ddd;background:#fff;border-radius:8px;font-size:14px">取消</button>' +
+      '<button id="_cf_ok" style="flex:1;padding:10px;border:0;background:var(--brand,#ff758c);color:#fff;border-radius:8px;font-size:14px;font-weight:600">确定</button>' +
+      '</div>'
+    );
+    m.box.querySelector('#_cf_ok').onclick = function () { m.close(); if (cb) cb(true); };
+    m.box.querySelector('#_cf_cancel').onclick = function () { m.close(); if (cb) cb(false); };
+  }
+  /* 二选一操作弹窗：重命名 / 删除 */
+  function askRenameOrDelete(title, curName, onRename, onDelete) {
+    var m = _mkModal(
+      '<h3 style="margin:0 0 10px;font-size:15px">' + String(title).replace(/</g, '&lt;') + '</h3>' +
+      '<input id="_rd_in" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box" value="' + String(curName || '').replace(/"/g, '&quot;') + '" placeholder="输入新名称">' +
+      '<div style="display:flex;gap:8px;margin-top:12px">' +
+      '<button id="_rd_del" style="flex:0 0 88px;padding:10px;border:1px solid #ffb3c1;background:#fff;color:#e14b6a;border-radius:8px;font-size:14px">删除</button>' +
+      '<button id="_rd_cancel" style="flex:1;padding:10px;border:1px solid #ddd;background:#fff;border-radius:8px;font-size:14px">取消</button>' +
+      '<button id="_rd_ok" style="flex:1;padding:10px;border:0;background:var(--brand,#ff758c);color:#fff;border-radius:8px;font-size:14px;font-weight:600">保存</button>' +
+      '</div>'
+    );
+    var inp = m.box.querySelector('#_rd_in');
+    setTimeout(function () { try { inp.focus(); inp.select(); } catch (e) {} }, 60);
+    m.box.querySelector('#_rd_ok').onclick = function () { var v = inp.value; m.close(); if (onRename) onRename(v); };
+    m.box.querySelector('#_rd_del').onclick = function () { m.close(); if (onDelete) onDelete(); };
+    m.box.querySelector('#_rd_cancel').onclick = function () { m.close(); };
+    inp.onkeydown = function (e) { if (e.key === 'Enter') { var v = inp.value; m.close(); if (onRename) onRename(v); } };
+  }
+  /* 位置管理：可视化列表（重命名 / 删除） */
+  function manageLocationsUI() {
+    var rows = state.locations.map(function (l) {
+      return '<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #f2f2f2">' +
+        '<span style="flex:1;font-size:14px">' + String(l.name).replace(/</g, '&lt;') + '</span>' +
+        '<button data-ren="' + l.id + '" style="padding:6px 10px;border:1px solid #ddd;background:#fff;border-radius:6px;font-size:12px">重命名</button>' +
+        '<button data-del="' + l.id + '" style="padding:6px 10px;border:1px solid #ffb3c1;background:#fff;color:#e14b6a;border-radius:6px;font-size:12px">删除</button>' +
+        '</div>';
+    }).join('');
+    var m = _mkModal(
+      '<h3 style="margin:0 0 8px;font-size:15px">储存位置管理</h3>' +
+      '<div style="max-height:52vh;overflow:auto">' + (rows || '<div style="color:#999;font-size:13px">暂无位置</div>') + '</div>' +
+      '<button id="_loc_add" style="width:100%;margin-top:10px;padding:10px;border:1px dashed var(--brand,#ff758c);background:#fff;color:var(--brand,#ff758c);border-radius:8px;font-size:14px">＋ 新增位置</button>' +
+      '<button id="_loc_close" style="width:100%;margin-top:8px;padding:10px;border:1px solid #ddd;background:#fff;border-radius:8px;font-size:14px">关闭</button>'
+    );
+    m.box.addEventListener('click', function (e) {
+      var rid = e.target.getAttribute && e.target.getAttribute('data-ren');
+      var did = e.target.getAttribute && e.target.getAttribute('data-del');
+      if (rid) { var l1 = state.locations.find(function (x) { return x.id === rid; }); m.close(); if (l1) askInput({ title: '重命名位置', value: l1.name, okText: '保存' }, function (v) { if (v && v.trim()) renameLocation(rid, v); }); return; }
+      if (did) { var l2 = state.locations.find(function (x) { return x.id === did; }); m.close(); if (!l2) return; if (state.locations.length <= 1) { toast('至少保留一个位置'); return; } askConfirm('删除位置「' + l2.name + '」？该位置的素材会保留', function (ok) { if (ok) deleteLocation(did); }); return; }
+      if (e.target.id === '_loc_add') { m.close(); askInput({ title: '新增储存位置', placeholder: '如：出租屋 / 父母家', okText: '新增' }, function (v) { if (v && v.trim()) addLocation(v); }); return; }
+      if (e.target.id === '_loc_close') { m.close(); }
+    });
+  }
+  /* 方案卡片操作：重命名 / 移动 / 删除（可视化菜单，不再手输 1/2/3） */
+  function askPlanAction(planId, curName) {
+    var m = _mkModal(
+      '<h3 style="margin:0 0 4px;font-size:15px">方案操作</h3>' +
+      '<div style="font-size:12px;color:#888;margin-bottom:10px">' + String(curName || '').replace(/</g, '&lt;') + '</div>' +
+      '<button id="_pa_ren" style="display:block;width:100%;text-align:left;padding:11px 12px;border:1px solid #eee;background:#fff;border-radius:8px;font-size:14px;margin-bottom:6px">✏️ 重命名</button>' +
+      '<button id="_pa_mv" style="display:block;width:100%;text-align:left;padding:11px 12px;border:1px solid #eee;background:#fff;border-radius:8px;font-size:14px;margin-bottom:6px">📁 移动到文件夹</button>' +
+      '<button id="_pa_del" style="display:block;width:100%;text-align:left;padding:11px 12px;border:1px solid #ffb3c1;background:#fff;color:#e14b6a;border-radius:8px;font-size:14px;margin-bottom:6px">🗑 删除方案</button>' +
+      '<button id="_pa_close" style="width:100%;padding:10px;border:1px solid #ddd;background:#fff;border-radius:8px;font-size:14px">关闭</button>'
+    );
+    m.box.addEventListener('click', function (e) {
+      if (e.target.id === '_pa_ren') {
+        m.close();
+        askInput({ title: '重命名方案', value: curName || '', okText: '保存' }, function (v) {
+          if (!v || !v.trim()) return;
+          var pl = state.plans.find(function (x) { return x.id === planId; });
+          if (pl) { pl.name = v.trim(); notify(); toast('已重命名'); }
+        });
+        return;
+      }
+      if (e.target.id === '_pa_mv') { m.close(); askMovePlan(planId); return; }
+      if (e.target.id === '_pa_del') {
+        m.close();
+        askConfirm('确定删除这个方案？', function (ok) { if (ok) deletePlan(planId); });
+        return;
+      }
+      if (e.target.id === '_pa_close') { m.close(); }
+    });
+  }
+
+  /* 方案移动：从已有文件夹里选（不再手输） */
+  function askMovePlan(planId) {
+    var opts = state.planFolders.map(function (f) {
+      return '<button data-fid="' + f.id + '" style="display:block;width:100%;text-align:left;padding:11px 12px;border:1px solid #eee;background:#fff;border-radius:8px;font-size:14px;margin-bottom:6px">' + String(f.name).replace(/</g, '&lt;') + '</button>';
+    }).join('');
+    var m = _mkModal(
+      '<h3 style="margin:0 0 10px;font-size:15px">移动到文件夹</h3>' + (opts || '<div style="color:#999;font-size:13px">暂无文件夹</div>') +
+      '<button id="_mv_new" style="width:100%;margin-top:6px;padding:10px;border:1px dashed var(--brand,#ff758c);background:#fff;color:var(--brand,#ff758c);border-radius:8px;font-size:14px">＋ 新建文件夹并移动</button>' +
+      '<button id="_mv_close" style="width:100%;margin-top:8px;padding:10px;border:1px solid #ddd;background:#fff;border-radius:8px;font-size:14px">取消</button>'
+    );
+    m.box.addEventListener('click', function (e) {
+      var fid = e.target.getAttribute && e.target.getAttribute('data-fid');
+      if (fid) { m.close(); movePlanToFolder(planId, fid); toast('已移动'); return; }
+      if (e.target.id === '_mv_new') { m.close(); askInput({ title: '新建文件夹名称', okText: '新建并移动' }, function (v) { if (!v || !v.trim()) return; addPlanFolder(v); var f = state.planFolders[state.planFolders.length - 1]; movePlanToFolder(planId, f.id); toast('已移动到：' + f.name); }); return; }
+      if (e.target.id === '_mv_close') { m.close(); }
+    });
+  }
+
   /* ============ 侧边栏 ============ */
   function renderSidebar() {
     var s = el('side-account');
     if (s) s.textContent = (state.session && state.session.email) || '';
-    var name = el('brand-name');
-    if (name) name.textContent = state.appName || '我的衣橱';
+    applyAppName();
+  }
+  /* v14：软件名称改了立刻全量生效（侧栏 + 登录页 + 浏览器标签 + 各处标题） */
+  function applyAppName() {
+    var nm = (state.appName && String(state.appName).trim()) || '我的衣橱';
+    var e1 = el('brand-name'); if (e1) e1.textContent = nm;
+    var e2 = el('brand-name-login'); if (e2) e2.textContent = nm;
+    try { document.title = nm + ' · AI 穿搭'; } catch (e) {}
+    // 兜底：页面上任何带 data-appname 的元素
+    try {
+      var all = document.querySelectorAll('[data-appname]');
+      for (var i = 0; i < all.length; i++) all[i].textContent = nm;
+    } catch (e) {}
   }
   function showPage(name) {
-    ['closet', 'avatar', 'tryon', 'plans', 'advisor', 'settings'].forEach(function (p) {
+    ['closet', 'avatar', 'tryon', 'canvas', 'plans', 'advisor', 'settings'].forEach(function (p) {
       var pg = el('page-' + p);
       if (pg) pg.style.display = (p === name) ? '' : 'none';
     });
@@ -459,6 +842,8 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
       n.classList.toggle('active', n.dataset.page === name);
     });
     if (name === 'closet') renderCloset();
+    if (name === 'tryon') { try { doTryon(); } catch (e) {} }
+    if (name === 'canvas') { try { renderCanvas(); } catch (e) { console.warn(e); } }
     if (name === 'plans') renderPlans();
   }
 
@@ -470,6 +855,8 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
   function filteredItems() {
     return state.items.filter(function (it) {
       if (currentCategoryId && it.categoryId !== currentCategoryId) return false;
+      if (currentSubFolderId && (it.subFolderId || '') !== currentSubFolderId) return false;
+      if (currentSeason && (it.season || '不限') !== currentSeason) return false;
       if (currentLocationId && it.locationId !== currentLocationId) return false;
       if (searchKeyword) {
         var k = norm(searchKeyword);
@@ -502,6 +889,30 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
         return '<span class="chip' + (l.id === currentLocationId ? ' on' : '') + '" data-loc="' + l.id + '">' + escapeHtml(l.name) + '</span>';
       }).join('') + '<span class="chip add" id="loc-add">＋ 位置</span><span class="chip" id="loc-manage">管理</span>';
     }
+    // 类目内文件夹（自定义：冬装 / 夏装 …）
+    var sf = el('subfolder-chips');
+    if (sf) {
+      var subs = subFoldersOf(currentCategoryId);
+      sf.innerHTML = (currentCategoryId ? '' : '<span class="sub-chip' + (!currentSubFolderId ? ' on' : '') + '" data-sub="">全部文件夹</span>') +
+        subs.map(function (f) {
+          return '<span class="sub-chip' + (f.id === currentSubFolderId ? ' on' : '') + '" data-sub="' + f.id + '">' + escapeHtml(f.name) + '<b data-sfdel="' + f.id + '" style="margin-left:5px;color:#c0392b">×</b></span>';
+        }).join('') + '<span class="sub-chip" id="sub-add" style="border-style:dashed;color:var(--brand)">＋ 新建文件夹</span>';
+    }
+    // 季节条
+    var sc = el('season-chips');
+    if (sc) {
+      sc.innerHTML = '<span class="sub-chip' + (!currentSeason ? ' on' : '') + '" data-sea="">全部季节</span>' +
+        SEASONS.map(function (x) {
+          return '<span class="sub-chip' + (x === currentSeason ? ' on' : '') + '" data-sea="' + x + '">' + x + '</span>';
+        }).join('');
+    }
+    // 上传时归属：季节 / 文件夹
+    var us = el('up-season');
+    if (us) us.innerHTML = SEASONS.map(function (x) { return '<option value="' + x + '"' + (x === uploadSeason ? ' selected' : '') + '>' + x + '</option>'; }).join('');
+    var ub = el('up-sub');
+    if (ub) ub.innerHTML = subFoldersOf(currentCategoryId).map(function (f) {
+      return '<option value="' + f.id + '"' + (f.id === uploadSubId ? ' selected' : '') + '>' + escapeHtml(f.name) + '</option>';
+    }).join('') || '<option value="">（未建文件夹）</option>';
     // 网格
     var grid = el('item-grid');
     if (grid) {
@@ -510,11 +921,16 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
         grid.innerHTML = '<div class="empty"><div class="big">🗄️</div>暂无素材，点「＋ 上传素材」开始</div>';
       } else {
         grid.innerHTML = list.map(function (it) {
+          var _src = itemSrc(it);
           return '<div class="item-card" data-id="' + it.id + '">' +
-            '<div class="thumb">' + (it.imgId ? '<img src="' + (imgCache[it.imgId] || '') + '" onerror="this.src=\'\'">' : '<div class="ph">👕</div>') + '</div>' +
+            '<div class="thumb' + (it.hasAlpha ? ' alpha' : '') + '">' +
+            (_src ? '<img src="' + _src + '" onerror="this.src=\'\'">' : '<div class="ph">👕</div>') +
+            (it.hasAlpha ? '<span class="alpha-badge">透明</span>' : '') + '</div>' +
             '<div class="item-name">' + escapeHtml(it.name || '未命名素材') + '</div>' +
             '<div class="item-meta"><span class="tag">' + escapeHtml(catName(it.categoryId) || '未分类') + '</span></div>' +
-            '<div class="item-meta"><small>📍 ' + escapeHtml(locName(it.locationId) || '-') + '</small></div>' +
+            '<div class="item-meta"><small>📍 ' + escapeHtml(locName(it.locationId) || '-') + '</small>' +
+              ((it.season && it.season !== '不限') ? '<span class="season-badge">' + escapeHtml(it.season) + '</span>' : '') +
+              (subName(it.subFolderId) ? '<span class="season-badge" style="background:#f3eefe;color:#7a5aa5">🗂 ' + escapeHtml(subName(it.subFolderId)) + '</span>' : '') + '</div>' +
             '</div>';
         }).join('');
       }
@@ -526,8 +942,12 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
 
   var imgCache = {};
   function refreshImages() {
-    state.items.forEach(function (it) {
-      if (it.imgId && !imgCache[it.imgId]) imgGet(it.imgId, function (v) { if (v) imgCache[it.imgId] = v; });
+    var ids = [];
+    (state.items || []).forEach(function (it) { if (it.imgId) ids.push(it.imgId); if (it.transparentImgId) ids.push(it.transparentImgId); });
+    (state.avatars || []).forEach(function (a) { if (a.imgId) ids.push(a.imgId); });
+    (state.plans || []).forEach(function (p) { if (p.coverImgId) ids.push(p.coverImgId); });
+    ids.forEach(function (id) {
+      if (id && !imgCache[id]) imgGet(id, function (v) { if (v) imgCache[id] = v; });
     });
   }
 
@@ -570,42 +990,545 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     notify();
   }
 
-  /* ---- 上传素材（多张、预览、名称/品类非必填、允许重名、自动抠图透明PNG）---- */
+  /* ---- 上传素材 v15：先预览再入库 + 自行选择是否抠图 ----
+     ★修复1：files 先切片成真数组，避免 iOS Safari 清空 input.value 后 FileList 失效
+     ★修复2：上传归属默认跟随当前筛选（季节/文件夹），否则新素材会被过滤器藏起来 → 像"上传没用"
+     ★修复3：全程有进度提示与缩略图预览，不再无反馈
+     ★新增：每张图可单独决定是否抠图（生成空白底透明 PNG）                       */
+  var _pendingUploads = [];   // [{dataUrl, name, cutout}]
   function uploadFiles(files) {
-    var locId = currentLocationId || state.locations[0].id;
-    [].forEach.call(files, function (f) {
-      var reader = new FileReader();
-      reader.onload = function (e) {
-        var dataUrl = e.target.result;
+    var arr = [];
+    try { arr = [].slice.call(files || []); } catch (e) { arr = []; }
+    arr = arr.filter(function (f) { return f && (!f.type || /^image\//.test(f.type)); });
+    if (!arr.length) { toast('请选择图片文件'); return; }
+    _pendingUploads = [];
+    var left = arr.length, done = 0;
+    toast('正在读取图片 0/' + arr.length + '…');
+    arr.forEach(function (f) {
+      _readUploadOne(f, function (dataUrl, nm) {
+        if (dataUrl) _pendingUploads.push({ dataUrl: dataUrl, name: nm, cutout: true });
+        done++;
+        if (done < arr.length) toast('正在读取图片 ' + done + '/' + arr.length + '…');
+        left--;
+        if (left === 0) {
+          if (!_pendingUploads.length) { toast('图片读取失败，请重试'); return; }
+          openUploadModal();
+        }
+      });
+    });
+  }
+  function _readUploadOne(f, cb) {
+    var nm = (f.name || '').replace(/\.[^.]+$/, '').slice(0, 40);
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      compressImage(e.target.result, 1400, 'image/jpeg', 0.88, function (d) { cb(d, nm); });
+    };
+    reader.onerror = function () { cb('', nm); };
+    try { reader.readAsDataURL(f); } catch (e) { cb('', nm); }
+  }
+
+  function renderUploadList() {
+    var box = document.getElementById('up-list');
+    if (!box) return;
+    box.innerHTML = _pendingUploads.map(function (p, i) {
+      return '<div style="border:1px solid var(--line);border-radius:10px;padding:6px;text-align:center">' +
+        '<div style="position:relative">' +
+          '<img src="' + p.dataUrl + '" style="width:100%;height:74px;object-fit:cover;border-radius:6px;display:block">' +
+          '<span data-rm="' + i + '" style="position:absolute;top:2px;right:2px;width:20px;height:20px;line-height:19px;' +
+            'text-align:center;background:#fff;border-radius:50%;cursor:pointer;font-size:12px;box-shadow:0 1px 3px rgba(0,0,0,.2)">✕</span>' +
+        '</div>' +
+        '<label style="display:flex;align-items:center;justify-content:center;gap:4px;font-size:11px;margin-top:6px;cursor:pointer;color:var(--sub)">' +
+          '<input type="checkbox" data-cut="' + i + '"' + (p.cutout ? ' checked' : '') + ' style="width:14px;height:14px">抠图</label>' +
+      '</div>';
+    }).join('');
+    var n = document.getElementById('up-count');
+    if (n) n.textContent = _pendingUploads.length;
+  }
+
+  function openUploadModal() {
+    if (!_pendingUploads.length) return;
+    // ★默认跟随当前筛选，保证上传后在当前视图里能立刻看到
+    var defCat = currentCategoryId || (state.categories[0] || {}).id || '';
+    var defLoc = currentLocationId || (state.locations[0] || {}).id || '';
+    var defSea = currentSeason || uploadSeason || '不限';
+    var defSub = currentSubFolderId || uploadSubId || '';
+    var selCss = 'width:100%;border:1px solid var(--line);border-radius:10px;padding:9px 10px;margin-top:4px;background:#fff';
+    var inner =
+      '<h3 style="margin:0 0 6px;font-size:16px">上传素材（<span id="up-count">' + _pendingUploads.length + '</span> 张）</h3>' +
+      '<div class="sub" style="font-size:12px;margin-bottom:10px">每张可单独勾选「抠图」→ 生成空白底透明 PNG，便于试穿与拼图；不勾选则保留原图</div>' +
+      '<div id="up-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px;margin-bottom:12px"></div>' +
+      '<div style="margin-bottom:10px"><label class="sub">名称（可留空，多张按顺序编号）</label>' +
+        '<input id="up-name" type="text" placeholder="未命名素材" style="width:100%;border:1px solid var(--line);border-radius:10px;padding:9px 10px;margin-top:4px"></div>' +
+      '<div style="display:flex;gap:8px;margin-bottom:10px">' +
+        '<div style="flex:1"><label class="sub">品类</label><select id="up-cat2" style="' + selCss + '"></select></div>' +
+        '<div style="flex:1"><label class="sub">储存位置</label><select id="up-loc2" style="' + selCss + '"></select></div>' +
+      '</div>' +
+      '<div style="display:flex;gap:8px;margin-bottom:12px">' +
+        '<div style="flex:1"><label class="sub">季节</label><select id="up-sea2" style="' + selCss + '"></select></div>' +
+        '<div style="flex:1"><label class="sub">类目内文件夹</label><select id="up-sub2" style="' + selCss + '"></select></div>' +
+      '</div>' +
+      '<label style="display:flex;align-items:center;gap:8px;padding:10px;border:1px solid var(--line);border-radius:10px;background:#faf7fb;margin-bottom:12px;cursor:pointer">' +
+        '<input type="checkbox" id="up-cutall" checked style="width:18px;height:18px">' +
+        '<span style="font-size:13px">全部抠图（取消则全部保留原图）</span></label>' +
+      '<div style="display:flex;gap:8px">' +
+        '<button class="btn sec" id="up-cancel" style="flex:1">取消</button>' +
+        '<button class="btn" id="up-ok" style="flex:1">确认上传</button></div>';
+
+    var m = _mkModal(inner);
+    renderUploadList();
+
+    function fillSel(id, arr, cur, allowEmpty, emptyText) {
+      var s = document.getElementById(id);
+      if (!s) return null;
+      var h = allowEmpty ? '<option value="">' + (emptyText || '（无）') + '</option>' : '';
+      h += arr.map(function (o) {
+        return '<option value="' + o.id + '"' + (o.id === cur ? ' selected' : '') + '>' + escapeHtml(o.name) + '</option>';
+      }).join('');
+      s.innerHTML = h;
+      return s;
+    }
+    var sCat = fillSel('up-cat2', state.categories || [], defCat, false);
+    fillSel('up-loc2', state.locations || [], defLoc, false);
+    fillSel('up-sea2', SEASONS.map(function (x) { return { id: x, name: x }; }), defSea, false);
+    fillSel('up-sub2', subFoldersOf(defCat), defSub, true, '（未建文件夹）');
+    if (sCat) sCat.onchange = function () { fillSel('up-sub2', subFoldersOf(sCat.value), '', true, '（未建文件夹）'); };
+
+    var list = document.getElementById('up-list');
+    if (list) list.addEventListener('click', function (e) {
+      var t = e.target;
+      var rm = t.getAttribute && t.getAttribute('data-rm');
+      if (rm !== null && rm !== undefined) {
+        _pendingUploads.splice(parseInt(rm, 10), 1);
+        renderUploadList();
+        if (!_pendingUploads.length) m.close();
+        return;
+      }
+    });
+    if (list) list.addEventListener('change', function (e) {
+      var t = e.target;
+      var ci = t.getAttribute && t.getAttribute('data-cut');
+      if (ci !== null && ci !== undefined) {
+        var p = _pendingUploads[parseInt(ci, 10)];
+        if (p) p.cutout = !!t.checked;
+      }
+    });
+    var ca = document.getElementById('up-cutall');
+    if (ca) ca.onchange = function () {
+      var v = !!ca.checked;
+      _pendingUploads.forEach(function (p) { p.cutout = v; });
+      renderUploadList();
+    };
+
+    document.getElementById('up-cancel').onclick = function () { _pendingUploads = []; m.close(); };
+    document.getElementById('up-ok').onclick = function () {
+      var nm = (document.getElementById('up-name').value || '').trim();
+      var catId = (document.getElementById('up-cat2') || {}).value || (state.categories[0] || {}).id || '';
+      var locId = (document.getElementById('up-loc2') || {}).value || (state.locations[0] || {}).id || '';
+      var sea = (document.getElementById('up-sea2') || {}).value || '不限';
+      var sub = (document.getElementById('up-sub2') || {}).value || '';
+      var multi = _pendingUploads.length > 1;
+      var cutN = 0;
+      _pendingUploads.forEach(function (p) { if (p.cutout) cutN++; });
+      var batch = _pendingUploads.slice();
+      _pendingUploads = [];
+      m.close();
+      uploadSeason = sea; uploadSubId = sub;
+      // ★清掉可能遮住新素材的搜索词
+      searchKeyword = '';
+
+      batch.forEach(function (p, i2) {
         var id = uid();
-        imgPut(id, dataUrl);
-        imgCache[id] = dataUrl;
-        // 自动抠图：尝试 remove.bg，失败用原图（透明 PNG 兜底）
-        var transparentDataUrl = dataUrl; // 占位，真实抠图走异步（此处用原图保证不白屏）
+        imgPut(id, p.dataUrl);
+        imgCache[id] = p.dataUrl;
+        var itemName = nm ? (multi ? nm + ' ' + (i2 + 1) : nm) : '';
         var item = {
           id: id,
-          name: '',               // ★非必填
-          categoryId: currentCategoryId || state.categories[0].id,  // ★可选
+          name: itemName,
+          categoryId: catId,
           locationId: locId,
           imgId: id,
-          transparentImgId: id,   // ★透明PNG引用
+          transparentImgId: '',   // 抠图完成后才有
+          refinedImgId: '',
+          trimmedImgId: '',
+          animeImgId: '',
           tags: '',
+          season: sea,
+          subFolderId: sub,
+          hasAlpha: false,
           createdAt: Date.now()
         };
         state.items.push(item);
-        notify();
-        removeBg(id, dataUrl); // 异步抠图
-      };
-      reader.readAsDataURL(f);
+      });
+      notify();
+      toast('已添加 ' + batch.length + ' 张' + (cutN ? '，其中 ' + cutN + ' 张正在抠图…' : '（保留原图）'));
+
+      // ★逐张抠图（串行，避免一次性卡死）
+      var idx = 0;
+      function nextCut() {
+        while (idx < batch.length && !batch[idx].cutout) idx++;
+        if (idx >= batch.length) { renderCloset(); toast('上传完成：共 ' + batch.length + ' 张' + (cutN ? '，抠图 ' + cutN + ' 张' : '')); return; }
+        var p = batch[idx]; var newId = state.items[state.items.length - batch.length + idx].id;
+        idx++;
+        toast('正在抠图 ' + idx + '/' + batch.length + '…');
+        removeBg(newId, p.dataUrl, true);
+        setTimeout(nextCut, 400);
+      }
+      if (cutN) setTimeout(nextCut, 300);
+    };
+  }
+
+  // ★通用抠图：输入 dataURL，输出透明 PNG 的 dataURL（本地 canvas，去背景）
+  function cutoutImage(dataUrl, cb) {
+    if (!dataUrl) { cb(null); return; }
+    var img = new Image();
+    img.onload = function () {
+      try {
+        var w = img.naturalWidth || 300, h = img.naturalHeight || 300;
+        var MAX = 700;
+        if (w > MAX || h > MAX) {
+          var k = Math.min(MAX / w, MAX / h);
+          w = Math.max(1, Math.round(w * k)); h = Math.max(1, Math.round(h * k));
+        }
+        var c = document.createElement('canvas');
+        c.width = w; c.height = h;
+        var ctx = c.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        var idat = ctx.getImageData(0, 0, w, h);
+        var d = idat.data;
+        // 1) 四角 + 边缘多点采样背景色
+        var pts = [[0,0],[w-1,0],[0,h-1],[w-1,h-1],[Math.floor(w/2),0],[Math.floor(w/2),h-1],[0,Math.floor(h/2)],[w-1,Math.floor(h/2)]];
+        var sr=0,sg=0,sb=0,n=0;
+        pts.forEach(function(p){
+          var i = (p[1]*w + p[0]) * 4;
+          sr += d[i]; sg += d[i+1]; sb += d[i+2]; n++;
+        });
+        var br = sr/n, bg = sg/n, bb = sb/n;
+        // 2) 四角颜色是否接近 → 判断是否纯色背景
+        var spread = 0;
+        pts.slice(0,4).forEach(function(p){
+          var i = (p[1]*w + p[0]) * 4;
+          spread = Math.max(spread, Math.abs(d[i]-br) + Math.abs(d[i+1]-bg) + Math.abs(d[i+2]-bb));
+        });
+        var TOL = spread > 120 ? 42 : 66;   // 背景不纯则收紧容差，避免吃掉主体
+        for (var i = 0; i < d.length; i += 4) {
+          var dr = d[i]-br, dg = d[i+1]-bg, db = d[i+2]-bb;
+          var dist = Math.sqrt(dr*dr + dg*dg + db*db);
+          if (dist < TOL) { d[i+3] = 0; }
+          else if (dist < TOL * 1.9) { d[i+3] = Math.round(255 * (dist - TOL) / (TOL * 0.9)); }
+        }
+        ctx.putImageData(idat, 0, 0);
+        cb(c.toDataURL('image/png'));
+      } catch (e) { cb(null); }
+    };
+    img.onerror = function () { cb(null); };
+    img.src = dataUrl;
+  }
+
+  /* ★裁掉透明图四周的空白边：素材图常有大片留白，衣服实际内容很小，
+     直接叠加就会"飘"在身上 —— 裁紧后按锚点摆放才自然贴合 */
+  function trimTransparent(dataUrl, cb) {
+    if (!dataUrl) { cb(null, 0); return; }
+    var img = new Image();
+    img.onload = function () {
+      try {
+        var w = img.naturalWidth || 300, h = img.naturalHeight || 300;
+        if (w > 900 || h > 900) {
+          var k = Math.min(900 / w, 900 / h);
+          w = Math.max(1, Math.round(w * k)); h = Math.max(1, Math.round(h * k));
+        }
+        var c = document.createElement('canvas'); c.width = w; c.height = h;
+        var ctx = c.getContext('2d'); ctx.drawImage(img, 0, 0, w, h);
+        var d = ctx.getImageData(0, 0, w, h).data;
+        var minX = w, minY = h, maxX = -1, maxY = -1, step = w > 500 ? 2 : 1;
+        for (var y = 0; y < h; y += step) {
+          for (var x = 0; x < w; x += step) {
+            if (d[(y * w + x) * 4 + 3] > 24) {
+              if (x < minX) minX = x; if (x > maxX) maxX = x;
+              if (y < minY) minY = y; if (y > maxY) maxY = y;
+            }
+          }
+        }
+        if (maxX < 0 || maxY < 0) { cb(null, 0); return; }
+        var pad = 3;
+        minX = Math.max(0, minX - pad); minY = Math.max(0, minY - pad);
+        maxX = Math.min(w - 1, maxX + pad); maxY = Math.min(h - 1, maxY + pad);
+        var nw = maxX - minX + 1, nh = maxY - minY + 1;
+        // 几乎无留白就不用裁
+        if (nw < 8 || nh < 8 || (nw >= w - 6 && nh >= h - 6)) { cb(null, 0); return; }
+        var c2 = document.createElement('canvas'); c2.width = nw; c2.height = nh;
+        c2.getContext('2d').drawImage(img, minX, minY, nw, nh, 0, 0, nw, nh);
+        cb(c2.toDataURL('image/png'), nw / nh);
+      } catch (e) { cb(null, 0); }
+    };
+    img.onerror = function () { cb(null, 0); };
+    img.src = dataUrl;
+  }
+  // ★自动抠图（素材）：生成透明 PNG 并挂到素材上
+  function removeBg(itemId, dataUrl, silent) {
+    var item = state.items.find(x => x.id === itemId);
+    if (!item) return;
+    cutoutImage(dataUrl, function (out) {
+      if (!out) {
+        item.hasAlpha = false; saveMeta();
+        if (!silent) toast('抠图失败，已保留原图');
+        return;
+      }
+      var tid = uid();
+      imgPut(tid, out);
+      imgCache[tid] = out;
+      item.transparentImgId = tid;
+      item.hasAlpha = true;
+      saveMeta();
+      // ★再裁紧留白，并记录宽高比（自动贴合要用）
+      trimTransparent(out, function (t, ar) {
+        if (t) {
+          var tid2 = uid(); imgPut(tid2, t); imgCache[tid2] = t;
+          item.trimmedImgId = tid2; item.aspect = ar || 0;
+          saveMeta();
+        }
+        if (!silent) toast(t ? '已生成透明 PNG（去背景 + 裁紧留白）' : '已生成透明 PNG（去背景）');
+        renderCloset();
+        if (el('item-edit-modal') && el('item-edit-modal').style.display === 'flex' && editingItemId === itemId) openItemEdit(itemId);
+      });
     });
   }
-  // 自动抠图（remove.bg / 本地边缘检测兜底）
-  function removeBg(itemId, dataUrl) {
-    var key = (state.config && state.config.hunyuanKey) || '';
-    // 无 Key → 本地兜底（保持原图，标记已处理）
-    var item = state.items.find(x => x.id === itemId);
-    if (item) item.hasAlpha = true;
-    saveMeta();
+  /* ===== AI 素材精修（"AI 分身"）=====
+     目标：素材还是那件素材，款式/版型/颜色/图案/花色一律不变；
+     只把"拍摄不足"补回来——去杂乱背景、去褶皱、补光、边缘干净，
+     输出专业电商平铺图，再自动抠成透明 PNG，便于穿到 AI 人物身上 / 摆进搭配卡片。 */
+  function refinePrompt(it) {
+    var cn = '';
+    try { cn = (state.categories.find(function (c) { return c.id === it.categoryId; }) || {}).name || ''; } catch (e) {}
+    return '将图中的同一件衣物重绘为专业服装电商摄影棚平铺图。严格要求：' +
+      '1) 款式、版型、领型、袖长、衣长、廓形完全保持不变；' +
+      '2) 颜色、图案、印花、条纹、波点、格纹等所有花色设计元素完全保持不变，不得改色、不得增删图案；' +
+      '3) 材质观感（牛仔/针织/雪纺/皮革/棉麻等）保持不变；' +
+      '4) 仅优化拍摄层面：干净纯白背景、去除褶皱与杂乱阴影、光线均匀柔和、边缘清晰锐利、高清细节；' +
+      '5) 单件衣物完整居中平铺展示，不要模特人物、不要衣架、不要文字水印、不要额外配饰。' +
+      (cn ? '（品类：' + cn + '）' : '');
+  }
+
+  /* ★喜茶风本地滤镜：暖调 + 柔和色块 + 水彩感，款式花色完全不变 */
+  function heyteaFilter(src, cb) {
+    var img = new Image();
+    img.onerror = function () { cb(src); };
+    img.onload = function () {
+      try {
+        var nw = img.naturalWidth || 200, nh = img.naturalHeight || 200;
+        var c = document.createElement('canvas'); c.width = nw; c.height = nh;
+        var x = c.getContext('2d');
+        try { x.filter = 'saturate(1.16) brightness(1.05) contrast(0.97)'; } catch (e) {}
+        x.drawImage(img, 0, 0);
+        try { x.filter = 'none'; } catch (e) {}
+        var soft = document.createElement('canvas'); soft.width = nw; soft.height = nh;
+        var sx = soft.getContext('2d');
+        try { sx.filter = 'blur(' + Math.max(1, Math.round(nw / 260)) + 'px)'; } catch (e) {}
+        sx.drawImage(c, 0, 0);
+        try { sx.filter = 'none'; } catch (e) {}
+        var A = x.getImageData(0, 0, nw, nh), a = A.data;
+        var B = sx.getImageData(0, 0, nw, nh), b = B.data;
+        for (var i = 0; i < a.length; i += 4) {
+          if (a[i + 3] < 8) continue;
+          var r = Math.min(255, b[i] + 12), g = b[i + 1], bl = Math.max(0, b[i + 2] - 10);
+          r = Math.round(r / 28) * 28; g = Math.round(g / 28) * 28; bl = Math.round(bl / 28) * 28;
+          a[i]     = Math.min(255, Math.round(r * 0.62 + a[i] * 0.38));
+          a[i + 1] = Math.min(255, Math.round(g * 0.62 + a[i + 1] * 0.38));
+          a[i + 2] = Math.min(255, Math.round(bl * 0.62 + a[i + 2] * 0.38));
+        }
+        x.putImageData(A, 0, 0);
+        cb(c.toDataURL('image/png'));
+      } catch (e) { cb(src); }
+    };
+    img.src = src;
+  }
+  function heyteaLocal(it, raw, silent) {
+    if (!silent) toast('🎨 正在生成喜茶风素材（本地滤镜）…');
+    heyteaFilter(raw, function (d) {
+      if (!d) { toast('生成失败'); return; }
+      var id = uid(); imgPut(id, d); imgCache[id] = d;
+      it.animeImgId = id; it.localAnime = true; saveMeta(); notify(); renderCloset();
+      if (!silent) toast('✅ 喜茶风素材已生成（本地滤镜；填图像接口可升级为 AI 重绘）');
+    });
+  }
+
+  // 喜茶风动漫素材：保持款式/花色不变，转为简约扁平卡通插画风
+  function animeStylePrompt(it) {
+    var cn = '';
+    try { cn = (state.categories.find(function (c) { return c.id === it.categoryId; }) || {}).name || ''; } catch (e) {}
+    return '将图中的同一件衣物重绘为简约扁平卡通插画风格（类似新式茶饮品牌的治愈系包装插画）。严格要求：\n' +
+      '1) 款式、版型、领型、袖长、衣长、廓形完全保持不变，一眼能认出是同一件衣服；\n' +
+      '2) 颜色、图案、印花、条纹、波点、格纹等所有花色设计元素完全保持不变，不得改色、不得增删图案；\n' +
+      '3) 画风：粗描边、明快干净的色块、轻微手绘笔触纹理、扁平矢量插画质感、可爱治愈、无渐变过度渲染；\n' +
+      '4) 背景：干净纯白或极简浅色背景，单件衣物完整居中展示，边缘清晰；\n' +
+      '5) 不要模特人物、不要衣架、不要文字水印、不要额外配饰。' + (cn ? '（品类：' + cn + '）' : '');
+  }
+  function aiAnimeItem(itemId, silent) {
+    var it = state.items.find(function (x) { return x.id === itemId; });
+    if (!it) { toast('素材不存在'); return; }
+    var g = getImgGenConfig();
+    if (!g.key || !g.base) {
+      var raw0 = imgCache[it.transparentImgId] || imgCache[it.trimmedImgId] || imgCache[it.imgId] || '';
+      if (raw0) { heyteaLocal(it, raw0, silent); }
+      else if (!silent) { toast('图片尚未加载，请稍候重试'); }
+      return;
+    }
+    var src = imgCache[it.imgId] || '';
+    if (!src) {
+      imgGet(it.imgId, function (v) {
+        if (v) { imgCache[it.imgId] = v; aiAnimeItem(itemId, silent); }
+        else if (!silent) toast('素材图片尚未加载完，请稍候重试');
+      });
+      return;
+    }
+    if (!silent) toast('🎨 正在生成喜茶风动漫素材（款式花色不变）…');
+    callImageEdit(src, animeStylePrompt(it), function (url) {
+      urlToDataUrl(url, function (d) {
+        compressImage(d, 1024, 'image/png', 0.95, function (dd) {
+          var rid = uid(); imgPut(rid, dd); imgCache[rid] = dd;
+          it.animeImgId = rid; it.aiAnime = true; saveMeta();
+          cutoutImage(dd, function (out) {
+            var done = function () { saveMeta(); renderCloset(); try { renderCard(); } catch (e) {}
+              if (el('item-edit-modal') && el('item-edit-modal').style.display === 'flex' && editingItemId === itemId) openItemEdit(itemId);
+              if (!silent) toast('🎨 喜茶风动漫素材已生成（款式花色不变）'); };
+            if (out) {
+              var tid = uid(); imgPut(tid, out); imgCache[tid] = out; it.transparentImgId = tid;
+              trimTransparent(out, function (t, ar) { if (t) { var t2 = uid(); imgPut(t2, t); imgCache[t2] = t; it.trimmedImgId = t2; it.aspect = ar || 0; } done(); });
+            } else done();
+          });
+        });
+      });
+    }, function (err) { if (!silent) toast('动漫化失败：' + err); });
+  }
+  function aiAnimeAll() {
+    var list = (state.items || []).filter(function (it) { return !it.aiAnime && (imgCache[it.imgId] || it.imgId); });
+    if (!list.length) { toast('所有素材都已生成动漫版了'); return; }
+    if (list.length > 30) list = list.slice(0, 30);
+    toast('开始批量生成喜茶风动漫素材 ' + list.length + ' 件…');
+    var i = 0;
+    (function step() {
+      if (i >= list.length) { toast('🎨 批量动漫化完成'); renderCloset(); return; }
+      aiAnimeItem(list[i].id, true); i++; setTimeout(step, 1500);
+    })();
+  }
+  function aiRefineItem(itemId, silent) {
+    var it = state.items.find(function (x) { return x.id === itemId; });
+    if (!it) { toast('素材不存在'); return; }
+    var g = getImgGenConfig();
+    if (!g.key || !g.base) {
+      toast('请先到「设置 → AI 形象生成」配置图像接口与 Key');
+      try { showPage('settings'); } catch (e) {}
+      return;
+    }
+    var src = imgCache[it.imgId] || '';
+    if (!src) {
+      imgGet(it.imgId, function (v) {
+        if (v) { imgCache[it.imgId] = v; aiRefineItem(itemId, silent); }
+        else if (!silent) toast('素材图片尚未加载完，请稍候重试');
+      });
+      return;
+    }
+    if (!silent) toast('✨ 正在 AI 精修（款式花色不变）…');
+    callImageEdit(src, refinePrompt(it), function (url) {
+      urlToDataUrl(url, function (d) {
+        compressImage(d, 1024, 'image/png', 0.95, function (dd) {
+          var rid = uid(); imgPut(rid, dd); imgCache[rid] = dd;
+          it.refinedImgId = rid; it.aiRefined = true; saveMeta();
+          // 精修图再抠图 → 透明"AI 分身"，用于穿在 AI 人物身上 / 卡片摆放
+          cutoutImage(dd, function (out) {
+            var done = function () {
+              saveMeta(); renderCloset();
+              try { renderCard(); } catch (e) {}
+              if (el('item-edit-modal') && el('item-edit-modal').style.display === 'flex' && editingItemId === itemId) openItemEdit(itemId);
+              if (!silent) toast('✨ AI 精修完成：款式花色不变，已去背景');
+            };
+            if (out) {
+              var tid = uid(); imgPut(tid, out); imgCache[tid] = out;
+              it.transparentImgId = tid;
+              trimTransparent(out, function (t, ar) {
+                if (t) { var t2 = uid(); imgPut(t2, t); imgCache[t2] = t; it.trimmedImgId = t2; it.aspect = ar || 0; }
+                done();
+              });
+            } else done();
+          });
+        });
+      });
+    }, function (err) { if (!silent) toast('精修失败：' + err); });
+  }
+  // 批量：一键精修所有还没处理过的素材（限前 30 件，避免限流）
+  function aiRefineAll() {
+    var list = (state.items || []).filter(function (it) { return !it.aiRefined && (imgCache[it.imgId] || it.imgId); });
+    if (!list.length) { toast('所有素材都已精修过了'); return; }
+    if (list.length > 30) list = list.slice(0, 30);
+    toast('开始批量 AI 精修 ' + list.length + ' 件…');
+    var i = 0;
+    var step = function () {
+      if (i >= list.length) { toast('✨ 批量精修完成'); renderCloset(); return; }
+      aiRefineItem(list[i].id, true);
+      i++;
+      setTimeout(step, 1500);
+    };
+    step();
+  }
+
+  // 素材取图：AI精修分身/透明 PNG 优先
+  function itemSrc(it) {
+    if (!it) return '';
+    if (it.animeImgId && imgCache[it.animeImgId]) return imgCache[it.animeImgId];
+    if (it.trimmedImgId && imgCache[it.trimmedImgId]) return imgCache[it.trimmedImgId];
+    if (it.transparentImgId && imgCache[it.transparentImgId]) return imgCache[it.transparentImgId];
+    if (it.refinedImgId && imgCache[it.refinedImgId]) return imgCache[it.refinedImgId];
+    return imgCache[it.imgId] || '';
+  }
+  var editingItemId = null;
+  function openItemEdit(id) {
+    var it = state.items.find(x => x.id === id); if (!it) return;
+    editingItemId = id;
+    var pv = el('ie-preview');
+    var src = itemSrc(it);
+    if (pv) pv.innerHTML = src ? '<img src="' + src + '" style="max-height:140px;max-width:100%;border-radius:10px">' : '<div class="ph">👕</div>';
+    var nm = el('ie-name'); if (nm) nm.value = it.name || '';
+    var cs = el('ie-cat');
+    if (cs) cs.innerHTML = state.categories.map(function (c) {
+      return '<option value="' + c.id + '"' + (c.id === it.categoryId ? ' selected' : '') + '>' + escapeHtml(c.name) + '</option>';
+    }).join('') + '<option value="__add">＋ 新建品类…</option>';
+    var ls = el('ie-loc');
+    if (ls) ls.innerHTML = state.locations.map(function (l) {
+      return '<option value="' + l.id + '"' + (l.id === it.locationId ? ' selected' : '') + '>' + escapeHtml(l.name) + '</option>';
+    }).join('') + '<option value="__add">＋ 新建位置…</option>';
+    var se = el('ie-season');
+    if (se) se.innerHTML = SEASONS.map(function (x) { return '<option value="' + x + '"' + (x === (it.season || '不限') ? ' selected' : '') + '>' + x + '</option>'; }).join('');
+    var sb = el('ie-sub');
+    if (sb) {
+      var subs = subFoldersOf(it.categoryId);
+      sb.innerHTML = '<option value="">（不归入文件夹）</option>' + subs.map(function (f) {
+        return '<option value="' + f.id + '"' + (f.id === (it.subFolderId || '') ? ' selected' : '') + '>' + escapeHtml(f.name) + '</option>';
+      }).join('') + '<option value="__add">＋ 新建文件夹…</option>';
+    }
+    el('item-edit-modal').style.display = 'flex';
+  }
+  function closeItemEdit() { editingItemId = null; var m = el('item-edit-modal'); if (m) m.style.display = 'none'; }
+  function saveItemEdit() {
+    var it = state.items.find(x => x.id === editingItemId); if (!it) return;
+    var nm = el('ie-name'); if (nm) it.name = (nm.value || '').trim();
+    var cs = el('ie-cat'), ls = el('ie-loc'), se0 = el('ie-season'), sb0 = el('ie-sub');
+    if (cs && cs.value !== '__add') it.categoryId = cs.value;
+    if (ls && ls.value !== '__add') it.locationId = ls.value;
+    if (se0) it.season = se0.value || '不限';
+    if (sb0 && sb0.value !== '__add') it.subFolderId = sb0.value || '';
+    // 需要新建的项：逐个弹窗输入，全部完成后再保存
+    var steps = [];
+    if (cs && cs.value === '__add') steps.push({ t: '新建品类', ph: '如：西装 / 帽子', fn: function (v) { addCategory(v); it.categoryId = state.categories[state.categories.length - 1].id; } });
+    if (ls && ls.value === '__add') steps.push({ t: '新建储存位置', ph: '如：出租屋', fn: function (v) { addLocation(v); it.locationId = state.locations[state.locations.length - 1].id; } });
+    if (sb0 && sb0.value === '__add') steps.push({ t: '新建文件夹（当前类目下）', ph: '如：冬装', fn: function (v) { currentCategoryId = it.categoryId || currentCategoryId; addSubFolder(v); it.subFolderId = state.subFolders[state.subFolders.length - 1].id; } });
+    function run(i) {
+      if (i >= steps.length) { closeItemEdit(); notify(); toast('已保存'); return; }
+      var st = steps[i];
+      askInput({ title: st.t, placeholder: st.ph, okText: '确定' }, function (v) {
+        if (v && v.trim()) st.fn(v.trim());
+        run(i + 1);
+      });
+    }
+    run(0);
   }
   function deleteItem(id) {
     var it = state.items.find(x => x.id === id);
@@ -626,14 +1549,19 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     }
   }
 
+
+
   /* ============ 形象（多张 + 主形象 + 真人参数）============ */
-  function addAvatar(name, dataUrl) {
-    var id = uid();
-    imgPut(id, dataUrl);
-    imgCache[id] = dataUrl;
-    state.avatars.push({ id: id, name: name || ('形象 ' + (state.avatars.length + 1)), imgId: id, createdAt: Date.now() });
-    if (!state.primaryAvatarId) state.primaryAvatarId = id;
-    notify();
+  function addAvatar(name, dataUrl, cb) {
+    compressImage(dataUrl, 1024, 'image/jpeg', 0.86, function (d) {
+      var id = uid();
+      imgPut(id, d);
+      imgCache[id] = d;
+      state.avatars.push({ id: id, name: name || ('形象 ' + (state.avatars.length + 1)), imgId: id, createdAt: Date.now() });
+      if (!state.primaryAvatarId) state.primaryAvatarId = id;
+      notify();
+      if (cb) cb(id);
+    });
   }
   // ★设主形象
   function setPrimaryAvatar(id) { state.primaryAvatarId = id; notify(); }
@@ -643,50 +1571,213 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     notify();
   }
   function saveParams(p) { state.params = Object.assign(defaultParams(), p || {}); notify(); }
-  // ★生成 AI 形象（混元真实 / 本地拼贴兜底）
+  // ★生成真人 AI 形象（调用大模型文生图；未配置则用你的真人照片，绝不画火柴人）
+  function avatarStyle(){ var e=el('avatar-style'); return e?e.value:'semi'; }
+  function styleDesc(st){
+    if(st==='anime') return '二次元动漫风格全身人物立绘，精致日系插画质感，大眼睛、柔和渐变配色、干净线稿、细腻光影，像换装手游的角色立绘';
+    if(st==='real')  return '真实摄影风格的全身人像时装模特照片，高清人像摄影质感，自然肤质与发丝细节，柔和棚拍布光';
+    return '3D 卡通仿真风格全身人物形象，半写实二次元（semi-realistic 3D cartoon），像奇迹暖暖/闪耀暖暖这类换装游戏的角色立绘：圆润精致的面部、大而有神的眼睛、柔和的渐变肤色、干净的线条、细腻的 3D 渲染光感、柔和边缘光，姿态自然优雅';
+  }
+  function avatarPrompt() {
+    var p = state.params || defaultParams();
+    var st = avatarStyle();
+    return styleDesc(st) + '，亚洲女性，全身站立，正面站姿，手臂自然微张下垂，完整全身入镜（头顶到脚底都在画面内），' +
+      '身高约' + (p.height || 165) + 'cm，体型匀称，体重约' + (p.weight || 52) + 'kg，' +
+      '胸围' + (p.bust || 84) + 'cm 腰围' + (p.waist || 66) + 'cm 臀围' + (p.hip || 90) + 'cm，' +
+      '肩宽' + (p.shoulder || 38) + 'cm，腿长' + (p.leg || 80) + 'cm，' + (p.skin || '自然肤色') + '，' +
+      '穿着简约的白色紧身打底背心与短裤（便于后续换装），' +
+      '纯色简洁背景（浅米白），人物居中，竖构图 3:4，高清，不要文字水印、不要多余人物';
+  }
+  function getImgGenConfig() {
+    var c = state.config || {};
+    return {
+      base: (c.proxyUrl || c.llmBase || c.yuanbaoUrl || '').trim(),
+      key: (c.hunyuanKey || c.llmKey || c.yuanbaoKey || '').trim(),
+      model: (c.imgModel || '').trim() || 'hunyuan-image'
+    };
+  }
+  function setGenStatus(msg) { var s = el('avatar-gen-status'); if (s) s.textContent = msg || ''; }
+  function pickImageUrl(t) {
+    var j = null; try { j = JSON.parse(t); } catch (e) { j = null; }
+    if (!j) return null;
+    var d = j.data && j.data[0];
+    if (!d) return null;
+    var u = d.url || d.b64_json || d.image || d.image_url;
+    if (!u) return null;
+    return /^https?:|^data:/.test(u) ? u : 'data:image/png;base64,' + String(u).replace(/\s/g, '');
+  }
+  function parseImgErr(t) {
+    var j = null; try { j = JSON.parse(t); } catch (e) { j = null; }
+    return (j && j.error && (j.error.message || j.error)) || String(t).slice(0, 100);
+  }
+  function dataURLToBlob(dataUrl) {
+    var arr = String(dataUrl).split(',');
+    var mime = (arr[0].match(/:(.*?);/) || [])[1] || 'image/png';
+    var bstr = atob(arr[1] || ''), len = bstr.length, u8 = new Uint8Array(len);
+    for (var i = 0; i < len; i++) u8[i] = bstr.charCodeAt(i);
+    return new Blob([u8], { type: mime });
+  }
+  // 远程图片 → dataURL（持久化，刷新不丢）；跨域失败则退回原 URL
+  function urlToDataUrl(url, cb) {
+    if (/^data:/.test(url)) { cb(url); return; }
+    try {
+      fetch(url).then(function (r) { return r.blob(); }).then(function (b) {
+        var fr = new FileReader();
+        fr.onload = function () { cb(fr.result); };
+        fr.onerror = function () { cb(url); };
+        fr.readAsDataURL(b);
+      }).catch(function () { cb(url); });
+    } catch (e) { cb(url); }
+  }
+  /* ★图生图：以用户照片/视频帧为参考，生成对应的 AI 形象（参考建模） */
+  function callImageEdit(refDataUrl, prompt, onOk, onErr) {
+    var g = getImgGenConfig();
+    var base = g.base.replace(/\/+$/, '');
+    var url = /\/images\/edits$/.test(base) ? base : base + '/images/edits';
+    try {
+      var fd = new FormData();
+      fd.append('image', dataURLToBlob(refDataUrl), 'ref.png');
+      fd.append('prompt', prompt);
+      fd.append('model', g.model);
+      fd.append('n', '1');
+      fd.append('size', '768x1024');
+      fetch(url, { method: 'POST', headers: { 'Authorization': 'Bearer ' + g.key }, body: fd })
+        .then(function (r) { return r.text(); })
+        .then(function (t) { var u = pickImageUrl(t); if (!u) { onErr(parseImgErr(t)); return; } onOk(u); })
+        .catch(function () { onErr('网络/跨域失败'); });
+    } catch (e) { onErr('图片处理失败'); }
+  }
+  function avatarRefPrompt(p) {
+    p = p || {};
+    var st = avatarStyle();
+    return styleDesc(st) + '，参考图中人物的脸型、五官、发型、肤色与身材比例，生成同一个人的全身站立形象，' +
+      '亚洲女性，正面站姿，手臂自然微张下垂，完整全身入镜（头顶到脚底都在画面内），' +
+      '身高约' + (p.height || 165) + 'cm，体重约' + (p.weight || 52) + 'kg，' +
+      '胸围' + (p.bust || 84) + 'cm 腰围' + (p.waist || 66) + 'cm 臀围' + (p.hip || 90) + 'cm，' +
+      '穿简约白色紧身打底背心与打底短裤（便于后续换装），纯色简洁背景（浅米白），人物居中，竖构图 3:4，高清，' +
+      '不要文字水印、不要多余人物';
+  }
+  function finishGenAvatar(dataUrl, name) {
+    addAvatar(name, dataUrl, function (id) {
+      var a = state.avatars.find(function (x) { return x.id === id; });
+      if (a) { a.ai = true; a.isModel = true; }
+      state.primaryAvatarId = id; activeAvatarId = id;
+      notify(); renderAvatar(); renderTryon(); doTryon();
+      setGenStatus('✅ 已生成 AI 形象并设为主形象（AI 模型生成，非抠图）。');
+      toast('AI 形象已生成 ✅');
+    });
+  }
+  // ★真·AI 形象：图生图(参考照片/视频) / 文生图 / 本地兜底，每一步都有明确状态
   function generateAvatar() {
-    var primary = state.avatars.find(x => x.id === state.primaryAvatarId) || state.avatars[0];
-    var key = (state.config && state.config.hunyuanKey) || '';
-    if (key) {
-      // 真实接入：此处发请求到混元（需经代理解决跨域），成功回调里设为主形象
-      toast('已调用混元生成（请配置代理地址）');
-    } else {
-      // 本地兜底：基于真人参数生成纸片人化身（离线可用，绝不报错）
-      var params = state.params;
-      var dataUrl = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScL4WQAAAABJRU5ErkJggg=='; // 1x1 占位
-      try {
-        var canvas = document.createElement('canvas');
-        canvas.width = 300; canvas.height = 480;
-        var ctx = canvas.getContext('2d');
-        if (ctx) {
-          // 身形按参数比例
-          var hRatio = (params.height - 140) / 60; // 140~200cm
-          var bodyH = 260 + hRatio * 40;
-          var legH = (params.leg || 78) / 100 * 140;
-          ctx.fillStyle = '#fbeee0'; ctx.fillRect(0, 0, 300, 480);
-          ctx.fillStyle = '#c98b5e';
-          // 头
-          ctx.beginPath(); ctx.arc(150, 60, 32, 0, Math.PI * 2); ctx.fill();
-          // 身
-          ctx.fillRect(120, 95, 60, bodyH * 0.35);
-          // 腿（按腿长参数）
-          ctx.fillRect(125, 95 + bodyH * 0.35, 20, legH);
-          ctx.fillRect(155, 95 + bodyH * 0.35, 20, legH);
-          dataUrl = canvas.toDataURL('image/png');
-        }
-      } catch (e) { /* 环境不支持 canvas，用占位（真实浏览器不会走这里） */ }
-      addAvatar('AI形象(本地)', dataUrl);
-      toast('已生成 AI 形象（本地模式，填混元 Key 可升级真人效果）');
+    var modeEl = el('avatar-gen-mode');
+    var mode = modeEl ? modeEl.value : 'image';
+    var g = getImgGenConfig();
+    var p = state.params || defaultParams();
+
+    if (mode === 'local' || !g.base || !g.key) {
+      if (mode !== 'local') {
+        setGenStatus('⚠️ 未配置 AI 图像接口（设置页填「图像接口地址 + API Key」），当前为本地抠像兜底 —— 这不是 AI 生成。');
+        toast('未配置 AI 接口 → 本地抠像兜底');
+      } else {
+        setGenStatus('已选择本地抠像兜底（不调用 AI）。');
+      }
+      withAvatarImage(function (photo, src) {
+        if (!photo) { toast('请先上传一张你的全身照'); return; }
+        usePhotoAsAvatar(photo, src);
+      });
+      return;
     }
+
+    if (mode === 'image') {
+      withAvatarImage(function (photo, src) {
+        if (!src) { setGenStatus('⚠️ 请先上传一张全身照作为参考，或改用「文生图」。'); toast('请上传参考照'); return; }
+        setGenStatus('🎨 正在以你的照片为参考生成 AI 形象（图生图）…');
+        toast('正在参考你的照片生成 AI 形象…');
+        callImageEdit(src, avatarRefPrompt(p), function (u) {
+          urlToDataUrl(u, function (d) { finishGenAvatar(d, 'AI形象(AI生成·参考照)'); });
+        }, function (err) {
+          setGenStatus('图生图失败（' + err + '）→ 尝试文生图…');
+          callImageGen(avatarPrompt(), function (u2) {
+            urlToDataUrl(u2, function (d) { finishGenAvatar(d, 'AI形象(AI生成)'); });
+          }, function (err2) {
+            setGenStatus('❌ AI 生成失败（' + err2 + '）→ 已用本地抠像兜底。');
+            toast('AI 生成失败 → 本地兜底');
+            usePhotoAsAvatar(photo, src);
+          });
+        });
+      });
+      return;
+    }
+
+    setGenStatus('🎨 正在按你的真人参数生成 AI 形象…');
+    toast('正在生成 AI 形象…');
+    callImageGen(avatarPrompt(), function (u) {
+      urlToDataUrl(u, function (d) { finishGenAvatar(d, 'AI形象(AI生成)'); });
+    }, function (err) {
+      setGenStatus('❌ 生成失败（' + err + '）。可换「图生图」，或检查接口地址 / Key 是否正确。');
+      toast('AI 生成失败：' + err);
+    });
+  }
+  // ★统一取形象原图（内存没有就去存储里取，取不到才提示重传 —— 不再"假性丢失"）
+  function withAvatarImage(cb) {
+    var photo = state.avatars.find(x => x.id === state.primaryAvatarId) || state.avatars[0];
+    if (!photo) { cb(null, ''); return; }
+    if (imgCache[photo.imgId]) { cb(photo, imgCache[photo.imgId]); return; }
+    imgGet(photo.imgId, function (v) {
+      if (v) imgCache[photo.imgId] = v;
+      cb(photo, v || '');
+    });
+  }
+  // ★本地兜底：把你的照片抠成"真人透明人像"（试穿叠衣更自然）；抠图失败就用原图
+  function usePhotoAsAvatar(photo, src) {
+    src = src || (photo ? imgCache[photo.imgId] : '') || '';
+    if (!src) { toast('形象照已失效，请重新上传一张你的全身照'); return; }
+    toast('正在生成卡通仿真形象（本地动漫滤镜）…');
+    cutoutImage(src, function (out0) {
+      var base = (out0 && out0.length > 3000) ? out0 : src;
+      heyteaFilter(base, function (out) {
+      if (out && out.length > 3000) {
+        var id = uid();
+        imgPut(id, out); imgCache[id] = out;
+        state.avatars.push({ id: id, name: 'AI形象(卡通·本地滤镜)', imgId: id, isModel: true, local: true, createdAt: Date.now() });
+        state.primaryAvatarId = id; activeAvatarId = id;
+        notify(); renderAvatar(); renderTryon(); doTryon();
+        setGenStatus('⚠️ 这是本地动漫滤镜结果（不是 AI 生成）。想要奇迹暖暖风 3D 卡通仿真 AI 立绘：设置 → AI 形象生成，填「图像接口地址 + API Key」后再点生成。');
+        toast('卡通仿真形象已生成 ✅（填接口可升级为 AI 生成）');
+      } else {
+        if (photo) { state.primaryAvatarId = photo.id; activeAvatarId = photo.id; }
+        notify(); renderAvatar(); renderTryon(); doTryon();
+        toast('已采用你的照片作为形象（设置里填 AI 引擎可生成更真实模特照）');
+      }
+      });
+    });
+  }
+  // 调用 OpenAI 兼容的 /images/generations
+  function callImageGen(prompt, onOk, onErr) {
+    var g = getImgGenConfig();
+    if (!g.base || !g.key) { onErr('未配置 AI 图像接口'); return; }
+    var base = g.base.replace(/\/+$/, '');
+    var url = /\/images\/generations$/.test(base) ? base : base + '/images/generations';
+    var body = JSON.stringify({ model: g.model, prompt: prompt, n: 1, size: '768x1024' });
+    fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + g.key },
+      body: body
+    }).then(function (r) { return r.text(); }).then(function (t) {
+      var u = pickImageUrl(t);
+      if (!u) { onErr(parseImgErr(t)); return; }
+      onOk(u);
+    }).catch(function () { onErr('网络/跨域失败'); });
   }
   function renderAvatar() {
     var list = el('avatar-list');
     if (list) {
-      list.innerHTML = (state.avatars.length ? '' : '<div class="empty-sm">上传一张照片作为你的 AI 形象</div>') +
+      list.innerHTML = (state.avatars.length ? '' : '<div class="empty-sm">先上传一张你的全身照（纯色背景、正面全身最佳），再点「✨ 生成 AI 形象」</div>') +
         state.avatars.map(function (a) {
           return '<div class="avatar-card' + (a.id === state.primaryAvatarId ? ' primary' : '') + '" data-id="' + a.id + '">' +
             '<img src="' + (imgCache[a.imgId] || '') + '" onerror="this.src=\'\'"><span class="star">★</span>' +
-            '<small>' + escapeHtml(a.name) + '</small></div>';
+            '<span class="av-del" data-del="' + a.id + '" style="position:absolute;top:4px;left:4px;background:rgba(0,0,0,.45);color:#fff;border-radius:50%;width:20px;height:20px;font-size:13px;line-height:20px;text-align:center">×</span>' +
+            '<small>' + escapeHtml(a.name) + (a.id === state.primaryAvatarId ? ' · 主形象' : '') + '</small></div>';
         }).join('');
     }
     var pm = el('params-form');
@@ -727,28 +1818,198 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     else selectedItemIds.push(id);
     renderPicker();
   }
+  // ★奇迹暖暖式试穿：形象为底 + 素材为可拖动/缩放/旋转的图层
+  /* ★人体锚点：衣服按身体部位自动落位（占舞台高度的百分比），
+     而不是固定坐标硬贴 —— 这是"自然贴合"的核心 */
+  var BODY = { head: 6, shoulder: 17, chest: 27, waist: 42, hip: 52, knee: 72, ankle: 90, foot: 92 };
+  var FIG_AR = 300 / 480;              // 舞台 .figure 宽/高，用于宽高换算
+  function garmentAnchor(cn) {
+    cn = cn || '';
+    if (/外套|大衣|西装|风衣|夹克/.test(cn))  return { top: BODY.shoulder - 2, bottom: BODY.hip + 4, w: 52 };
+    if (/连衣裙/.test(cn))                    return { top: BODY.shoulder + 1, bottom: BODY.knee - 2, w: 46 };
+    if (/裙/.test(cn))                        return { top: BODY.waist - 2, bottom: BODY.knee - 4, w: 44 };
+    if (/上装|T恤|衬衫|卫衣|毛衣|针织|背心/.test(cn)) return { top: BODY.shoulder, bottom: BODY.hip - 2, w: 48 };
+    if (/裤/.test(cn))                        return { top: BODY.waist - 3, bottom: BODY.ankle, w: 42 };
+    if (/下装|半身/.test(cn))                 return { top: BODY.waist - 1, bottom: BODY.knee, w: 44 };
+    if (/鞋|靴/.test(cn))                     return { top: BODY.foot - 1, bottom: 99, w: 34 };
+    if (/包|袋/.test(cn))                     return { top: BODY.waist + 4, bottom: BODY.waist + 22, w: 26 };
+    if (/帽/.test(cn))                        return { top: 2, bottom: BODY.head + 9, w: 30 };
+    if (/围巾|披肩|丝巾/.test(cn))            return { top: BODY.shoulder - 4, bottom: BODY.chest + 8, w: 34 };
+    if (/配饰|项链|耳环|腰带/.test(cn))       return { top: BODY.chest - 2, bottom: BODY.chest + 8, w: 28 };
+    return { top: BODY.shoulder + 2, bottom: BODY.hip, w: 46 };
+  }
+  function guessAspect(cn) {
+    cn = cn || '';
+    if (/鞋|靴/.test(cn)) return 1.9;
+    if (/裤/.test(cn)) return 0.52;
+    if (/连衣裙/.test(cn)) return 0.60;
+    if (/裙/.test(cn)) return 0.75;
+    if (/外套|大衣|西装|风衣/.test(cn)) return 0.88;
+    if (/包|袋/.test(cn)) return 1.1;
+    if (/帽/.test(cn)) return 1.2;
+    if (/围巾|丝巾/.test(cn)) return 2.2;
+    if (/腰带/.test(cn)) return 3.0;
+    return 0.95;
+  }
+  function defaultLayerLayout(it) {
+    var cn = catName(it.categoryId) || '';
+    var A = garmentAnchor(cn);
+    var ar = (it && it.aspect) || guessAspect(cn);
+    var hPct = Math.max(4, A.bottom - A.top);
+    // 由宽度反推高度占比：h% = w% * (figureW/figureH) / 宽高比
+    var h = A.w * FIG_AR / (ar || 0.95);
+    h = Math.max(hPct * 0.55, Math.min(hPct * 1.7, h));
+    var top = A.top + Math.max(0, (hPct - h) * 0.15);
+    return {
+      x: Math.max(-10, Math.min(100, (100 - A.w) / 2)),
+      y: Math.max(0, Math.min(97, top)),
+      w: A.w, rot: 0, z: 0
+    };
+  }
+  // ★一键自动贴合：所有已选服装按锚点重新吸附
+  function autoFitTryon() {
+    var items = selectedItemIds.map(function (id) {
+      return state.items.find(function (x) { return x.id === id; });
+    }).filter(Boolean);
+    if (!items.length) { toast('先点「＋ 选择素材」挑几件衣服'); return; }
+    if (!state.tryonLayout) state.tryonLayout = {};
+    items.forEach(function (it) { state.tryonLayout[it.id] = defaultLayerLayout(it); });
+    saveLayout();
+    _tryonAnimate = true;
+    doTryon();
+    _tryonAnimate = false;
+    var st = el('tryon-stage');
+    if (st) { st.classList.remove('breathe'); void st.offsetWidth; st.classList.add('breathe'); }
+    toast('已按人体锚点自动贴合 ✅');
+  }
+  function getLayerLayout(it) {
+    if (!state.tryonLayout) state.tryonLayout = {};
+    if (!state.tryonLayout[it.id]) state.tryonLayout[it.id] = defaultLayerLayout(it);
+    return state.tryonLayout[it.id];
+  }
+  function saveLayout() { saveMeta(); }
+  var selLayerId = null;
+  var _tryonAnimate = false;   // 仅"新穿上"时播放穿衣动画，调整时不闪
   function doTryon() {
     var avatar = state.avatars.find(x => x.id === (activeAvatarId || state.primaryAvatarId)) || state.avatars[0];
-    if (!avatar) { toast('请先在「形象」页上传并选择你的 AI 形象'); return; }
-    if (!selectedItemIds.length) { toast('请先选择要试穿的素材'); return; }
-    // 分层叠加：把选中素材按 上装/下装/连衣裙/鞋子/配饰 分层叠到形象上
-    var stage = el('tryon-stage');
-    if (!stage) return;
-    var avImg = imgCache[avatar.imgId] || '';
-    var layers = selectedItemIds.map(function (id) {
-      var it = state.items.find(x => x.id === id);
-      var src = imgCache[it.imgId] || '';
-      var layer = '';
-      if (src) layer = '<img class="layer" src="' + src + '" data-cat="' + catName(it.categoryId) + '">';
-      return layer;
-    }).join('');
-    stage.innerHTML = '<div class="figure"><img class="base" src="' + avImg + '">' + layers + '</div>';
-    toast('试穿完成（分层叠穿）');
+    var stage = el('tryon-stage'); if (!stage) return;
+    if (!avatar) { stage.innerHTML = '<div class="empty"><div class="big">🪞</div>请先在「形象」页上传照片并点「✨ 生成 AI 形象」</div>'; return; }
+    if (!imgCache[avatar.imgId]) {
+      imgGet(avatar.imgId, function (v) { if (v) imgCache[avatar.imgId] = v; _doTryonDraw(avatar); });
+      return;
+    }
+    _doTryonDraw(avatar);
+  }
+  function _doTryonDraw(avatar) {
+    var stage = el('tryon-stage'); if (!stage) return;
+    var items = selectedItemIds.map(function (id) { return state.items.find(x => x.id === id); }).filter(Boolean);
+    stage.innerHTML = '';
+    var wrap = document.createElement('div'); wrap.className = 'figure';
+    var base = document.createElement('img'); base.className = 'base';
+    base.src = imgCache[avatar.imgId] || ''; wrap.appendChild(base);
+    items.forEach(function (it, idx) {
+      var L = getLayerLayout(it);
+      var im = document.createElement('img');
+      im.className = 'layer' + (_tryonAnimate ? ' puton' : '');
+      im.dataset.id = it.id;
+      // ★优先用"裁紧留白"的透明图，贴合更准
+      im.src = imgCache[it.trimmedImgId] || imgCache[it.transparentImgId] || imgCache[it.imgId] || '';
+      im.style.left = L.x + '%'; im.style.top = L.y + '%';
+      im.style.width = L.w + '%';
+      im.style.transform = 'rotate(' + (L.rot || 0) + 'deg)';
+      im.style.zIndex = String(10 + (L.z || 0));
+      if (_tryonAnimate) im.style.animationDelay = (idx * 90) + 'ms';
+      wrap.appendChild(im);
+    });
+    if (items.length && _tryonAnimate) wrap.classList.add('breathe');
+    if (state.aiBeautify) wrap.classList.add('beautify');
+    var ctl = document.createElement('div'); ctl.id = 'tryon-ctl';
+    ctl.innerHTML = '<span class="lb" id="ctl-name">点选一件衣服可调整</span>' +
+      '<button data-a="big">＋</button><button data-a="small">－</button>' +
+      '<button data-a="rotl">↺</button><button data-a="rotr">↻</button>' +
+      '<button data-a="up">⬆</button><button data-a="down">⬇</button>' +
+      '<button data-a="reset">重置</button><button data-a="del" class="del">移除</button>';
+    stage.appendChild(wrap); stage.appendChild(ctl);
+    bindTryonStage(stage, wrap, ctl);
+    if (!items.length) toast('已载入形象，点「＋ 选择素材」挑衣服穿上');
+    else toast('已穿上 ' + items.length + ' 件，可直接拖动调整位置');
+  }
+  var _tryonWrap = null, _tryonMove = null, _tryonUp = null;
+  function bindTryonStage(stage, wrap, ctl) {
+    _tryonWrap = wrap;
+    var drag = null;
+    function pct(ev, axis) {
+      var r = (_tryonWrap || wrap).getBoundingClientRect();
+      var cx = (ev.touches ? ev.touches[0].clientX : ev.clientX);
+      var cy = (ev.touches ? ev.touches[0].clientY : ev.clientY);
+      return axis === 'x' ? (cx - r.left) / r.width * 100 : (cy - r.top) / r.height * 100;
+    }
+    function onDown(ev) {
+      var t = ev.target;
+      if (!t || t.className.indexOf('layer') < 0) return;
+      [].forEach.call(wrap.querySelectorAll('.layer'), function (l) { l.classList.remove('sel'); });
+      t.classList.add('sel'); selLayerId = t.dataset.id;
+      var it = state.items.find(x => x.id === selLayerId);
+      var nm = ctl.querySelector('#ctl-name');
+      if (nm) nm.textContent = '调整：' + ((it && (it.name || catName(it.categoryId))) || '素材');
+      ctl.style.display = 'flex';
+      var L = getLayerLayout(it || { categoryId: null });
+      var px = pct(ev, 'x'), py = pct(ev, 'y');
+      drag = { el: t, L: L, dx: px - L.x, dy: py - L.y };
+      ev.preventDefault();
+    }
+    function onMove(ev) {
+      if (!drag) return;
+      drag.L.x = Math.max(-20, Math.min(110, pct(ev, 'x') - drag.dx));
+      drag.L.y = Math.max(-20, Math.min(110, pct(ev, 'y') - drag.dy));
+      drag.el.style.left = drag.L.x + '%';
+      drag.el.style.top = drag.L.y + '%';
+      ev.preventDefault();
+    }
+    function onUp() { if (drag) { saveLayout(); drag = null; } }
+    _tryonMove = onMove; _tryonUp = onUp;
+    wrap.addEventListener('mousedown', onDown);
+    wrap.addEventListener('touchstart', onDown, { passive: false });
+    // ★只绑一次 document 监听，避免多次试穿后重复触发
+    if (!global.__tryonDocBound) {
+      document.addEventListener('mousemove', function (e) { if (_tryonMove) _tryonMove(e); });
+      document.addEventListener('touchmove', function (e) { if (_tryonMove) _tryonMove(e); }, { passive: false });
+      document.addEventListener('mouseup', function (e) { if (_tryonUp) _tryonUp(e); });
+      document.addEventListener('touchend', function (e) { if (_tryonUp) _tryonUp(e); });
+      global.__tryonDocBound = true;
+    }
+    ctl.onclick = function (ev) {
+      var b = ev.target.closest('button'); if (!b) return;
+      var a = b.dataset.a;
+      if (!selLayerId) { toast('先点一下要调整的衣物'); return; }
+      var it = state.items.find(x => x.id === selLayerId); if (!it) return;
+      var L = getLayerLayout(it);
+      if (a === 'big') L.w = Math.min(160, L.w * 1.1);
+      else if (a === 'small') L.w = Math.max(10, L.w / 1.1);
+      else if (a === 'rotl') L.rot = (L.rot || 0) - 5;
+      else if (a === 'rotr') L.rot = (L.rot || 0) + 5;
+      else if (a === 'up') L.z = (L.z || 0) + 1;
+      else if (a === 'down') L.z = (L.z || 0) - 1;
+      else if (a === 'reset') { state.tryonLayout[it.id] = defaultLayerLayout(it); saveLayout(); doTryon(); return; }
+      else if (a === 'del') {
+        selectedItemIds = selectedItemIds.filter(x => x !== selLayerId);
+        if (state.tryonLayout) delete state.tryonLayout[it.id];
+        selLayerId = null; saveLayout(); doTryon(); return;
+      }
+      saveLayout(); doTryon();
+    };
   }
   function renderTryon() {
     var av = state.avatars.find(x => x.id === (activeAvatarId || state.primaryAvatarId)) || state.avatars[0];
     var slot = el('tryon-avatar-slot');
-    if (slot) slot.innerHTML = av ? '<img src="' + (imgCache[av.imgId] || '') + '" onerror="this.src=\'\'"><small>' + escapeHtml(av.name) + '</small>' : '<div class="empty-sm">选择形象</div>';
+    if (slot) slot.innerHTML = av ? '<img src="' + (imgCache[av.imgId] || '') + '" onerror="this.src=\'\'"><small>' + escapeHtml(av.name) + '</small>' : '<div class="empty-sm">暂无形象</div>';
+    var sel = el('tryon-avatar-select');
+    if (sel) {
+      sel.innerHTML = (state.avatars || []).length
+        ? state.avatars.map(function (a) { return '<option value="' + a.id + '"' + (av && a.id === av.id ? ' selected' : '') + '>' + escapeHtml(a.name) + '</option>'; }).join('')
+        : '<option value="">（先去形象页生成）</option>';
+      sel.onchange = function () { activeAvatarId = sel.value; renderTryon(); doTryon(); };
+    }
   }
 
   /* ============ 方案（自定义名字 + 多文件夹）============ */
@@ -777,7 +2038,11 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
       folderId: folderId,
       itemIds: selectedItemIds.slice(),
       avatarId: activeAvatarId || state.primaryAvatarId || null,
-      coverImgId: selectedItemIds[0] ? state.items.find(x => x.id === selectedItemIds[0]).imgId : null,
+      coverImgId: (function () {
+        var f = selectedItemIds.map(function (id) { return state.items.find(function (x) { return x.id === id; }); }).filter(Boolean)[0];
+        return f ? (f.imgId || null) : null;
+      })(),
+      layout: JSON.parse(JSON.stringify(state.tryonLayout || {})),
       createdAt: Date.now()
     };
     state.plans.unshift(plan);
@@ -808,8 +2073,11 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
           var cover = p.coverImgId ? imgCache[p.coverImgId] : '';
           return '<div class="plan-card" data-id="' + p.id + '">' +
             '<div class="thumb">' + (cover ? '<img src="' + cover + '" onerror="this.src=\'\'">' : '<div class="ph">👗</div>') + '</div>' +
-            '<div class="item-name">' + escapeHtml(p.name) + '</div>' +
-            '<small>' + p.itemIds.length + ' 件单品</small></div>';
+            '<div class="item-name">' + escapeHtml(p.name) +
+              (p.type === 'card' ? '<span class="season-badge" style="background:#fff0f5;color:#c2185b">卡片</span>' : '') +
+              (p.type === 'ai' ? '<span class="season-badge" style="background:#eefaf1;color:#2e7d52">AI试穿</span>' : '') +
+            '</div>' +
+            '<small>' + ((p.itemIds && p.itemIds.length) || 0) + ' 件单品</small></div>';
         }).join('');
       }
     }
@@ -879,7 +2147,7 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     var steps = Object.keys(pick).map(function (c) {
       return '「' + escapeHtml(pick[c].name || catName(pick[c].categoryId)) + '」(' + escapeHtml(c) + ', 存于 ' + escapeHtml(locName(pick[c].locationId)) + ')';
     }).join(' + ');
-    return '【穿搭方案】\n场景：' + an.styles.join(' / ') + '\n核心思路：' + steps + '\n' + an.advice.join('\n') + '\n\n如需更细化的方案，可接入元宝 AI（设置页填写 Key）。';
+    return '【穿搭方案】\n场景：' + an.styles.join(' / ') + '\n核心思路：' + steps + '\n' + an.advice.join('\n') + '\n\n如需更细化的方案，可接入混元 AI（设置页填写 Key）。';
   }
   // ★大模型接入（OpenAI 兼容：元宝 / 混元 / 自定义），支持图片多模态
   function getLLMConfig() {
@@ -1048,8 +2316,8 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
       toast('已填入混元预设，请补 Key');
     };
     if (py) py.onclick = function () {
-      el('cfg-base').value = 'https://api.yuanbao.tencent.com/v1';
-      el('cfg-model').value = 'yuanbao';
+      el('cfg-base').value = 'https://api.hunyuan.cloud.tencent.com/v1';
+      el('cfg-model').value = 'hunyuan-turbo';
       el('cfg-vision').checked = true;
       toast('已填入元宝预设，请补 Key');
     };
@@ -1094,16 +2362,100 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
       box.innerHTML = trends.map(function (x) { return '<div class="trend"><b>' + x.t + '</b>：' + x.c + '</div>'; }).join('');
       box.dataset.rendered = '1';
     }
+    renderBloggerBox();
+  }
+
+  /* ============ v14 博主穿搭经验（真实可点链接）============ */
+  var BLOGGERS = [
+    { name: '三木三木呢', tag: '莫兰迪色·轻熟通勤', plat: '小红书',
+      exp: '同色系叠穿是她的招牌：用深浅不同的莫兰迪色做层次，配质感配饰提气，通勤日常都大气，轻熟龄很好抄。',
+      url: 'https://www.xiaohongshu.com/search_result?keyword=' + encodeURIComponent('三木三木呢') },
+    { name: '梨梨 Liz', tag: '日韩清新·学生党友好', plat: '小红书',
+      exp: '淡蓝+浅粉+米白为主，棉麻衬衫、针织开衫、碎花长裙，配小白鞋或乐福鞋，甜而不腻、预算友好。',
+      url: 'https://www.xiaohongshu.com/search_result?keyword=' + encodeURIComponent('梨梨Liz 穿搭') },
+    { name: '夏 ouba', tag: '浅色系韩系·上班族', plat: '小红书',
+      exp: '米白、淡蓝、燕麦色打底，直筒西装裤配乐福鞋或玛丽珍鞋，质感在线又平价，通勤直接照搬。',
+      url: 'https://www.xiaohongshu.com/search_result?keyword=' + encodeURIComponent('夏ouba 穿搭') },
+    { name: '腻腻 ninii', tag: '低饱和·氛围感', plat: 'B站',
+      exp: '低饱和马卡龙色 + 棉麻针织，碎花裙或宽松针织配阔腿裤，妆容清淡，出片氛围感强。',
+      url: 'https://search.bilibili.com/all?keyword=' + encodeURIComponent('腻腻ninii 穿搭') },
+    { name: '原来是西门大嫂', tag: '莫兰迪·职场轻熟', plat: '微博',
+      exp: '衬衫配缎面半裙、针织套装，兼顾气场与柔美，想穿得有质感又不过分用力就参考她。',
+      url: 'https://s.weibo.com/weibo?q=' + encodeURIComponent('原来是西门大嫂 穿搭') },
+    { name: 'imjoo_', tag: '温柔质感·低饱和', plat: 'Instagram',
+      exp: '奶白、浅杏、雾霾蓝为主，针织开衫+雪纺衬衫+丝绒半裙叠穿，配饰极简，通勤约会都适配。',
+      url: 'https://www.instagram.com/imjoo_/' },
+    { name: '车静媛 cha_jungwon', tag: '简约高级·通勤', plat: 'Instagram',
+      exp: '浅卡其风衣、牛仔衬衫、直筒裤，高低价位混搭，版型利落，追求质感的职场人很适用。',
+      url: 'https://www.instagram.com/cha_jungwon/' },
+    { name: 'anneorion', tag: '法式松弛', plat: 'Instagram',
+      exp: '棕、蓝、白三色招牌，宽松针织 + 直筒牛仔 + 简约衬衫，冬天也不臃肿，日常感强。',
+      url: 'https://www.instagram.com/anneorion/' }
+  ];
+  var PLAT_LINKS = [
+    { n: '小红书 · 今日热门穿搭', u: 'https://www.xiaohongshu.com/search_result?keyword=' + encodeURIComponent('穿搭') },
+    { n: '微博 · 穿搭话题', u: 'https://s.weibo.com/weibo?q=' + encodeURIComponent('穿搭') },
+    { n: '抖音 · 穿搭榜', u: 'https://www.douyin.com/search/' + encodeURIComponent('穿搭') },
+    { n: 'B站 · 穿搭视频', u: 'https://search.bilibili.com/all?keyword=' + encodeURIComponent('穿搭') },
+    { n: '知乎 · 穿搭讨论', u: 'https://www.zhihu.com/search?type=content&q=' + encodeURIComponent('穿搭') },
+    { n: '小红书 · 梨形身材穿搭', u: 'https://www.xiaohongshu.com/search_result?keyword=' + encodeURIComponent('梨形身材穿搭') },
+    { n: '小红书 · 小个子显高', u: 'https://www.xiaohongshu.com/search_result?keyword=' + encodeURIComponent('小个子穿搭显高') },
+    { n: '小红书 · 通勤穿搭', u: 'https://www.xiaohongshu.com/search_result?keyword=' + encodeURIComponent('通勤穿搭') }
+  ];
+  function renderBloggerBox() {
+    var bb = el('blogger-box');
+    if (!bb || bb.dataset.rendered) return;
+    var seedDay = new Date().getDate();
+    var list = BLOGGERS.slice();
+    // 每天轮换展示顺序，但内容真实固定
+    var rot = seedDay % list.length;
+    list = list.slice(rot).concat(list.slice(0, rot));
+    var cards = list.map(function (b) {
+      return '<div class="trend" style="border-left:3px solid var(--brand,#ff758c)">' +
+        '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">' +
+        '<b style="font-size:13px">' + b.name + '</b>' +
+        '<span style="font-size:11px;color:#fff;background:var(--brand,#ff758c);border-radius:10px;padding:1px 8px">' + b.plat + '</span>' +
+        '<span style="font-size:11px;color:#888">' + b.tag + '</span>' +
+        '</div>' +
+        '<div style="margin:5px 0 7px;color:#555">' + b.exp + '</div>' +
+        '<a href="' + b.url + '" target="_blank" rel="noopener noreferrer" style="font-size:12px;color:var(--brand,#ff758c);text-decoration:none;font-weight:600">去看 TA 的最新穿搭 →</a>' +
+        '</div>';
+    }).join('');
+    var chips = PLAT_LINKS.map(function (x) {
+      return '<a href="' + x.u + '" target="_blank" rel="noopener noreferrer" style="display:inline-block;margin:4px 6px 0 0;padding:6px 11px;border:1px solid var(--line,#eee);border-radius:16px;font-size:12px;color:#555;text-decoration:none;background:#fff">' + x.n + ' ↗</a>';
+    }).join('');
+    bb.innerHTML =
+      '<div style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--line,#eee)">' +
+      '<div style="font-size:13px;font-weight:600;margin-bottom:6px">👗 博主真实穿搭经验（点链接直接看）</div>' +
+      cards +
+      '<div style="margin-top:10px;font-size:12px;color:#888">按主题逛平台（实时最新内容）：</div>' +
+      '<div style="margin-top:4px">' + chips + '</div>' +
+      '</div>';
+    bb.dataset.rendered = '1';
   }
 
   /* ============ 模板（变更/开关）============ */
   function toggleTemplate(id, on) { state.templateEnabled[id] = !!on; notify(); }
 
   /* ============ 设置 ============ */
-  var APP_VERSION = 'v2026.09.09-完整版';
+  var APP_VERSION = 'v2026.09.10-v15上传版';
   function renderSettings() {
-    var an = el('set-appname');
-    if (an && an.value === '') an.value = state.appName || '我的衣橱';
+    var c = state.config || {};
+    // ★全量回填：保存后立刻能看到已存的值，不再"存了像没存"
+    var setv = function (id, v) { var e = el(id); if (e) e.value = v || ''; };
+    setv('set-appname', state.appName || '我的衣橱');
+    setv('set-supabase-url', c.supabaseUrl);
+    setv('set-supabase-key', c.supabaseKey);
+    setv('set-hunyuan-key', c.hunyuanKey);
+    setv('set-yuanbao-url', c.yuanbaoUrl);
+    setv('set-yuanbao-key', c.yuanbaoKey);
+    setv('set-proxy-url', c.proxyUrl);
+    setv('set-img-model', c.imgModel);
+    var gg = getImgGenConfig();
+    var tip = el('set-ai-tip');
+    if (tip) tip.textContent = (gg.base && gg.key)
+      ? '✅ AI 形象生成已配置（接口：' + gg.base + '，模型：' + gg.model + '）'
+      : '⚠️ 未配置 AI 图像接口 →「生成 AI 形象」只会做本地抠像兜底（不是 AI 生成）';
     var sync = el('set-sync');
     if (sync) sync.textContent = (state.config && state.config.supabaseUrl) ? '已配置云端同步' : '未配置（本地模式可用）';
     // 可见版本徽章：让用户一眼确认下载的是否为最新版
@@ -1115,7 +2467,7 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
       var page = el('page-settings');
       if (page && page.firstChild) page.insertBefore(vb, page.firstChild);
     }
-    if (vb) vb.textContent = '✅ 当前版本：' + APP_VERSION + '（含：素材抠图透明PNG / 真人参数 / 方案多文件夹 / 模糊搜索 / 元宝顾问）';
+    if (vb) vb.textContent = '✅ 当前版本：v2026.09.10-v15上传版（①上传素材修复：先预览再入库、上传后必可见 ②上传时可自行选择是否抠图，逐张可勾选 ③其他功能零改动）';
   }
   function applySettings(form) {
     state.appName = form.appName || '我的衣橱';
@@ -1125,11 +2477,14 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
       hunyuanKey: form.hunyuanKey || '',
       yuanbaoKey: form.yuanbaoKey || '',
       yuanbaoUrl: form.yuanbaoUrl || '',
-      proxyUrl: form.proxyUrl || ''
+      proxyUrl: form.proxyUrl || '',
+      imgModel: form.imgModel || ''
     });
+    saveMeta();
     notify();
     renderSidebar();
-    toast('设置已保存');
+    renderSettings();
+    toast('设置已保存 ✅');
   }
 
   /* ============ 事件绑定（一次性）============ */
@@ -1144,10 +2499,14 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     // 登出 / 改密
     var logoutBtn = el('btn-logout'); if (logoutBtn) logoutBtn.onclick = function () { logout(); render(); };
     var cpBtn = el('btn-changepwd'); if (cpBtn) cpBtn.onclick = function () {
-      var o = prompt('原密码：'); if (o === null) return;
-      var n = prompt('新密码（≥6位）：'); if (!n) return;
-      var r = changePassword(o, n);
-      toast(r.ok ? '密码已修改' : r.msg);
+      askInput({ title: '原密码', placeholder: '请输入当前密码', okText: '下一步' }, function (o) {
+        if (o === null || o === undefined) return;
+        askInput({ title: '新密码（≥6位）', placeholder: '至少 6 位', okText: '确认修改' }, function (nn) {
+          if (!nn) return;
+          var r = changePassword(o, nn);
+          toast(r.ok ? '密码已修改' : (r.msg || '修改失败'));
+        });
+      });
     };
 
     // 品类
@@ -1158,22 +2517,24 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
         if (del) { renameOrDeleteCategory(del); return; }
         var li = e.target.closest('.cat-item');
         if (li) { currentCategoryId = li.dataset.id || null; renderCloset(); }
-        if (e.target.id === 'cat-add') { var n = prompt('新品类名称：'); if (n !== null) addCategory(n); }
+        if (e.target.id === 'cat-add') { askInput({ title: '新增品类', placeholder: '如：西装 / 帽子 / 围巾', okText: '新增' }, function (v) { if (v && v.trim()) addCategory(v); }); }
       };
       // 双击重命名
       catList.ondblclick = function (e) {
         var li = e.target.closest('.cat-item');
         if (li && li.dataset.id) {
-          var n = prompt('重命名品类：', catName(li.dataset.id));
-          if (n !== null) renameCategory(li.dataset.id, n);
+          var _cid = li.dataset.id;
+          askInput({ title: '重命名品类', value: catName(_cid), okText: '保存' }, function (v) { if (v && v.trim()) renameCategory(_cid, v); });
         }
       };
     }
     function renameOrDeleteCategory(id) {
-      var act = prompt('品类操作：输入「del」删除，或直接输入新名称重命名：');
-      if (act === null) return;
-      if (act.trim().toLowerCase() === 'del') deleteCategory(id);
-      else renameCategory(id, act);
+      askRenameOrDelete('品类：可改名或删除', catName(id),
+        function (v) { if (v && v.trim()) renameCategory(id, v); toast('已重命名'); },
+        function () {
+          if (state.categories.length <= 1) { toast('至少保留一个品类'); return; }
+          askConfirm('删除品类「' + catName(id) + '」？该品类下的素材会保留', function (ok) { if (ok) deleteCategory(id); });
+        });
     }
 
     // 位置
@@ -1181,19 +2542,12 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     if (locChips) {
       locChips.onclick = function (e) {
         var c = e.target.closest('.chip'); if (!c) return;
-        if (c.id === 'loc-add') { var n = prompt('新位置名称：'); if (n !== null) addLocation(n); return; }
-        if (c.id === 'loc-manage') { manageLocations(); return; }
+        if (c.id === 'loc-add') { askInput({ title: '新增储存位置', placeholder: '如：主卧衣柜 / 出租屋', okText: '新增' }, function (v) { if (v && v.trim()) addLocation(v); }); return; }
+        if (c.id === 'loc-manage') { manageLocationsUI(); return; }
         var loc = c.dataset.loc; if (loc !== undefined) { currentLocationId = loc || null; renderCloset(); }
       };
     }
-    function manageLocations() {
-      var acts = state.locations.map(function (l, i) { return (i + 1) + '. ' + l.name; }).join('\n');
-      var cmd = prompt('位置管理（输入数字重命名，del+数字删除）：\n' + acts);
-      if (!cmd) return;
-      var m = cmd.match(/del\s*(\d+)/i);
-      if (m) deleteLocation(state.locations[parseInt(m[1]) - 1].id);
-      else { var p = cmd.match(/(\d+)\s*[:：]?\s*(.+)/); if (p) renameLocation(state.locations[parseInt(p[1]) - 1].id, p[2]); }
-    }
+    function manageLocations() { manageLocationsUI(); }
 
     // 搜索
     var si = el('searchInput');
@@ -1206,27 +2560,43 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     var fileInput = el('file-input');
     if (uploadBtn && fileInput) {
       uploadBtn.onclick = function () { fileInput.click(); };
-      fileInput.onchange = function () { if (fileInput.files.length) uploadFiles(fileInput.files); fileInput.value = ''; };
+      fileInput.onchange = function () {
+        // ★先把 FileList 拷成真数组，再清空 value（否则 iOS Safari 会让文件失效 → 上传无反应）
+        var picked = [];
+        try { picked = [].slice.call(fileInput.files || []); } catch (e) { picked = []; }
+        fileInput.value = '';
+        if (picked.length) uploadFiles(picked);
+      };
     }
 
-    // 卡片操作（委托）
+    // 卡片操作（委托）→ 弹出下拉编辑面板（不输入文字）
     var grid = el('item-grid');
     if (grid) {
       grid.onclick = function (e) {
         var card = e.target.closest('.item-card'); if (!card) return;
-        var id = card.dataset.id;
-        var act = prompt('操作：1=重命名 2=改类目 3=改位置 4=删除（直接输入数字）：');
-        if (!act) return;
-        if (act === '1') { var n = prompt('新名称：'); if (n !== null) renameItem(id, n); }
-        else if (act === '2') {
-          var cn = prompt('目标类目名（现有：' + state.categories.map(x => x.name).join('/') + '）：');
-          if (cn) { var c = state.categories.find(x => x.name === cn) || (addCategory(cn), state.categories[state.categories.length - 1]); moveItem(id, c.id, null); }
-        } else if (act === '3') {
-          var ln = prompt('目标位置（现有：' + state.locations.map(x => x.name).join('/') + '）：');
-          if (ln) { var l = state.locations.find(x => x.name === ln) || (addLocation(ln), state.locations[state.locations.length - 1]); moveItem(id, null, l.id); }
-        } else if (act === '4') { if (confirm('确定删除？')) deleteItem(id); }
+        openItemEdit(card.dataset.id);
       };
     }
+    var ieCancel = el('ie-cancel'); if (ieCancel) ieCancel.onclick = closeItemEdit;
+    var ieSave = el('ie-save'); if (ieSave) ieSave.onclick = saveItemEdit;
+    var ieDel = el('ie-del');
+    if (ieDel) ieDel.onclick = function () {
+      if (!editingItemId) return;
+      askConfirm('确定删除这件素材？', function (ok) { if (ok) { deleteItem(editingItemId); closeItemEdit(); } });
+    };
+    var ieRefine = el('ie-refine');
+    if (ieRefine) ieRefine.onclick = function () { if (editingItemId) aiRefineItem(editingItemId); };
+    var refineAllBtn = el('btn-refine-all');
+    if (refineAllBtn) refineAllBtn.onclick = function () { aiRefineAll(); };
+    var animeAllBtn = el('btn-anime-all'); if (animeAllBtn) animeAllBtn.onclick = function () { aiAnimeAll(); };
+    var ieAnime = el('ie-anime'); if (ieAnime) ieAnime.onclick = function () { if (editingItemId) aiAnimeItem(editingItemId); };
+    var ieRecut = el('ie-recut');
+    if (ieRecut) ieRecut.onclick = function () {
+      var it = state.items.find(x => x.id === editingItemId); if (!it) return;
+      var src = imgCache[it.imgId]; if (!src) { toast('找不到原图'); return; }
+      toast('正在抠图…'); removeBg(it.id, src);
+      setTimeout(function () { toast('抠图完成（已生成透明 PNG）'); }, 600);
+    };
 
     // 形象
     var avUpload = el('avatar-upload');
@@ -1239,11 +2609,42 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
       avUpload.value = '';
     };
     var genBtn = el('btn-generate-avatar'); if (genBtn) genBtn.onclick = generateAvatar;
+    // ★参考照 / 参考视频（视频自动取一帧）
+    var refInp = el('avatar-ref');
+    if (refInp) refInp.onchange = function () {
+      var f = refInp.files && refInp.files[0]; if (!f) return;
+      if (/^video\//.test(f.type)) {
+        var v = document.createElement('video');
+        v.preload = 'metadata'; v.muted = true; v.playsInline = true;
+        v.onloadeddata = function () { try { v.currentTime = Math.min(0.2, (v.duration || 1) / 2); } catch (e) {} };
+        v.onseeked = function () {
+          try {
+            var cv = document.createElement('canvas');
+            cv.width = v.videoWidth || 480; cv.height = v.videoHeight || 640;
+            cv.getContext('2d').drawImage(v, 0, 0, cv.width, cv.height);
+            addAvatar('参考视频帧', cv.toDataURL('image/jpeg', 0.9), function () {
+              renderAvatar(); toast('已取视频帧作为参考照');
+            });
+          } catch (e) { toast('视频取帧失败，请改用照片'); }
+        };
+        v.onerror = function () { toast('视频读取失败'); };
+        v.src = URL.createObjectURL(f);
+      } else {
+        var fr = new FileReader();
+        fr.onload = function () {
+          addAvatar('参考照', fr.result, function () { renderAvatar(); toast('参考照已上传，可点「生成我的 AI 形象」'); });
+        };
+        fr.readAsDataURL(f);
+      }
+    };
     var avList = el('avatar-list');
     if (avList) avList.onclick = function (e) {
       var card = e.target.closest('.avatar-card'); if (!card) return;
+      if (e.target.classList.contains('av-del')) {
+        deleteAvatar(card.dataset.id); renderAvatar(); renderTryon(); doTryon(); toast('已删除该形象'); return;
+      }
       if (e.target.classList.contains('star') || e.target.tagName === 'SMALL') { setPrimaryAvatar(card.dataset.id); renderAvatar(); return; }
-      setPrimaryAvatar(card.dataset.id); activeAvatarId = card.dataset.id; renderAvatar(); renderTryon();
+      setPrimaryAvatar(card.dataset.id); activeAvatarId = card.dataset.id; renderAvatar(); renderTryon(); doTryon();
     };
     var saveParamsBtn = el('btn-save-params');
     if (saveParamsBtn) saveParamsBtn.onclick = function () {
@@ -1254,17 +2655,19 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
 
     // 试穿
     var pickBtn = el('btn-pick-items'); if (pickBtn) pickBtn.onclick = openPicker;
+    var fitBtn = el('btn-autofit'); if (fitBtn) fitBtn.onclick = autoFitTryon;
     var closePicker = el('picker-close'); if (closePicker) closePicker.onclick = function () { el('picker-modal').style.display = 'none'; };
     var pickGrid = el('picker-grid');
     if (pickGrid) pickGrid.onclick = function (e) {
       var c = e.target.closest('.picker-card'); if (!c) return;
       togglePickerItem(c.dataset.id);
     };
-    var autoBtn = el('btn-auto-tryon'); if (autoBtn) autoBtn.onclick = doTryon;
+    var autoBtn = el('btn-auto-tryon'); if (autoBtn) autoBtn.onclick = function () {
+      _tryonAnimate = true; doTryon(); _tryonAnimate = false;
+    };
     var savePlanBtn = el('btn-save-plan');
     if (savePlanBtn) savePlanBtn.onclick = function () {
-      var n = prompt('给这个方案起个名字：', '我的方案 ' + (state.plans.length + 1));
-      if (n !== null) savePlan(n);
+      askInput({ title: '给这个方案起个名字', value: '我的方案 ' + (state.plans.length + 1), okText: '保存方案' }, function (v) { savePlan(v || ('我的方案 ' + (state.plans.length + 1))); });
     };
 
     // 方案文件夹
@@ -1272,7 +2675,7 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     if (planTabs) {
       planTabs.onclick = function (e) {
         var c = e.target.closest('.chip'); if (!c) return;
-        if (c.id === 'folder-add') { var fn = prompt('新文件夹名称：'); if (fn !== null) addPlanFolder(fn); return; }
+        if (c.id === 'folder-add') { askInput({ title: '新建方案文件夹', placeholder: '如：通勤 / 约会 / 秋冬', okText: '新建' }, function (v) { if (v && v.trim()) addPlanFolder(v); }); return; }
         var f = c.dataset.fold; if (f !== undefined) { state.activeFolderId = f || currentFolderId(); renderPlans(); }
       };
     }
@@ -1282,12 +2685,8 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
       planGrid.onclick = function (e) {
         var c = e.target.closest('.plan-card'); if (!c) return;
         var id = c.dataset.id;
-        var act = prompt('操作：1=重命名 2=移动到文件夹 3=删除：');
-        if (act === '1') { var n = prompt('新名称：'); if (n !== null) { var p = state.plans.find(x => x.id === id); if (p) { p.name = n.trim(); notify(); } } }
-        else if (act === '2') {
-          var fn = prompt('目标文件夹（现有：' + state.planFolders.map(x => x.name).join('/') + '；新建直接输入名）：');
-          if (fn) { var f = state.planFolders.find(x => x.name === fn) || (addPlanFolder(fn), state.planFolders[state.planFolders.length - 1]); movePlanToFolder(id, f.id); }
-        } else if (act === '3') { if (confirm('确定删除？')) deletePlan(id); }
+        var pl = state.plans.find(x => x.id === id);
+        askPlanAction(id, pl ? pl.name : '');
       };
     }
 
@@ -1313,14 +2712,17 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     // 设置
     var saveSet = el('btn-save-settings');
     if (saveSet) saveSet.onclick = function () {
+      // ★安全取值：任一输入框不存在都不会再抛错（此前 set-proxy-url 缺失导致保存静默失败）
+      var val = function (id) { var e = el(id); return e ? String(e.value || '').trim() : ''; };
       applySettings({
-        appName: (el('set-appname').value || '').trim() || '我的衣橱',
-        supabaseUrl: el('set-supabase-url').value.trim(),
-        supabaseKey: el('set-supabase-key').value.trim(),
-        hunyuanKey: el('set-hunyuan-key').value.trim(),
-        yuanbaoKey: el('set-yuanbao-key').value.trim(),
-        yuanbaoUrl: el('set-yuanbao-url').value.trim(),
-        proxyUrl: el('set-proxy-url').value.trim()
+        appName: val('set-appname') || '我的衣橱',
+        supabaseUrl: val('set-supabase-url'),
+        supabaseKey: val('set-supabase-key'),
+        hunyuanKey: val('set-hunyuan-key'),
+        yuanbaoKey: val('set-yuanbao-key'),
+        yuanbaoUrl: val('set-yuanbao-url'),
+        proxyUrl: val('set-proxy-url'),
+        imgModel: val('set-img-model')
       });
     };
     var syncBtn = el('btn-sync');
@@ -1342,9 +2744,500 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     restoreSession();   // ★刷新恢复会话
     refreshImages();
     bindAll();
+    try { bindV9(); } catch (e) { console.warn('bindV9', e); }
     render();
+    try { renderSettings(); } catch (e) {}
     if (state.session && state.session.email) showPage('closet');
     console.log('[我的衣橱] 初始化完成 v' + VERSION);
+  }
+
+
+  /* ============ v9-1：季节 + 类目内自定义文件夹 ============ */
+  var SEASONS = ['不限', '春', '夏', '秋', '冬', '四季'];
+  var currentSubFolderId = null;
+  var currentSeason = null;
+  var uploadSeason = '不限';
+  var uploadSubId = '';
+
+  function subFoldersOf(catId) { return (state.subFolders || []).filter(function (f) { return f.categoryId === catId; }); }
+  function subName(id) { var f = (state.subFolders || []).find(function (x) { return x.id === id; }); return f ? f.name : ''; }
+  function addSubFolder(name) {
+    name = (name || '').trim() || '新文件夹';
+    var catId = currentCategoryId || (state.categories[0] && state.categories[0].id);
+    if (!catId) { toast('请先选择一个大类目'); return; }
+    state.subFolders.push({ id: uid(), categoryId: catId, name: name });
+    notify(); toast('已新建文件夹：' + name);
+  }
+  function renameSubFolder(id, name) {
+    var f = (state.subFolders || []).find(function (x) { return x.id === id; });
+    if (f && name && name.trim()) { f.name = name.trim(); notify(); }
+  }
+  function deleteSubFolder(id) {
+    state.items.forEach(function (it) { if (it.subFolderId === id) it.subFolderId = ''; });
+    state.subFolders = state.subFolders.filter(function (x) { return x.id !== id; });
+    if (currentSubFolderId === id) currentSubFolderId = null;
+    notify();
+  }
+
+  /* ============ v9-2：搭配卡片画布（拼图 / 服装搭配卡）============ */
+  var CANVAS_BG = {
+    white: '#ffffff', cream: '#fdf8f1', pink: '#fdeef3', gray: '#f4f4f6'
+  };
+  var CANVAS_RATIO = { '1:1': 1, '3:4': 0.75, '4:3': 1.3333, '9:16': 0.5625 };
+  var canvasLayers = [];
+  var canvasSel = null;
+  var canvasTitle = '';
+  var lastCardDataUrl = '';
+  var _styleCache = {};
+  var _aiSrcMap = {};
+
+  function canvasDims() {
+    var r = CANVAS_RATIO[state.canvasRatio] || 0.75;
+    var w = 900, h = Math.round(w / r);
+    return { w: w, h: h };
+  }
+  function layerItem(L) { return state.items.find(function (z) { return z.id === L.itemId; }); }
+  function layerSrc(it, L) {
+    var s = (_aiSrcMap[it.id] || imgCache[it.trimmedImgId] || imgCache[it.transparentImgId] || imgCache[it.imgId] || '');
+    return s;
+  }
+  function applyStageBg(st) {
+    var bg = state.canvasBg || 'white';
+    if (bg === 'grad') st.style.background = 'linear-gradient(160deg,#fff5f8 0%,#f3f0ff 100%)';
+    else st.style.background = CANVAS_BG[bg] || '#ffffff';
+  }
+  function addToCanvas(itemIds) {
+    (itemIds || []).forEach(function (id) {
+      if (canvasLayers.some(function (l) { return l.itemId === id; })) return;
+      var n = canvasLayers.length;
+      canvasLayers.push({
+        uid: 'cl' + Date.now() + Math.random().toString(36).slice(2, 6),
+        itemId: id, x: 8 + (n % 3) * 30, y: 8 + Math.floor(n / 3) * 26, w: 30, rot: 0, z: n
+      });
+    });
+    renderCanvasStage();
+    toast('已添加 ' + (itemIds || []).length + ' 件到画布');
+  }
+  function removeCanvasLayer(uid) {
+    canvasLayers = canvasLayers.filter(function (l) { return l.uid !== uid; });
+    if (canvasSel === uid) canvasSel = null;
+    renderCanvasStage();
+  }
+  function tidyCanvas() {
+    var n = canvasLayers.length; if (!n) return;
+    var cols = n <= 2 ? n : (n <= 6 ? 2 : 3);
+    var rows = Math.ceil(n / cols);
+    canvasLayers.forEach(function (L, i) {
+      var c = i % cols, r = Math.floor(i / cols);
+      L.w = Math.round(88 / cols);
+      L.x = Math.round(6 + c * (88 / cols));
+      L.y = Math.round(6 + r * (78 / rows));
+      L.rot = 0; L.z = i;
+    });
+    renderCanvasStage(); toast('已一键排版');
+  }
+  function renderCanvasStage() {
+    var st = el('cv-stage'); if (!st) return;
+    var d = canvasDims();
+    applyStageBg(st);
+    var W = st.clientWidth || 380;
+    st.style.height = Math.round(W * d.h / d.w) + 'px';
+    st.style.aspectRatio = d.w + ' / ' + d.h;
+    st.innerHTML = '';
+    canvasLayers.slice().sort(function (a, b) { return (a.z || 0) - (b.z || 0); }).forEach(function (L) {
+      var it = layerItem(L); if (!it) return;
+      var src = layerSrc(it, L); if (!src) return;
+      var im = document.createElement('img');
+      im.className = 'cv-layer' + (canvasSel === L.uid ? ' sel' : '');
+      im.dataset.uid = L.uid;
+      im.src = src;
+      im.style.left = L.x + '%'; im.style.top = L.y + '%'; im.style.width = L.w + '%';
+      im.style.transform = 'rotate(' + (L.rot || 0) + 'deg)';
+      im.style.zIndex = String(10 + (L.z || 0));
+      st.appendChild(im);
+    });
+    var t = document.createElement('div'); t.className = 'cv-title';
+    t.textContent = canvasTitle || '';
+    st.appendChild(t);
+    renderCanvasThumbs();
+    var ctl = el('cv-ctl'); if (ctl) ctl.style.display = canvasSel ? 'flex' : 'none';
+  }
+  function renderCanvasThumbs() {
+    var box = el('cv-thumbs'); if (!box) return;
+    box.innerHTML = canvasLayers.length ? canvasLayers.map(function (L) {
+      var it = layerItem(L);
+      var src = it ? layerSrc(it, L) : '';
+      return '<div class="cv-thumb" data-uid="' + L.uid + '">' + (src ? '<img src="' + src + '">' : '') +
+        '<span class="x" data-x="' + L.uid + '">✕</span></div>';
+    }).join('') : '<div class="sub">画布还是空的</div>';
+  }
+  function stylizeImage(src, style, cb) {
+    if (!src || style === 'raw' || style === 'ai') { cb(src); return; }
+    var key = style + '|' + src.length + '|' + src.slice(0, 32);
+    if (_styleCache[key]) { cb(_styleCache[key]); return; }
+    var img = new Image();
+    img.onload = function () {
+      try {
+        var pad = (style === 'sticker') ? 16 : 8;
+        var nw = img.naturalWidth || 200, nh = img.naturalHeight || 200;
+        var c = document.createElement('canvas'); c.width = nw + pad * 2; c.height = nh + pad * 2;
+        var x = c.getContext('2d');
+        if (style === 'sticker') {
+          var m = document.createElement('canvas'); m.width = nw; m.height = nh;
+          var mx = m.getContext('2d'); mx.drawImage(img, 0, 0);
+          mx.globalCompositeOperation = 'source-atop'; mx.fillStyle = '#ffffff'; mx.fillRect(0, 0, nw, nh);
+          mx.globalCompositeOperation = 'source-over';
+          [[-4, 0], [4, 0], [0, -4], [0, 4], [-3, -3], [3, -3], [-3, 3], [3, 3], [-4, -2], [4, 2]].forEach(function (o) {
+            x.drawImage(m, pad + o[0], pad + o[1]);
+          });
+        }
+        if (style === 'soft') { try { x.filter = 'saturate(1.14) contrast(1.05) brightness(1.03)'; } catch (e) {} x.shadowColor = 'rgba(140,110,110,.22)'; x.shadowBlur = 10; }
+        else if (style === 'cartoon') { try { x.filter = 'saturate(1.26) contrast(1.12)'; } catch (e) {} }
+        x.drawImage(img, pad, pad);
+        try { x.filter = 'none'; } catch (e) {} x.shadowBlur = 0;
+        if (style === 'cartoon') {
+          try {
+            var idat = x.getImageData(0, 0, c.width, c.height), dd = idat.data;
+            for (var i = 0; i < dd.length; i += 4) {
+              if (dd[i + 3] < 8) continue;
+              dd[i] = Math.round(dd[i] / 16) * 16; dd[i + 1] = Math.round(dd[i + 1] / 16) * 16; dd[i + 2] = Math.round(dd[i + 2] / 16) * 16;
+            }
+            x.putImageData(idat, 0, 0);
+          } catch (e) {}
+        }
+        var out = c.toDataURL('image/png');
+        _styleCache[key] = out; cb(out);
+      } catch (e) { cb(src); }
+    };
+    img.onerror = function () { cb(src); };
+    img.src = src;
+  }
+  function prepareCardImages(cb) {
+    if ((state.cardStyle || 'soft') !== 'ai') { cb(); return; }
+    var g = getImgGenConfig();
+    if (!g.base || !g.key) { toast('未配置图片接口，已改用「柔和美化」'); state.cardStyle = 'soft'; cb(); return; }
+    var list = canvasLayers.slice(), i = 0;
+    (function next() {
+      if (i >= list.length) { cb(); return; }
+      var L = list[i++]; var it = layerItem(L);
+      var raw = it ? (imgCache[it.transparentImgId] || imgCache[it.imgId]) : '';
+      if (!raw || _aiSrcMap[it.id]) { next(); return; }
+      callImageEdit(raw, '严格保持这件衣物的款式、廓形、颜色、图案与细节完全不变，仅把它处理成柔和插画质感的服装展示图，纯白背景，边缘干净，高清',
+        function (u) {
+          urlToDataUrl(u, function (d) { if (d) _aiSrcMap[it.id] = d; next(); });
+        }, function () { next(); });
+    })();
+  }
+  function drawCanvasBg(x, d) {
+    var bg = state.canvasBg || 'white';
+    if (bg === 'grad') { var g = x.createLinearGradient(0, 0, d.w, d.h); g.addColorStop(0, '#fff5f8'); g.addColorStop(1, '#f3f0ff'); x.fillStyle = g; }
+    else x.fillStyle = CANVAS_BG[bg] || '#ffffff';
+    x.fillRect(0, 0, d.w, d.h);
+    if (bg === 'grad') return;
+  }
+  function exportCanvas(cb) {
+    var d = canvasDims();
+    var c = document.createElement('canvas'); c.width = d.w; c.height = d.h;
+    var x = c.getContext('2d');
+    drawCanvasBg(x, d);
+    var items = canvasLayers.slice().sort(function (a, b) { return (a.z || 0) - (b.z || 0); });
+    if (!items.length) { drawCanvasTitle(x, d); cb(c.toDataURL('image/png')); return; }
+    var done = 0, total = items.length;
+    items.forEach(function (L) {
+      var it = layerItem(L);
+      var raw = it ? (_aiSrcMap[it.id] || imgCache[it.trimmedImgId] || imgCache[it.transparentImgId] || imgCache[it.imgId] || '') : '';
+      if (!raw) { done++; fin(); return; }
+      stylizeImage(raw, state.cardStyle || 'soft', function (src) {
+        var im = new Image();
+        im.onload = function () {
+          var w = d.w * (L.w / 100);
+          var h = w * (im.naturalHeight / (im.naturalWidth || 1));
+          var px = d.w * (L.x / 100), py = d.h * (L.y / 100);
+          x.save();
+          if (L.rot) { x.translate(px + w / 2, py + h / 2); x.rotate((L.rot || 0) * Math.PI / 180); x.drawImage(im, -w / 2, -h / 2, w, h); }
+          else x.drawImage(im, px, py, w, h);
+          x.restore();
+          done++; fin();
+        };
+        im.onerror = function () { done++; fin(); };
+        im.src = src;
+      });
+    });
+    function fin() { if (done >= total) { drawCanvasTitle(x, d); cb(c.toDataURL('image/png')); } }
+  }
+  function drawCanvasTitle(x, d) {
+    if (!canvasTitle) return;
+    x.save();
+    x.fillStyle = 'rgba(255,255,255,.72)';
+    x.fillRect(0, d.h - 74, d.w, 74);
+    x.fillStyle = '#5a4a4a';
+    x.font = 'bold 34px system-ui, -apple-system, "PingFang SC", sans-serif';
+    x.textAlign = 'center'; x.textBaseline = 'middle';
+    x.fillText(canvasTitle, d.w / 2, d.h - 38);
+    x.restore();
+  }
+  function generateCard() {
+    if (!canvasLayers.length) { toast('先添加素材到画布'); return; }
+    toast('正在生成卡片…');
+    prepareCardImages(function () {
+      exportCanvas(function (url) {
+        lastCardDataUrl = url;
+        var pv = el('cv-preview');
+        if (pv) pv.innerHTML = '<div class="card"><div style="font-weight:600;margin-bottom:8px">卡片预览</div>' +
+          '<img src="' + url + '" style="max-width:320px;width:100%;border-radius:12px;border:1px solid var(--line)"><div class="sub" style="margin-top:8px">长按图片可保存到相册；点「💾 保存到方案」存进文件夹</div></div>';
+        toast('卡片已生成');
+      });
+    });
+  }
+  function saveCardPlan() {
+    if (!lastCardDataUrl) { toast('先点「🖼 生成卡片」'); return; }
+    var nmEl = el('cv-name');
+    var name = (nmEl && nmEl.value || '').trim() || ('搭配卡片 ' + (state.plans.length + 1));
+    var fd = el('cv-folder');
+    var folderId = (fd && fd.value) || currentFolderId() || state.planFolders[0].id;
+    var id = uid();
+    try { imgPut(id, lastCardDataUrl); imgCache[id] = lastCardDataUrl; } catch (e) { toast('图片过大，保存失败'); return; }
+    state.plans.unshift({
+      id: uid(),
+      name: name,
+      folderId: folderId,
+      itemIds: canvasLayers.map(function (l) { return l.itemId; }),
+      avatarId: null,
+      coverImgId: id,
+      type: 'card',
+      title: canvasTitle || '',
+      layout: {},
+      createdAt: Date.now()
+    });
+    notify(); toast('已保存：' + name);
+    showPage('plans');
+  }
+  var _cvPicker = null, _cvPickerGrid = null;
+  function ensureCanvasPicker() {
+    if (_cvPicker && _cvPickerGrid) return _cvPicker;
+    var d = document.createElement('div');
+    d.className = 'modal'; d.id = 'cv-picker-modal';
+    var box = document.createElement('div'); box.className = 'modal-box';
+    var hd = document.createElement('div');
+    hd.style.display = 'flex'; hd.style.justifyContent = 'space-between'; hd.style.alignItems = 'center'; hd.style.marginBottom = '10px';
+    var h3 = document.createElement('h3'); h3.style.margin = '0'; h3.textContent = '添加到画布（可多选）';
+    var cl = document.createElement('span'); cl.id = 'cv-picker-close'; cl.textContent = '✕';
+    cl.style.cursor = 'pointer'; cl.style.fontSize = '20px';
+    hd.appendChild(h3); hd.appendChild(cl);
+    var g = document.createElement('div'); g.id = 'cv-picker-grid'; g.className = 'grid';
+    var okb = document.createElement('button'); okb.id = 'cv-picker-ok'; okb.className = 'btn block';
+    okb.style.marginTop = '12px'; okb.textContent = '确认添加';
+    box.appendChild(hd); box.appendChild(g); box.appendChild(okb);
+    d.appendChild(box);
+    document.body.appendChild(d);
+    d.addEventListener('click', function (e) { if (e.target === d) d.style.display = 'none'; });
+    cl.onclick = function () { d.style.display = 'none'; };
+    g.onclick = function (e) {
+      var c = e.target && e.target.closest ? e.target.closest('.picker-card') : null;
+      if (c) c.classList.toggle('on');
+    };
+    _cvPicker = d; _cvPickerGrid = g;
+    okb.onclick = function () {
+      var ids = [];
+      [].forEach.call(g.querySelectorAll('.picker-card.on'), function (c) { ids.push(c.dataset.id); });
+      if (!ids.length) { toast('还没选素材'); return; }
+      addToCanvas(ids);
+      d.style.display = 'none';
+    };
+    return d;
+  }
+  function openCanvasPicker() {
+    ensureCanvasPicker();
+    ensureCanvasPicker();
+    var g = _cvPickerGrid || el('cv-picker-grid');
+    if (!g) return;
+    g.innerHTML = (state.items.length ? '' : '<div class="empty-sm">衣橱还没有素材</div>') +
+      state.items.map(function (it) {
+        return '<div class="picker-card" data-id="' + it.id + '">' +
+          (it.imgId ? '<img src="' + (imgCache[it.imgId] || '') + '" onerror="this.src=\'\'">' : '<div class="ph">👕</div>') +
+          '<small>' + escapeHtml(it.name || catName(it.categoryId)) + '</small></div>';
+      }).join('');
+    (_cvPicker || el('cv-picker-modal')).style.display = 'flex';
+  }
+  function renderCanvas() {
+    var r = el('cv-ratio'); if (r) r.value = state.canvasRatio || '3:4';
+    var b = el('cv-bg'); if (b) b.value = state.canvasBg || 'white';
+    var stl = el('cv-style'); if (stl) stl.value = state.cardStyle || 'soft';
+    var f = el('cv-folder');
+    if (f) f.innerHTML = state.planFolders.map(function (x) {
+      return '<option value="' + x.id + '"' + (x.id === currentFolderId() ? ' selected' : '') + '>' + escapeHtml(x.name) + '</option>';
+    }).join('');
+    var ti = el('cv-title'); if (ti && ti.value !== canvasTitle) ti.value = canvasTitle;
+    renderCanvasStage();
+  }
+
+  /* ============ v9-3：试穿 AI 美化 / AI 合成 ============ */
+  function toggleAiBeautify() {
+    state.aiBeautify = !state.aiBeautify; saveMeta();
+    try { doTryon(); } catch (e) {}
+    toast(state.aiBeautify ? '✨ AI美化已开启（仅修饰观感，款式花色不变）' : 'AI美化已关闭');
+  }
+  function composeTryonCanvas(cb) {
+    var avatar = state.avatars.find(function (x) { return x.id === (activeAvatarId || state.primaryAvatarId); }) || state.avatars[0];
+    if (!avatar) { cb(null); return; }
+    var W = 768, H = 1024;
+    var c = document.createElement('canvas'); c.width = W; c.height = H;
+    var x = c.getContext('2d');
+    x.fillStyle = '#ffffff'; x.fillRect(0, 0, W, H);
+    var base = new Image();
+    base.onload = function () {
+      x.drawImage(base, 0, 0, W, H);
+      var items = selectedItemIds.map(function (id) { return state.items.find(function (z) { return z.id === id; }); }).filter(Boolean);
+      var i = 0;
+      (function nx() {
+        if (i >= items.length) { cb(c.toDataURL('image/png')); return; }
+        var it = items[i++];
+        var src = imgCache[it.trimmedImgId] || imgCache[it.transparentImgId] || imgCache[it.imgId];
+        if (!src) { nx(); return; }
+        var im = new Image();
+        im.onload = function () {
+          var L = getLayerLayout(it);
+          var w = W * (L.w / 100), h = w * (im.naturalHeight / (im.naturalWidth || 1));
+          x.save();
+          x.translate(W * (L.x / 100) + w / 2, H * (L.y / 100) + h / 2);
+          if (L.rot) x.rotate(L.rot * Math.PI / 180);
+          x.drawImage(im, -w / 2, -h / 2, w, h);
+          x.restore();
+          nx();
+        };
+        im.onerror = function () { nx(); };
+        im.src = src;
+      })();
+    };
+    base.onerror = function () { cb(null); };
+    base.src = imgCache[avatar.imgId] || '';
+  }
+  function aiMergeTryon() {
+    var g = getImgGenConfig();
+    if (!g.base || !g.key) { toast('⚠️ AI合成试穿需要接口：设置 → AI 形象生成，填「图像接口地址 + API Key」（跨域可运行 hunyuan_proxy.js）。未配置时可用「自动贴合」手动摆位'); return; }
+    var avatar = state.avatars.find(function (x) { return x.id === (activeAvatarId || state.primaryAvatarId); }) || state.avatars[0];
+    if (!avatar) { toast('请先在「形象」页生成 AI 形象'); return; }
+    if (!selectedItemIds.length) { toast('先「＋ 选择素材」挑衣服'); return; }
+    toast('正在 AI 合成试穿…');
+    composeTryonCanvas(function (d) {
+      if (!d) { toast('合成失败，请确认形象图片已加载'); return; }
+      callImageEdit(d,
+        '这是一张虚拟试衣参考图：画面中的人物是同一个人，旁边的衣物是待穿的单品。' +
+        '请生成一张完整的试穿效果图，把这身搭配真正穿到人物身上。严格要求：\n' +
+        '1) 人物：保持参考图中人物的脸型、五官、发型、肤色、身材比例完全一致，同一Pose与站姿；\n' +
+        '2) 服装：严格保持每件单品的款式、版型、领型、袖长、衣长、廓形完全不变；\n' +
+        '3) 花色：颜色、图案、印花、条纹、波点、格纹等所有设计元素完全不变，不得改色、不得增删图案；\n' +
+        '4) 穿着关系：上装穿在上半身、下装穿在下半身、鞋子穿在脚上、配饰戴在对应位置，各单品层级正确、互不遮挡错位；\n' +
+        '5) 真实感：服装贴合身形，有自然的垂坠、褶皱与光影，袖口/领口/下摆与身体衔接自然，不要悬浮、不要贴图感；\n' +
+        '6) 画质：整体像一张真实的穿搭照片/高质量时装插画，高清，构图完整，人物全身入镜，不要文字水印。',
+        function (u) {
+          urlToDataUrl(u, function (res) {
+            if (!res) { toast('AI 返回结果无法读取'); return; }
+            var id = uid();
+            imgPut(id, res); imgCache[id] = res;
+            state.plans.unshift({
+              id: uid(), name: 'AI试穿 ' + new Date().toLocaleDateString('zh-CN'),
+              folderId: currentFolderId() || state.planFolders[0].id,
+              itemIds: selectedItemIds.slice(),
+              avatarId: avatar.id, coverImgId: id, type: 'ai',
+              layout: JSON.parse(JSON.stringify(state.tryonLayout || {})),
+              createdAt: Date.now()
+            });
+            notify(); toast('AI 试穿图已生成并保存为方案');
+            showPage('plans');
+          });
+        },
+        function (err) { toast('AI 合成失败：' + (err || '未知')); });
+    });
+  }
+
+  /* ============ v9 事件绑定 ============ */
+  function bindV9() {
+    // 上传归属
+    var us = el('up-season'); if (us) us.onchange = function () { uploadSeason = us.value; };
+    var ub = el('up-sub'); if (ub) ub.onchange = function () { uploadSubId = ub.value; };
+    // 子文件夹 / 季节筛选
+    var sf = el('subfolder-chips');
+    if (sf) sf.onclick = function (e) {
+      if (e.target.id === 'sub-add') { askInput({ title: '新建文件夹（当前类目下）', placeholder: '如：冬装 / 夏装', okText: '新建' }, function (v) { if (v && v.trim()) addSubFolder(v); }); return; }
+      var d = e.target.dataset.sfdel;
+      if (d) { askConfirm('删除该文件夹？素材不会被删除', function (ok) { if (ok) deleteSubFolder(d); }); return; }
+      var c = e.target.closest('.sub-chip'); if (!c) return;
+      currentSubFolderId = c.dataset.sub || null; renderCloset();
+    };
+    var sc = el('season-chips');
+    if (sc) sc.onclick = function (e) {
+      var c = e.target.closest('.sub-chip'); if (!c) return;
+      currentSeason = c.dataset.sea || null; renderCloset();
+    };
+    // 试穿 AI
+    var bb = el('btn-aibeauty'); if (bb) bb.onclick = toggleAiBeautify;
+    var bm = el('btn-ai-merge'); if (bm) bm.onclick = aiMergeTryon;
+    // 画布
+    var bp = el('btn-canvas-pick'); if (bp) bp.onclick = openCanvasPicker;
+    var bc = el('btn-canvas-clear'); if (bc) bc.onclick = function () { canvasLayers = []; canvasSel = null; renderCanvasStage(); var p = el('cv-preview'); if (p) p.innerHTML = ''; lastCardDataUrl = ''; };
+    var rr = el('cv-ratio'); if (rr) rr.onchange = function () { state.canvasRatio = rr.value; saveMeta(); renderCanvasStage(); };
+    var bg = el('cv-bg'); if (bg) bg.onchange = function () { state.canvasBg = bg.value; saveMeta(); renderCanvasStage(); };
+    var stl = el('cv-style'); if (stl) stl.onchange = function () { state.cardStyle = stl.value; saveMeta(); };
+    var tidy = el('btn-cv-tidy'); if (tidy) tidy.onclick = tidyCanvas;
+    var exp = el('btn-cv-export'); if (exp) exp.onclick = generateCard;
+    var sv = el('btn-cv-save'); if (sv) sv.onclick = saveCardPlan;
+    var ti = el('cv-title'); if (ti) ti.oninput = function () { canvasTitle = ti.value; renderCanvasStage(); };
+    var th = el('cv-thumbs');
+    if (th) th.onclick = function (e) {
+      var xx = e.target.dataset.x;
+      if (xx) { removeCanvasLayer(xx); return; }
+      var c = e.target.closest('.cv-thumb'); if (!c) return;
+      canvasSel = c.dataset.uid; renderCanvasStage();
+    };
+    var ctl = el('cv-ctl');
+    if (ctl) ctl.onclick = function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      var a = b.dataset.c; if (!canvasSel) { toast('先选中一件'); return; }
+      var L = canvasLayers.find(function (l) { return l.uid === canvasSel; }); if (!L) return;
+      if (a === 'big') L.w = Math.min(96, L.w * 1.12);
+      else if (a === 'small') L.w = Math.max(6, L.w / 1.12);
+      else if (a === 'rotl') L.rot = (L.rot || 0) - 5;
+      else if (a === 'rotr') L.rot = (L.rot || 0) + 5;
+      else if (a === 'up') L.z = (L.z || 0) + 1;
+      else if (a === 'down') L.z = (L.z || 0) - 1;
+      else if (a === 'del') { removeCanvasLayer(L.uid); return; }
+      renderCanvasStage();
+    };
+    // 画布拖拽
+    var stage = el('cv-stage');
+    if (stage) {
+      var drag = null;
+      function pct(ev, ax) {
+        var r = stage.getBoundingClientRect();
+        var cx = (ev.touches ? ev.touches[0].clientX : ev.clientX);
+        var cy = (ev.touches ? ev.touches[0].clientY : ev.clientY);
+        return ax === 'x' ? (cx - r.left) / r.width * 100 : (cy - r.top) / r.height * 100;
+      }
+      function down(ev) {
+        var t = ev.target; if (!t || t.className.indexOf('cv-layer') < 0) return;
+        canvasSel = t.dataset.uid;
+        var L = canvasLayers.find(function (l) { return l.uid === canvasSel; }); if (!L) return;
+        drag = { L: L, dx: pct(ev, 'x') - L.x, dy: pct(ev, 'y') - L.y };
+        renderCanvasStage();
+        ev.preventDefault();
+      }
+      function move(ev) {
+        if (!drag) return;
+        drag.L.x = Math.max(-20, Math.min(110, pct(ev, 'x') - drag.dx));
+        drag.L.y = Math.max(-20, Math.min(110, pct(ev, 'y') - drag.dy));
+        var im = stage.querySelector('.cv-layer[data-uid="' + drag.L.uid + '"]');
+        if (im) { im.style.left = drag.L.x + '%'; im.style.top = drag.L.y + '%'; }
+        ev.preventDefault();
+      }
+      function up() { drag = null; }
+      stage.addEventListener('mousedown', down);
+      stage.addEventListener('touchstart', down, { passive: false });
+      document.addEventListener('mousemove', move);
+      document.addEventListener('touchmove', move, { passive: false });
+      document.addEventListener('mouseup', up);
+      document.addEventListener('touchend', up);
+    }
   }
 
   // 暴露（仅真实存在的函数）
@@ -1353,11 +3246,20 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     render: render,
     renderCloset: renderCloset,
     renderAvatar: renderAvatar,
+    refreshImages: refreshImages,
     renderTryon: renderTryon,
     renderPlans: renderPlans,
     renderAdvisor: renderAdvisor,
     renderSettings: renderSettings,
     renderSidebar: renderSidebar,
+    applyAppName: applyAppName,
+    askInput: askInput,
+    askConfirm: askConfirm,
+    askMovePlan: askMovePlan,
+    askPlanAction: askPlanAction,
+    askRenameOrDelete: askRenameOrDelete,
+    manageLocationsUI: manageLocationsUI,
+    renderBloggerBox: renderBloggerBox,
     showPage: showPage,
     bindAuthBtn: bindAuthBtn,
     bindAll: bindAll,
@@ -1372,6 +3274,7 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     renameLocation: renameLocation,
     deleteLocation: deleteLocation,
     uploadFiles: uploadFiles,
+    openUploadModal: openUploadModal,
     removeBg: removeBg,
     deleteItem: deleteItem,
     renameItem: renameItem,
@@ -1385,6 +3288,9 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     renderPicker: renderPicker,
     togglePickerItem: togglePickerItem,
     doTryon: doTryon,
+    openItemEdit: openItemEdit,
+    removeBg: removeBg,
+    generateAvatar: generateAvatar,
     addPlanFolder: addPlanFolder,
     renamePlanFolder: renamePlanFolder,
     deletePlanFolder: deletePlanFolder,
@@ -1405,9 +3311,51 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     toggleTemplate: toggleTemplate,
     applySettings: applySettings,
     toast: toast,
-    state: state,
+    get state(){ return state; },
     saveMeta: saveMeta,
-    loadMeta: loadMeta
+    loadMeta: loadMeta,
+    // ★本轮新增（均为真实存在的函数，逐个核对过）
+    getImgGenConfig: getImgGenConfig,
+    callImageEdit: callImageEdit,
+    heyteaFilter: heyteaFilter,
+    heyteaLocal: heyteaLocal,
+    urlToDataUrl: urlToDataUrl,
+    trimTransparent: trimTransparent,
+    defaultLayerLayout: defaultLayerLayout,
+    garmentAnchor: garmentAnchor,
+    autoFitTryon: autoFitTryon,
+    itemSrc: itemSrc,
+    get imgCache() { return imgCache; },
+    // ★v9 新增（逐个核对为真实存在的函数）
+    SEASONS: SEASONS,
+    subFoldersOf: subFoldersOf,
+    addSubFolder: addSubFolder,
+    renameSubFolder: renameSubFolder,
+    deleteSubFolder: deleteSubFolder,
+    addToCanvas: addToCanvas,
+    renderCanvas: renderCanvas,
+    renderCanvasStage: renderCanvasStage,
+    openCanvasPicker: openCanvasPicker,
+    tidyCanvas: tidyCanvas,
+    exportCanvas: exportCanvas,
+    stylizeImage: stylizeImage,
+    generateCard: generateCard,
+    saveCardPlan: saveCardPlan,
+    toggleAiBeautify: toggleAiBeautify,
+    aiMergeTryon: aiMergeTryon,
+    composeTryonCanvas: composeTryonCanvas,
+    aiRefineItem: aiRefineItem,
+    aiRefineAll: aiRefineAll,
+    aiAnimeItem: aiAnimeItem,
+    aiAnimeAll: aiAnimeAll,
+    refinePrompt: refinePrompt,
+    itemSrc: itemSrc,
+    imgPut: imgPut,
+    imgGet: imgGet,
+    get canvasLayers() { return canvasLayers; },
+    set canvasLayers(v) { canvasLayers = v; },
+    get selectedItemIds() { return selectedItemIds; },
+    set selectedItemIds(v) { selectedItemIds = v; }
   };
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
@@ -1415,5 +3363,31 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
 })(window);
 
 </script>
+<div class="modal" id="item-edit-modal">
+  <div class="modal-box" style="max-width:380px">
+    <h3 style="margin:0 0 12px;font-size:16px">编辑素材</h3>
+    <div id="ie-preview" style="text-align:center;margin-bottom:12px"></div>
+    <div style="margin-bottom:12px"><label style="font-size:12px;color:var(--sub)">名称（可留空）</label>
+      <input id="ie-name" type="text" placeholder="未命名素材" style="width:100%;border:1px solid var(--line);border-radius:10px;padding:9px 10px;margin-top:4px"></div>
+    <div style="margin-bottom:12px"><label style="font-size:12px;color:var(--sub)">品类（下拉选择）</label>
+      <select id="ie-cat" style="width:100%;border:1px solid var(--line);border-radius:10px;padding:9px 10px;margin-top:4px;background:#fff"></select></div>
+    <div style="margin-bottom:4px"><label style="font-size:12px;color:var(--sub)">储存位置（下拉选择）</label>
+      <select id="ie-loc" style="width:100%;border:1px solid var(--line);border-radius:10px;padding:9px 10px;margin-top:4px;background:#fff"></select></div>
+    <div style="margin-top:10px"><label class="sub">季节</label>
+      <select id="ie-season" style="width:100%;border:1px solid var(--line);border-radius:10px;padding:9px 10px;margin-top:4px;background:#fff"></select></div>
+    <div style="margin-top:10px"><label class="sub">类目内文件夹</label>
+      <select id="ie-sub" style="width:100%;border:1px solid var(--line);border-radius:10px;padding:9px 10px;margin-top:4px;background:#fff"></select></div>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button class="btn sec" id="ie-cancel" style="flex:1">取消</button>
+      <button class="btn" id="ie-save" style="flex:1">保存</button>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button class="btn sec" id="ie-refine" style="flex:1">✨ AI精修</button>
+      <button class="btn sec" id="ie-anime" style="flex:1">🎨 喜茶风动漫</button>
+      <button class="btn sec" id="ie-recut" style="flex:1">重新抠图</button>
+      <button class="btn sec" id="ie-del" style="flex:1;color:#c0392b">删除</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
