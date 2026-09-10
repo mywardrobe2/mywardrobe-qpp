@@ -5,8 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>我的衣橱 · AI 穿搭</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="我的衣橱">
+<meta name="application-name" content="我的衣橱">
 <meta name="theme-color" content="#c98b5e">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
 <style>
 :root{--bg:#f6f3ee;--card:#fff;--ink:#2b2b2b;--sub:#8a8a8a;--line:#ece7df;--brand:#c98b5e;--brand2:#a86f42;--good:#3aa76d;--shadow:0 2px 12px rgba(0,0,0,.06)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -399,11 +403,12 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
           <label class="sub" style="font-weight:600">📱 手机 App 名称（桌面图标名）</label>
           <div style="font-size:11px;color:#888;line-height:1.65;margin:4px 0 8px">
             桌面图标下面的名字是<b>打包进 APK 里的</b>，安装之后无法在 App 内直接改 —— 需要用改名脚本改完<b>重新打包安装</b>。<br>
-            如果你是「浏览器 → 添加到主屏」在用，点第一个按钮就能立刻同步成新名字。
+            如果你是「浏览器 → 添加到主屏」在用：点第一个按钮会<b>自动写入服务器</b>（用 start.js 启动时），手机刷新后「添加到主屏」就是新名字；若用的是 python 启动，请点第三个按钮下载 manifest.json，覆盖回本文件夹即可。
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
             <button id="btn-sync-pwa" class="btn sec" type="button">📲 同步到手机桌面名称</button>
             <button id="btn-gen-rename" class="btn sec" type="button">📦 下载改名打包脚本</button>
+            <button id="btn-dl-manifest" class="btn sec" type="button">📄 下载 manifest.json</button>
           </div>
           <small id="mobile-appname-tip" class="sub" style="display:block;margin-top:6px"></small>
         </div>
@@ -917,6 +922,13 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
       var all = document.querySelectorAll('[data-appname]');
       for (var i = 0; i < all.length; i++) all[i].textContent = nm;
     } catch (e) {}
+    /* v25：软件名一变就自动同步到手机桌面名（manifest + iOS meta），无需手动点按钮 */
+    try {
+      if (window.__lastPwaName !== nm) {
+        window.__lastPwaName = nm;
+        syncPwaName();
+      }
+    } catch (e) {}
   }
   /* v21：只保存软件名称 —— 立即持久化 + 立刻全量生效（侧栏/登录页/浏览器标签） */
   function saveAppNameOnly() {
@@ -940,36 +952,77 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     return ok;
   }
   /* v24：手机 App 名称 —— ①同步到「添加到主屏」的桌面名 ②下载改名打包脚本 */
+  function buildManifest() {
+    var nm = (state.appName && String(state.appName).trim()) || '我的衣橱';
+    return {
+      name: nm, short_name: nm.slice(0, 10),
+      start_url: './wardrobe.html', scope: './',
+      display: 'standalone', orientation: 'portrait',
+      background_color: '#fff5f7', theme_color: '#c98b5e',
+      description: nm + ' · AI 穿搭衣橱',
+      icons: [{ src: 'icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+              { src: 'icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' }]
+    };
+  }
   function syncPwaName() {
     var nm = (state.appName && String(state.appName).trim()) || '我的衣橱';
     var tip = el('mobile-appname-tip');
-    var warn = '';
+    var mf = buildManifest();
+    /* ① iOS「添加到主屏」读的就是这两个 meta，改了立刻生效 */
     try {
       var head = document.head || (document.getElementsByTagName ? document.getElementsByTagName('head')[0] : null);
-      var mf = {
-        name: nm, short_name: nm.slice(0, 8), start_url: '.', display: 'standalone',
-        background_color: '#fff5f7', theme_color: '#ff758c',
-        icons: [{ src: 'assets/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
-                { src: 'assets/icons/icon-512.png', sizes: '512x512', type: 'image/png' }]
-      };
-      var blob = new Blob([JSON.stringify(mf)], { type: 'application/manifest+json' });
-      var url = URL.createObjectURL(blob);
       if (head) {
-        var link = document.querySelector('link[rel="manifest"]');
-        if (!link) { link = document.createElement('link'); link.rel = 'manifest'; head.appendChild(link); }
-        link.href = url;
         var mt = document.querySelector('meta[name="apple-mobile-web-app-title"]');
         if (!mt) { mt = document.createElement('meta'); mt.name = 'apple-mobile-web-app-title'; head.appendChild(mt); }
         mt.content = nm;
         var m2 = document.querySelector('meta[name="application-name"]');
         if (!m2) { m2 = document.createElement('meta'); m2.name = 'application-name'; head.appendChild(m2); }
         m2.content = nm;
-      } else { warn = '（未找到 head，仅更新了标题）'; }
-    } catch (e) { warn = '（' + (e && e.message ? e.message : e) + '）'; }
-    var okTitle = true;
-    try { document.title = nm; } catch (e) { okTitle = false; }
-    if (tip) tip.innerHTML = '✅ 已同步为「<b>' + nm + '</b>」' + (warn ? ' ' + warn : '') + '。手机浏览器菜单 →「添加到主屏」，桌面图标名就是它了。';
-    if (okTitle) toast('已同步桌面名称：' + nm + ' ✅');
+      }
+    } catch (e) {}
+    try { document.title = nm + ' · AI 穿搭'; } catch (e) {}
+    /* ② Android Chrome 读 manifest.json —— 让服务器真的把文件改掉（start.js 支持写） */
+    var done = false;
+    try {
+      fetch('__save_manifest', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(mf)
+      }).then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.text();
+      }).then(function () {
+        done = true;
+        try {
+          var lk = document.querySelector('link[rel="manifest"]');
+          if (lk) lk.setAttribute('href', 'manifest.json?v=' + Date.now());
+        } catch (e) {}
+        if (tip) tip.innerHTML = '✅ 已写入服务器 <b>manifest.json</b>：手机刷新后「添加到主屏」，桌面图标名就是「<b>' + nm + '</b>」';
+        toast('桌面名称已同步：' + nm + ' ✅');
+      }).catch(function () {
+        if (tip) tip.innerHTML = '⚠️ 当前用的是 python 启动，服务器不允许自动写入。<br>请点「<b>📄 下载 manifest.json</b>」，把它覆盖回本文件夹（和 wardrobe.html 放一起），手机刷新即可。';
+      });
+    } catch (e) {
+      if (tip) tip.innerHTML = '⚠️ 无法自动写入：请点「📄 下载 manifest.json」覆盖回本文件夹。';
+    }
+    if (tip && !tip.innerHTML) tip.innerHTML = '正在同步…';
+  }
+  function dlManifest() {
+    var nm = (state.appName && String(state.appName).trim()) || '我的衣橱';
+    try {
+      var txt = JSON.stringify(buildManifest(), null, 2);
+      var blob = new Blob([txt], { type: 'application/manifest+json;charset=utf-8' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'manifest.json';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      var tip = el('mobile-appname-tip');
+      if (tip) tip.innerHTML = '✅ 已下载 <b>manifest.json</b>（名字已写为「<b>' + nm + '</b>」）。<br>把它覆盖到 wardrobe.html 同一个文件夹里，<b>手机刷新</b>后「添加到主屏」就是新名字。';
+      toast('manifest.json 已下载 ✅');
+    } catch (e) {
+      var t2 = el('mobile-appname-tip');
+      if (t2) t2.textContent = '⚠️ 下载失败：' + (e && e.message ? e.message : e);
+    }
   }
   function genRenameScript() {
     var nm = (state.appName && String(state.appName).trim()) || '我的衣橱';
@@ -3101,7 +3154,7 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
   function toggleTemplate(id, on) { state.templateEnabled[id] = !!on; notify(); }
 
   /* ============ 设置 ============ */
-  var APP_VERSION = 'v2026.09.10-v24资讯改名版';
+  var APP_VERSION = 'v2026.09.10-v25手机改名版';
   function renderSettings() {
     var c = state.config || {};
     // ★全量回填：保存后立刻能看到已存的值，不再"存了像没存"
@@ -3403,6 +3456,8 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     });
     var pwaBtn = el('btn-sync-pwa');
     if (pwaBtn) pwaBtn.onclick = function () { syncPwaName(); };
+    var dlMf = el('btn-dl-manifest');
+    if (dlMf) dlMf.onclick = function () { dlManifest(); };
     var rnBtn = el('btn-gen-rename');
     if (rnBtn) rnBtn.onclick = function () { genRenameScript(); };
     var pwaBtn = el('btn-sync-pwa');
@@ -4008,11 +4063,15 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     applyAppName: applyAppName,
     syncPwaName: syncPwaName,
     genRenameScript: genRenameScript,
+    buildManifest: buildManifest,
+    dlManifest: dlManifest,
     saveAppNameOnly: saveAppNameOnly,
     FASHION_NEWS: FASHION_NEWS,
     OUTFIT_LINKS: OUTFIT_LINKS,
     syncPwaName: syncPwaName,
     genRenameScript: genRenameScript,
+    buildManifest: buildManifest,
+    dlManifest: dlManifest,
     saveAppNameOnly: saveAppNameOnly,
     FASHION_NEWS: FASHION_NEWS,
     OUTFIT_LINKS: OUTFIT_LINKS,
