@@ -395,6 +395,18 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
           </div>
           <small id="set-appname-tip" class="sub" style="display:block;margin-top:6px"></small>
         </div>
+        <div style="padding:10px;border:1px dashed var(--line);border-radius:10px;background:#fffafb">
+          <label class="sub" style="font-weight:600">📱 手机 App 名称（桌面图标名）</label>
+          <div style="font-size:11px;color:#888;line-height:1.65;margin:4px 0 8px">
+            桌面图标下面的名字是<b>打包进 APK 里的</b>，安装之后无法在 App 内直接改 —— 需要用改名脚本改完<b>重新打包安装</b>。<br>
+            如果你是「浏览器 → 添加到主屏」在用，点第一个按钮就能立刻同步成新名字。
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button id="btn-sync-pwa" class="btn sec" type="button">📲 同步到手机桌面名称</button>
+            <button id="btn-gen-rename" class="btn sec" type="button">📦 下载改名打包脚本</button>
+          </div>
+          <small id="mobile-appname-tip" class="sub" style="display:block;margin-top:6px"></small>
+        </div>
         <div><label class="sub">改密码</label><button id="btn-changepwd" class="btn sec">修改密码</button></div>
         <hr style="border:none;border-top:1px solid var(--line)">
         <div><label class="sub">云端同步（Supabase，可选）</label>
@@ -926,6 +938,55 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
       toast('⚠️ 存储已满，保存失败');
     }
     return ok;
+  }
+  /* v24：手机 App 名称 —— ①同步到「添加到主屏」的桌面名 ②下载改名打包脚本 */
+  function syncPwaName() {
+    var nm = (state.appName && String(state.appName).trim()) || '我的衣橱';
+    var tip = el('mobile-appname-tip');
+    var warn = '';
+    try {
+      var head = document.head || (document.getElementsByTagName ? document.getElementsByTagName('head')[0] : null);
+      var mf = {
+        name: nm, short_name: nm.slice(0, 8), start_url: '.', display: 'standalone',
+        background_color: '#fff5f7', theme_color: '#ff758c',
+        icons: [{ src: 'assets/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
+                { src: 'assets/icons/icon-512.png', sizes: '512x512', type: 'image/png' }]
+      };
+      var blob = new Blob([JSON.stringify(mf)], { type: 'application/manifest+json' });
+      var url = URL.createObjectURL(blob);
+      if (head) {
+        var link = document.querySelector('link[rel="manifest"]');
+        if (!link) { link = document.createElement('link'); link.rel = 'manifest'; head.appendChild(link); }
+        link.href = url;
+        var mt = document.querySelector('meta[name="apple-mobile-web-app-title"]');
+        if (!mt) { mt = document.createElement('meta'); mt.name = 'apple-mobile-web-app-title'; head.appendChild(mt); }
+        mt.content = nm;
+        var m2 = document.querySelector('meta[name="application-name"]');
+        if (!m2) { m2 = document.createElement('meta'); m2.name = 'application-name'; head.appendChild(m2); }
+        m2.content = nm;
+      } else { warn = '（未找到 head，仅更新了标题）'; }
+    } catch (e) { warn = '（' + (e && e.message ? e.message : e) + '）'; }
+    var okTitle = true;
+    try { document.title = nm; } catch (e) { okTitle = false; }
+    if (tip) tip.innerHTML = '✅ 已同步为「<b>' + nm + '</b>」' + (warn ? ' ' + warn : '') + '。手机浏览器菜单 →「添加到主屏」，桌面图标名就是它了。';
+    if (okTitle) toast('已同步桌面名称：' + nm + ' ✅');
+  }
+  function genRenameScript() {
+    var nm = (state.appName && String(state.appName).trim()) || '我的衣橱';
+    var py = RENAME_PY.replace(/__APPNAME__/g, nm.replace(/"/g, '\\"'));
+    try {
+      var blob = new Blob([py], { type: 'text/plain;charset=utf-8' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = '重命名App.py';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      var tip = el('mobile-appname-tip');
+      if (tip) tip.innerHTML = '✅ 已下载「重命名App.py」（名字已写死为 <b>' + nm + '</b>）。把它放进安卓工程文件夹，双击运行，再执行 <b>build_apk.sh</b> 重新打包，装上新 APK 桌面名就变了。';
+      toast('改名脚本已下载 ✅');
+    } catch (e) {
+      var t2 = el('mobile-appname-tip');
+      if (t2) t2.textContent = '⚠️ 下载失败：' + (e && e.message ? e.message : e);
+    }
   }
   function showPage(name) {
     ['closet', 'avatar', 'tryon', 'canvas', 'plans', 'advisor', 'settings'].forEach(function (p) {
@@ -2861,6 +2922,97 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
       exp: '改良旗袍、盘扣上衣、马面裙配简约针织或西装外套，中西混搭，节日与日常都出彩。',
       kw: '新中式穿搭', url: DOUYIN('新中式穿搭') }
   ];
+  /* ===== v24：安卓工程改名脚本（下载后放进工程目录运行，再重新打包） ===== */
+  var RENAME_PY = [
+    '# -*- coding: utf-8 -*-',
+    '"""把安卓工程里的 App 名称改为「__APPNAME__」，改完重新打包即可。"""',
+    'import os, re, io',
+    '',
+    'NEW_NAME = "__APPNAME__"',
+    '',
+    'def rw(p, fn):',
+    '    try:',
+    '        s = io.open(p, encoding="utf-8").read()',
+    '    except Exception:',
+    '        return False',
+    '    ns = fn(s)',
+    '    if ns != s:',
+    '        io.open(p, "w", encoding="utf-8").write(ns)',
+    '        return True',
+    '    return False',
+    '',
+    'def main():',
+    '    base = os.path.dirname(os.path.abspath(__file__))',
+    '    hit = []',
+    '    for root, dirs, files in os.walk(base):',
+    '        if "strings.xml" in files:',
+    '            p = os.path.join(root, "strings.xml")',
+    '            def f(s):',
+    '                return re.sub(r"(<string\\s+name=\\"app_name\\"[^>]*>)[^<]*(</string>)", lambda m: m.group(1) + NEW_NAME + m.group(2), s)',
+    '            if rw(p, f):',
+    '                hit.append(os.path.relpath(p, base))',
+    '    for fn in ("twa-manifest.json",):',
+    '        p = os.path.join(base, fn)',
+    '        if os.path.exists(p):',
+    '            def g(s):',
+    '                s = re.sub(r"(\\"name\\"\\s*:\\s*\\")[^\\"]*(\\")", lambda m: m.group(1) + NEW_NAME + m.group(2), s, count=1)',
+    '                s = re.sub(r"(\\"launcherName\\"\\s*:\\s*\\")[^\\"]*(\\")", lambda m: m.group(1) + NEW_NAME + m.group(2), s, count=1)',
+    '                return s',
+    '            if rw(p, g):',
+    '                hit.append(fn)',
+    '    for rel in ("assets/public/manifest.json", "app/src/main/assets/public/manifest.json"):',
+    '        p = os.path.join(base, rel)',
+    '        if os.path.exists(p):',
+    '            def h(s):',
+    '                s = re.sub(r"(\\"name\\"\\s*:\\s*\\")[^\\"]*(\\")", lambda m: m.group(1) + NEW_NAME + m.group(2), s, count=1)',
+    '                s = re.sub(r"(\\"short_name\\"\\s*:\\s*\\")[^\\"]*(\\")", lambda m: m.group(1) + NEW_NAME[:8] + m.group(2), s, count=1)',
+    '                return s',
+    '            if rw(p, h):',
+    '                hit.append(rel)',
+    '    print("")',
+    '    print("新名称：" + NEW_NAME)',
+    '    if hit:',
+    '        print("已修改：")',
+    '        for x in hit:',
+    '            print("  - " + x)',
+    '    else:',
+    '        print("没找到可改的文件 —— 请把本脚本放在安卓工程根目录（含 app/ 与 build_apk.sh 的那一层）。")',
+    '    print("")',
+    '    print("下一步：运行 build_apk.sh 重新打包，装上新 APK 桌面图标名就变了。")',
+    '    print("")',
+    '    try:',
+    '        input("按回车键退出...")',
+    '    except Exception:',
+    '        pass',
+    '',
+    'main()'
+  ].join('\n');
+  /* ===== v24：时尚资讯（官方媒体主站，真实可点，看最新趋势/秀场/行业） ===== */
+  var FASHION_NEWS = [
+    { n: 'VOGUE 中国', u: 'https://www.vogue.com.cn/', d: '秀场速递 · 趋势 · 明星穿搭' },
+    { n: '时尚芭莎 BAZAAR', u: 'http://www.bazaar.com.cn/', d: '流行必知 · 一线专题' },
+    { n: '华丽志 LUXE.CO', u: 'https://luxe.co/', d: '中国时尚商业 · 品牌动态' },
+    { n: 'POP 服装趋势', u: 'https://www.popfashioninfo.com/', d: '专业趋势 · 色彩 · 款式' },
+    { n: 'WGSN 中国', u: 'https://www.wgsnchina.cn/', d: '权威趋势预测机构' },
+    { n: 'BoF 时装商业评论', u: 'https://www.businessoffashion.com/', d: '全球行业深度（英文）' },
+    { n: 'WWD', u: 'https://wwd.com/', d: '国际时尚商业新闻（英文）' },
+    { n: 'Vogue Business', u: 'https://www.voguebusiness.com/', d: '时尚商业洞察（英文）' }
+  ];
+  /* ===== v24：具体穿搭分享（带明确主题，点开就是这批内容，不是泛搜） ===== */
+  var OUTFIT_LINKS = [
+    { n: '梨形身材 · 显瘦搭配', u: XHS('梨形身材穿搭 显瘦') },
+    { n: '155 小个子 · 显高', u: XHS('小个子穿搭 显高') },
+    { n: '苹果型 · 遮肚显瘦', u: XHS('苹果型身材穿搭') },
+    { n: '通勤 · 一周不重样', u: XHS('通勤穿搭 一周') },
+    { n: '约会 · 氛围感裙装', u: XHS('约会穿搭 氛围感') },
+    { n: '微胖 · 显瘦叠穿', u: XHS('微胖穿搭 显瘦') },
+    { n: '秋冬 · 大衣叠穿', u: XHS('秋冬大衣穿搭') },
+    { n: '新中式 · 马面裙', u: XHS('马面裙穿搭') },
+    { n: 'B站 · 穿搭视频教程', u: BILI('穿搭教程') },
+    { n: '抖音 · 穿搭热榜', u: DOUYIN('穿搭') },
+    { n: '知乎 · 身材穿搭讨论', u: ZHIHU('身材 穿搭 怎么选') },
+    { n: '微博 · 今日穿搭话题', u: WEIBO('今日穿搭') }
+  ];
   var PLAT_LINKS = [
     { n: '小红书 · 今日热门穿搭', u: XHS('穿搭') },
     { n: 'B站 · 穿搭视频教程', u: BILI('穿搭') },
@@ -2913,18 +3065,34 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
         '<button type="button" data-kw="' + b.kw + '" onclick="copyKw(this.dataset.kw,this)" style="font-size:11px;color:#666;background:#fff;border:1px solid var(--line,#eee);border-radius:12px;padding:3px 9px;cursor:pointer">📋 复制关键词</button>' +
         '</div></div>';
     }).join('');
-    var chips = PLAT_LINKS.map(function (x) {
+    var chips = OUTFIT_LINKS.map(function (x) {
       return '<a href="' + x.u + '" target="_blank" rel="noopener noreferrer" style="display:inline-block;margin:4px 6px 0 0;padding:6px 11px;border:1px solid var(--line,#eee);border-radius:16px;font-size:12px;color:#555;text-decoration:none;background:#fff">' + x.n + ' ↗</a>';
+    }).join('');
+    /* v24：时尚资讯 —— 官方媒体主站，点开就是最新趋势 / 秀场 / 行业资讯 */
+    var newsHtml = FASHION_NEWS.map(function (x) {
+      return '<a href="' + x.u + '" target="_blank" rel="noopener noreferrer" ' +
+        'style="display:block;padding:9px 11px;border:1px solid var(--line,#eee);border-radius:10px;background:#fff;text-decoration:none;margin-bottom:7px">' +
+        '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">' +
+        '<b style="font-size:13px;color:#222">' + x.n + '</b>' +
+        '<span style="font-size:10px;color:#fff;background:#2b2b2b;border-radius:8px;padding:1px 7px">官方</span>' +
+        '</div>' +
+        '<div style="font-size:11px;color:#888;margin-top:3px">' + x.d + ' · 点开看最新 →</div>' +
+        '</a>';
     }).join('');
     bb.innerHTML =
       '<div style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--line,#eee)">' +
-      '<div style="font-size:13px;font-weight:600;margin-bottom:6px">👗 穿搭参考 · 按风格逛平台（内容实时最新）</div>' +
+      '<div style="font-size:13px;font-weight:600;margin-bottom:6px">📰 时尚资讯 · 官方媒体（看最新趋势 / 秀场 / 行业）</div>' +
       '<div style="font-size:11px;color:#999;margin-bottom:8px;line-height:1.6">' +
-      '链接跳转的是各平台<b>官方搜索页</b>。小红书 / 微博网页版需登录，抖音建议用手机打开；' +
+      '全是各媒体的<b>官方主站</b>，点开就是当天最新内容；标注（英文）的为国际站。</div>' +
+      newsHtml +
+      '<div style="margin-top:12px;font-size:13px;font-weight:600;margin-bottom:6px">👗 趋势解读 · 按风格流派（总结 + 逛平台）</div>' +
+      '<div style="font-size:11px;color:#999;margin-bottom:8px;line-height:1.6">' +
+      '下面是风格总结；链接跳转各平台<b>官方搜索页</b>。小红书 / 微博网页版需登录，抖音建议用手机打开；' +
       '若打不开，点「📋 复制关键词」粘贴到对应 App 搜索框即可。</div>' +
       cards +
-      '<div style="margin-top:10px;font-size:12px;color:#888">按主题逛平台（实时最新内容）：</div>' +
-      '<div style="margin-top:4px">' + chips + '</div>' +
+      '<div style="margin-top:12px;font-size:13px;font-weight:600;margin-bottom:2px">🔗 具体穿搭分享（点开就是这批内容）</div>' +
+      '<div style="font-size:11px;color:#999;margin-bottom:6px">按身材、场景、季节分好类，直接点进去看真人分享。</div>' +
+      '<div>' + chips + '</div>' +
       '</div>';
     bb.dataset.rendered = '1';
   }
@@ -2933,7 +3101,7 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
   function toggleTemplate(id, on) { state.templateEnabled[id] = !!on; notify(); }
 
   /* ============ 设置 ============ */
-  var APP_VERSION = 'v2026.09.10-v23穿搭参考版';
+  var APP_VERSION = 'v2026.09.10-v24资讯改名版';
   function renderSettings() {
     var c = state.config || {};
     // ★全量回填：保存后立刻能看到已存的值，不再"存了像没存"
@@ -3233,6 +3401,14 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     if (appNameInput) appNameInput.addEventListener('keydown', function (ev) {
       if (ev.key === 'Enter') { ev.preventDefault(); saveAppNameOnly(); }
     });
+    var pwaBtn = el('btn-sync-pwa');
+    if (pwaBtn) pwaBtn.onclick = function () { syncPwaName(); };
+    var rnBtn = el('btn-gen-rename');
+    if (rnBtn) rnBtn.onclick = function () { genRenameScript(); };
+    var pwaBtn = el('btn-sync-pwa');
+    if (pwaBtn) pwaBtn.onclick = function () { syncPwaName(); };
+    var rnBtn = el('btn-gen-rename');
+    if (rnBtn) rnBtn.onclick = function () { genRenameScript(); };
     var saveSet = el('btn-save-settings');
     if (saveSet) saveSet.onclick = function () {
       // ★安全取值：任一输入框不存在都不会再抛错（此前 set-proxy-url 缺失导致保存静默失败）
@@ -3830,6 +4006,16 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     renderSettings: renderSettings,
     renderSidebar: renderSidebar,
     applyAppName: applyAppName,
+    syncPwaName: syncPwaName,
+    genRenameScript: genRenameScript,
+    saveAppNameOnly: saveAppNameOnly,
+    FASHION_NEWS: FASHION_NEWS,
+    OUTFIT_LINKS: OUTFIT_LINKS,
+    syncPwaName: syncPwaName,
+    genRenameScript: genRenameScript,
+    saveAppNameOnly: saveAppNameOnly,
+    FASHION_NEWS: FASHION_NEWS,
+    OUTFIT_LINKS: OUTFIT_LINKS,
     saveAppNameOnly: saveAppNameOnly,
     askInput: askInput,
     askConfirm: askConfirm,
