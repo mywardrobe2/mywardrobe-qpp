@@ -136,6 +136,41 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
 .season-badge{display:inline-block;font-size:11px;padding:1px 7px;border-radius:999px;background:#eef4ff;color:#4a6fa5;margin-left:4px}
 .figure.beautify .base{filter:saturate(1.1) contrast(1.04) brightness(1.02)}
 .figure.beautify .layer{filter:saturate(1.2) contrast(1.06) drop-shadow(0 3px 9px rgba(120,80,90,.24))}
+
+  /* ===== v28 色彩元素 ===== */
+  .cc-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px}
+  .cc-tab{padding:8px 16px;border:1px solid var(--line);border-radius:20px;background:#fff;font-size:13px;cursor:pointer}
+  .cc-tab.on{background:#fbeee0;border-color:#e8c9a0;color:var(--brand2);font-weight:600}
+  .cc-group{margin-bottom:20px}
+  .cc-group-t{font-weight:600;font-size:14px;margin:0 0 8px;color:var(--ink)}
+  .cc-sw{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px}
+  .cc-chip{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff;cursor:pointer}
+  .cc-chip:active{transform:scale(.96)}
+  .cc-chip .sw-c{height:58px;display:flex;align-items:flex-end;justify-content:center;font-size:10px;padding-bottom:4px;font-family:ui-monospace,Menlo,monospace}
+  .cc-chip .sw-t{padding:6px 8px;font-size:12px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .cc-combo{background:var(--card);border-radius:14px;box-shadow:var(--shadow);padding:12px}
+  .cc-combo .bar{display:flex;height:64px;border-radius:10px;overflow:hidden;margin-bottom:8px;border:1px solid var(--line)}
+  .cc-combo .bar .seg{display:flex;align-items:flex-end;justify-content:center;font-size:10px;padding-bottom:4px;font-family:ui-monospace,Menlo,monospace;min-width:0}
+  .cc-combo .nm{font-weight:600;font-size:14px;margin-bottom:2px}
+  .cc-combo .sc{font-size:12px;color:#8a7f72;margin-bottom:6px}
+  .cc-combo .ds{font-size:12px;color:var(--ink);line-height:1.6}
+  .cc-combo .acts{margin-top:8px;display:flex;gap:6px;flex-wrap:wrap}
+  .cc-card{background:var(--card);border-radius:14px;box-shadow:var(--shadow);padding:10px;cursor:pointer}
+  .cc-card .cv{height:90px;border-radius:10px;overflow:hidden;background:#f4f0ea;margin-bottom:8px;display:flex;align-items:center;justify-content:center;color:#b9ada0;font-size:22px}
+  .cc-card .cv img{width:100%;height:100%;object-fit:cover;display:block}
+  .cc-card .tt{font-weight:600;font-size:13px;margin-bottom:3px;word-break:break-all}
+  .cc-card .nt{font-size:12px;color:#7d7266;line-height:1.55;margin-bottom:8px;word-break:break-all;max-height:56px;overflow:hidden}
+  .cc-strip{display:flex;height:26px;border-radius:7px;overflow:hidden;border:1px solid var(--line)}
+  .cc-strip span{flex:1}
+  .cc-tip{background:var(--card);border-radius:14px;box-shadow:var(--shadow);padding:12px 14px;margin-bottom:10px}
+  .cc-tip .h{font-weight:600;font-size:14px;margin-bottom:4px}
+  .cc-tip .b{font-size:13px;color:#5f564c;line-height:1.7}
+  .cc-row{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+  .cc-row label{font-size:12px;color:#8a7f72;min-width:56px}
+  .cc-inp{flex:1;min-width:120px;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:13px;background:#fbfaf8}
+  .cc-ta{width:100%;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:13px;background:#fbfaf8;min-height:64px;resize:vertical}
+  .cc-color{width:44px;height:34px;border:1px solid var(--line);border-radius:8px;padding:2px;background:#fff;cursor:pointer}
+  .cc-ed-item{display:flex;gap:8px;align-items:center;margin-bottom:6px}
 </style>
 </head>
 <body>
@@ -163,6 +198,7 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
       <a class="nav-item" data-page="tryon" href="#"><span class="nav-icon">✨</span><span class="nav-text">搭配</span></a>
       <a class="nav-item" data-page="canvas" href="#"><span class="nav-icon">🎨</span><span class="nav-text">搭配卡片</span></a>
       <a class="nav-item" data-page="plans" href="#"><span class="nav-icon">📁</span><span class="nav-text">方案</span></a>
+      <a class="nav-item" data-page="color" href="#"><span class="nav-icon">🌈</span><span class="nav-text">色彩元素</span></a>
       <a class="nav-item" data-page="advisor" href="#"><span class="nav-icon">💬</span><span class="nav-text">顾问</span></a>
       <a class="nav-item" data-page="settings" href="#"><span class="nav-icon">⚙️</span><span class="nav-text">设置</span></a>
     </nav>
@@ -177,7 +213,7 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     <!-- 衣橱 -->
     <section id="page-closet">
       <div class="view-head">
-        <div><h2>我的衣橱</h2><div class="sub">点击卡片管理：重命名 / 改类目 / 改位置 / 删除</div></div>
+        <div><h2 data-appname id="page-closet-title">我的衣橱</h2><div class="sub">点击卡片管理：重命名 / 改类目 / 改位置 / 删除</div></div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
           <button id="btn-upload" class="btn">＋ 上传素材</button>
           <button id="btn-refine-all" class="btn sec">✨ 批量AI精修</button>
@@ -345,6 +381,19 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
       <div id="plan-grid" class="grid"></div>
     </section>
 
+    <!-- 色彩元素 -->
+    <section id="page-color" style="display:none">
+      <div class="view-head"><div><h2>色彩元素</h2><div class="sub">色卡 · 成品搭配 · 我的配色卡片（自建文件夹 / 记录搭配理念 / 上传图片自动取色）</div></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+          <button id="cc-add-card" class="btn">＋ 新建配色卡片</button>
+        </div>
+      </div>
+      <div id="color-tabs" style="margin-bottom:12px"></div>
+      <div id="color-form" class="card" style="display:none;margin-bottom:14px"></div>
+      <div id="color-folder-tabs" style="margin-bottom:12px"></div>
+      <div id="color-body"></div>
+    </section>
+
     <!-- 顾问 -->
     <section id="page-advisor" style="display:none">
       <div class="view-head"><div><h2>搭配顾问</h2><div class="sub">专业搭配师：会检索你衣橱里的真实单品，给完整出行方案；可接入混元更智能</div></div></div>
@@ -403,7 +452,7 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
           <label class="sub" style="font-weight:600">📱 手机 App 名称（桌面图标名）</label>
           <div style="font-size:11px;color:#888;line-height:1.65;margin:4px 0 8px">
             桌面图标下面的名字是<b>打包进 APK 里的</b>，安装之后无法在 App 内直接改 —— 需要用改名脚本改完<b>重新打包安装</b>。<br>
-            如果你是「浏览器 → 添加到主屏」在用：点第一个按钮会<b>自动写入服务器</b>（用 start.js 启动时），手机刷新后「添加到主屏」就是新名字；若用的是 python 启动，请点第三个按钮下载 manifest.json，覆盖回本文件夹即可。
+            如果你是「浏览器 → 添加到主屏」在用：先在这里改名保存，再点「📲 同步到手机桌面名称」→ <b>手机刷新网页</b> → <span style="color:#c0392b"><b>删掉旧桌面图标，重新「添加到主屏」</b></span>，新图标名才生效（已存在的图标不会自动改名）。
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
             <button id="btn-sync-pwa" class="btn sec" type="button">📲 同步到手机桌面名称</button>
@@ -415,9 +464,21 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
         <div><label class="sub">改密码</label><button id="btn-changepwd" class="btn sec">修改密码</button></div>
         <hr style="border:none;border-top:1px solid var(--line)">
         <div><label class="sub">云端同步（Supabase，可选）</label>
+          <div style="font-size:11px;color:#888;line-height:1.7;margin:2px 0 6px">
+            <b>Supabase 是什么：</b>一个免费云端数据库。配好之后<b>换手机、换电脑数据都能一键搬过去</b>。<br>
+            它和 AI 功能无关，<b>不配也完全能用</b>，只是各台设备的数据各存各的。<br>
+            <b>用法：</b>填下方两项并保存 → 点「立即同步」→「⬆ 上传到云端」；新手机登录同一账号后点「⬇ 从云端恢复」。<br>
+            <span style="color:#c0392b">嫌配置麻烦？直接用下面的「导出备份 / 恢复备份」传文件，效果一样。</span>
+          </div>
           <input id="set-supabase-url" placeholder="Project URL"><input id="set-supabase-key" placeholder="anon key" style="margin-top:6px">
           <small id="set-sync" class="sub"></small></div>
         <button id="btn-sync" class="btn sec">立即同步</button>
+        <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+          <button id="btn-export-bak" class="btn sec" type="button" style="flex:1;min-width:130px">📤 导出备份</button>
+          <label for="file-import-bak" class="btn sec" style="flex:1;min-width:130px;text-align:center;cursor:pointer;margin:0;display:inline-block;box-sizing:border-box">📥 恢复备份</label>
+          <input id="file-import-bak" type="file" accept="application/json,.json" style="display:none">
+        </div>
+        <small id="bak-tip" class="sub" style="display:block;margin-top:6px"></small>
         <hr style="border:none;border-top:1px solid var(--line)">
         <div><label class="sub">模板变更（搭配模板开关）</label>
           <small class="sub">6 套内置模板，默认全开；后续可在「方案」页管理</small></div>
@@ -425,6 +486,8 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
         <div><label class="sub">AI 形象生成 · 图像接口地址（可选）</label><input id="set-proxy-url" placeholder="如 https://api.hunyuan.cloud.tencent.com/v1"></div>
         <div><label class="sub">AI 形象生成 · API Key（可选）</label><input id="set-hunyuan-key" placeholder="留空＝本地抠像兜底"></div>
         <div><label class="sub">AI 形象生成 · 模型名（可选）</label><input id="set-img-model" placeholder="如 hunyuan-image"></div>
+        <button id="btn-test-ai" class="btn sec" type="button" style="width:100%;margin-top:2px">🔍 测试连接（诊断 AI 接口）</button>
+        <div id="ai-test-result" class="sub" style="font-size:11px;line-height:1.75;white-space:pre-wrap;word-break:break-all;background:#fffafb;border:1px dashed var(--line);border-radius:8px;padding:9px;display:none"></div>
         <div><label class="sub">AI 顾问 · 腾讯混元（更智能互动，可选；元宝底层即混元，暂无公开 API）</label>
           <input id="set-yuanbao-url" placeholder="API 地址"><input id="set-yuanbao-key" placeholder="API Key" style="margin-top:6px"></div>
         <small id="set-ai-tip" class="sub" style="display:block;margin-bottom:8px"></small>
@@ -498,6 +561,9 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
       subFolders: [],
       items: [],
       plans: [],
+      colorFolders: [{ id: uid(), name: '我的配色' }],
+      activeColorFolderId: null,
+      colorCards: [],
       aiBeautify: false,
       canvasBg: 'white',
       canvasRatio: '3:4',
@@ -544,7 +610,7 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     try {
       var slim = {}, keys = ['appName', 'accounts', 'categories', 'locations', 'activeLocationId',
         'subFolders', 'items', 'plans', 'planFolders', 'activeFolderId', 'templates',
-        'templateEnabled', 'avatars', 'primaryAvatarId', 'params', 'config'];
+        'templateEnabled', 'colorFolders', 'activeColorFolderId', 'colorCards', 'avatars', 'primaryAvatarId', 'params', 'config'];
       for (var j = 0; j < keys.length; j++) { if (state[keys[j]] !== undefined) slim[keys[j]] = state[keys[j]]; }
       localStorage.setItem(META, JSON.stringify(slim));
       return true;
@@ -701,6 +767,8 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     state.session = s;
     setSession(s);
     saveMeta();
+    /* v27：登录成功后后台检测云端备份（换手机时自动提示恢复），失败静默不影响登录 */
+    try { setTimeout(function () { autoCheckCloud(email, password); }, 400); } catch (e) {}
     return { ok: true };
   }
   function changePassword(oldP, newP) {
@@ -730,6 +798,7 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
         renderAvatar();
         renderTryon();
         renderPlans();
+        try { renderColor(); } catch (e) { console.warn('[color]', e); }
         renderAdvisor();
         renderSettings();
         renderSidebar();
@@ -997,10 +1066,10 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
           var lk = document.querySelector('link[rel="manifest"]');
           if (lk) lk.setAttribute('href', 'manifest.json?v=' + Date.now());
         } catch (e) {}
-        if (tip) tip.innerHTML = '✅ 已写入服务器 <b>manifest.json</b>：手机刷新后「添加到主屏」，桌面图标名就是「<b>' + nm + '</b>」';
+        if (tip) tip.innerHTML = '✅ 已写入服务器 <b>manifest.json</b>（名字：<b>' + nm + '</b>）。<br>现在请：<b>手机刷新网页</b> → <b style="color:#c0392b">删掉旧桌面图标</b> → 重新「添加到主屏」，新图标名才会变。';
         toast('桌面名称已同步：' + nm + ' ✅');
       }).catch(function () {
-        if (tip) tip.innerHTML = '⚠️ 当前用的是 python 启动，服务器不允许自动写入。<br>请点「<b>📄 下载 manifest.json</b>」，把它覆盖回本文件夹（和 wardrobe.html 放一起），手机刷新即可。';
+        if (tip) tip.innerHTML = '⚠️ 当前服务器不允许自动写入（只读模式）。<br>请用文件夹里的 <b>start.sh / start.bat</b> 重新启动，再点本按钮；<br>或点「📄 下载 manifest.json」手动覆盖回本文件夹。';
       });
     } catch (e) {
       if (tip) tip.innerHTML = '⚠️ 无法自动写入：请点「📄 下载 manifest.json」覆盖回本文件夹。';
@@ -1042,7 +1111,7 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     }
   }
   function showPage(name) {
-    ['closet', 'avatar', 'tryon', 'canvas', 'plans', 'advisor', 'settings'].forEach(function (p) {
+    ['closet', 'avatar', 'tryon', 'canvas', 'plans', 'color', 'advisor', 'settings'].forEach(function (p) {
       var pg = el('page-' + p);
       if (pg) pg.style.display = (p === name) ? '' : 'none';
     });
@@ -1053,6 +1122,7 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     if (name === 'tryon') { try { doTryon(); } catch (e) {} }
     if (name === 'canvas') { try { renderCanvas(); } catch (e) { console.warn(e); } }
     if (name === 'plans') renderPlans();
+    if (name === 'color') renderColor();
   }
 
   /* ============ 衣橱 ============ */
@@ -2103,6 +2173,362 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
       model: (c.imgModel || '').trim() || 'hunyuan-image'
     };
   }
+  /* v26：把真实 API 路径塞进 header —— 云端代理据此转发，不再依赖云函数的 event.path */
+  function aiHeaders(g, apiPath, extra) {
+    var h = { 'Authorization': 'Bearer ' + (g.key || '') };
+    if (apiPath) h['X-Target-Path'] = apiPath;
+    if (extra) { try { Object.keys(extra).forEach(function (k) { h[k] = extra[k]; }); } catch (e) {} }
+    return h;
+  }
+  /* v26：AI 接口一键诊断 —— 把真实请求地址、状态码、返回原文摊开给你看 */
+  function testAiConnection() {
+    var box = el('ai-test-result');
+    var show = function (t) { if (box) { box.style.display = 'block'; box.innerHTML = t; } };
+    var g = getImgGenConfig();
+    if (!g.base || !g.key) {
+      show('❌ <b>还没填「图像接口地址」或「API Key」</b><br><br>' +
+        '地址填你刚建好的云函数网址，例如：<br>' +
+        '<b>https://1482725225-xxxx.ap-guangzhou.tencentscf.com</b><br>' +
+        '<span style="color:#c0392b">（末尾不要带 / ，更不要带 /v1）</span>');
+      return;
+    }
+    var url = g.base.replace(/\/+$/, '') + '/images/generations';
+    show('⏳ 正在测试…<br><b>请求地址：</b>' + escapeHtml(url) + '<br><b>模型：</b>' + escapeHtml(g.model));
+    var t0 = Date.now();
+    var ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    var timer = ctrl ? setTimeout(function () { try { ctrl.abort(); } catch (e) {} }, 60000) : null;
+    fetch(url, {
+      method: 'POST',
+      headers: aiHeaders(g, '/images/generations', { 'Content-Type': 'application/json' }),
+      body: JSON.stringify({ model: g.model, prompt: 'a simple red apple on white background', n: 1, size: '512x512' }),
+      signal: ctrl ? ctrl.signal : undefined
+    }).then(function (r) {
+      var st = r.status;
+      return r.text().then(function (t) { return { st: st, t: t }; });
+    }).then(function (o) {
+      if (timer) clearTimeout(timer);
+      var ms = Date.now() - t0;
+      var head = String(o.t || '').slice(0, 300);
+      var tail;
+      if (o.st === 200) {
+        tail = '✅ <b>连接成功！</b>（' + ms + 'ms）AI 功能可以正常使用了 🎉';
+      } else if (o.st === 401 || o.st === 403) {
+        tail = '❌ <b>' + o.st + ' 密钥错误</b><br>API Key 不对或已失效。请到混元控制台重新生成 <b>sk-</b> 开头的 Key（<b>不是</b>访问管理里的 SecretId/SecretKey）。';
+      } else if (o.st === 404) {
+        tail = '❌ <b>404 路径错误</b><br>请确认接口地址<b>末尾没有 /v1</b>，且云函数代码改动后点了「部署」。';
+      } else if (o.st === 504 || o.st === 502) {
+        tail = '❌ <b>' + o.st + ' 超时</b><br>云函数<b>执行超时</b>还是默认的 3 秒。去「函数配置」把它改成 <b>60 秒</b>。';
+      } else {
+        tail = '❌ <b>HTTP ' + o.st + '</b>';
+      }
+      show(tail + '<br><br><b>状态码：</b>' + o.st + '<br><b>返回内容（前300字）：</b><br>' + escapeHtml(head));
+    }).catch(function (e) {
+      if (timer) clearTimeout(timer);
+      var aborted = e && (e.name === 'AbortError');
+      show((aborted ? '❌ <b>请求超时（60秒）</b><br>多半是云函数执行超时没改成 60 秒，或函数没部署。'
+        : '❌ <b>网络/跨域失败</b><br>浏览器没能连上这个地址。常见原因：<br>' +
+          '① 云函数的<b>公网访问</b>没勾选<br>' +
+          '② 平台层 CORS 拦了（建议<b>关掉</b>平台 CORS，代理代码自带）<br>' +
+          '③ 地址填错（末尾不要带 /v1）') +
+        '<br><br><b>请求地址：</b>' + escapeHtml(url));
+    });
+  }
+  /* v26：手机 ↔ 电脑 数据搬家 —— 导出备份 / 恢复备份（不用配 Supabase） */
+  function collectImgIds() {
+    var ids = {}, guard = 0;
+    function walk(o) {
+      if (!o || typeof o !== 'object' || ++guard > 200000) return;
+      if (Object.prototype.toString.call(o) === '[object Array]') {
+        for (var i = 0; i < o.length; i++) walk(o[i]);
+        return;
+      }
+      var ks = Object.keys(o);
+      for (var j = 0; j < ks.length; j++) {
+        var k = ks[j], v = o[k];
+        if (/imgId$/i.test(k) && typeof v === 'string' && v && v.length < 90) { ids[v] = 1; continue; }
+        if (v && typeof v === 'object') walk(v);
+      }
+    }
+    try { walk(state); } catch (e) {}
+    return Object.keys(ids);
+  }
+  /* ============ v27：Supabase 真·云端同步（上传 / 恢复 / 登录自动检测） ============ */
+  function sbCfg() {
+    var c = state.config || {};
+    return { url: String(c.supabaseUrl || '').replace(/\/+$/, ''), key: String(c.supabaseKey || '').trim() };
+  }
+  function sbReady() { var c = sbCfg(); return !!(c.url && c.key); }
+  function sbUrl(p) { return sbCfg().url + p; }
+  function sbHeaders(token) {
+    var c = sbCfg();
+    var h = { 'apikey': c.key, 'Content-Type': 'application/json' };
+    if (token) h['Authorization'] = 'Bearer ' + token;
+    return h;
+  }
+  function _sbFetch(url, opt) {
+    return fetch(url, opt).then(function (r) {
+      return r.text().then(function (t) { return { status: r.status, text: t }; });
+    });
+  }
+  /* 登录 Supabase Auth；首次自动注册（需后台关闭 Confirm email） */
+  function sbAuth(email, password, cb) {
+    var c = sbCfg();
+    function signin(cb2) {
+      _sbFetch(c.url + '/auth/v1/token?grant_type=password', {
+        method: 'POST', headers: sbHeaders(),
+        body: JSON.stringify({ email: email, password: password })
+      }).then(function (o) {
+        var j = null; try { j = JSON.parse(o.text); } catch (e) {}
+        if (o.status === 200 && j && j.access_token) cb2(null, { token: j.access_token, uid: (j.user && j.user.id) || '' });
+        else cb2((j && (j.error_description || j.msg || j.message)) || ('登录失败(' + o.status + ')'));
+      }).catch(function (e) { cb2('网络失败：' + (e && e.message ? e.message : e)); });
+    }
+    signin(function (err, res) {
+      if (!err) { cb(null, res); return; }
+      _sbFetch(c.url + '/auth/v1/signup', {
+        method: 'POST', headers: sbHeaders(),
+        body: JSON.stringify({ email: email, password: password })
+      }).then(function () {
+        signin(function (e3, r3) {
+          if (e3) cb(e3);
+          else if (!r3) cb('注册成功但登录失败：请到 Supabase 后台 → Authentication → Providers → Email 关掉「Confirm email」');
+          else cb(null, r3);
+        });
+      }).catch(function (e) { cb('网络失败：' + (e && e.message ? e.message : e)); });
+    });
+  }
+  function askPassword(cb) {
+    var m = _mkModal(
+      '<h3 style="margin:0 0 10px;font-size:15px">输入登录密码（用于云端同步）</h3>' +
+      '<input id="_sp_in" type="password" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box" placeholder="你的登录密码">' +
+      '<div style="font-size:11px;color:#888;margin-top:6px;line-height:1.6">云端数据按账号隔离，只有这个密码能读取。</div>' +
+      '<div style="display:flex;gap:8px;margin-top:12px">' +
+      '<button id="_sp_cancel" style="flex:1;padding:10px;border:1px solid #ddd;background:#fff;border-radius:8px;font-size:14px">取消</button>' +
+      '<button id="_sp_ok" style="flex:1;padding:10px;border:0;background:var(--brand,#ff758c);color:#fff;border-radius:8px;font-size:14px;font-weight:600">确定</button></div>'
+    );
+    var inp = m.box.querySelector('#_sp_in');
+    setTimeout(function () { try { inp.focus(); } catch (e) {} }, 60);
+    function ok() { var v = inp.value; m.close(); if (cb) cb(v); }
+    m.box.querySelector('#_sp_ok').onclick = ok;
+    m.box.querySelector('#_sp_cancel').onclick = function () { m.close(); if (cb) cb(''); };
+    inp.onkeydown = function (e) { if (e.key === 'Enter') ok(); };
+  }
+  function slimMeta() {
+    var slim = {};
+    try {
+      var keys = ['appName', 'accounts', 'categories', 'locations', 'activeLocationId', 'subFolders',
+        'items', 'avatars', 'primaryAvatarId', 'plans', 'planFolders', 'params', 'config', 'templates',
+        'templateEnabled', 'aiBeautify', 'canvasBg', 'canvasRatio', 'cardStyle', 'advisorHistory'];
+      for (var i = 0; i < keys.length; i++) if (typeof state[keys[i]] !== 'undefined') slim[keys[i]] = state[keys[i]];
+    } catch (e) {}
+    return slim;
+  }
+  function collectSnapshot(cb) {
+    var ids = collectImgIds();
+    var imgs = {}, n = 0, total = ids.length, settled = false;
+    if (!total) { cb({ images: {}, meta: slimMeta() }); return; }
+    var done = function () {
+      n++;
+      if (n < total || settled) return;
+      settled = true;
+      cb({ images: imgs, meta: slimMeta() });
+    };
+    for (var i = 0; i < ids.length; i++) {
+      (function (id) {
+        try { imgGet(id, function (v) { if (v) imgs[id] = v; done(); }); }
+        catch (e) { done(); }
+      })(ids[i]);
+    }
+    setTimeout(done, 15000);
+  }
+  function applySnapshot(data) {
+    var imgs = data.images || {};
+    var keys = Object.keys(imgs);
+    for (var i = 0; i < keys.length; i++) { try { imgPut(keys[i], imgs[keys[i]]); } catch (e) {} }
+    try {
+      var m = data.meta || {};
+      Object.keys(m).forEach(function (k) { state[k] = m[k]; });
+      saveMeta();
+    } catch (e) {}
+    return keys.length;
+  }
+  function cloudUpload(set, done) {
+    if (!sbReady()) { done(false, '未配置 Supabase：请填写 Project URL 和 anon key 后点「保存设置」'); return; }
+    var s = state.session; if (!s || !s.email) { done(false, '请先登录'); return; }
+    askPassword(function (pwd) {
+      if (!pwd) { done(false, '已取消'); return; }
+      set('⏳ 正在登录云端…');
+      sbAuth(s.email, pwd, function (err, a) {
+        if (err) { done(false, '云端登录失败：' + err); return; }
+        set('⏳ 正在打包图片…');
+        collectSnapshot(function (snap) {
+          var payload = { __wardrobe_backup__: 1, v: 27, time: new Date().toISOString(), meta: snap.meta, images: snap.images };
+          var body = { owner_id: a.uid, data: payload, updated_at: new Date().toISOString() };
+          var mb = Math.round(JSON.stringify(body).length / 1048576 * 10) / 10;
+          set('⏳ 正在上传（约 ' + mb + ' MB，图片多时请耐心等）…');
+          _sbFetch(sbUrl('/rest/v1/wardrobe_snapshots'), {
+            method: 'POST',
+            headers: (function () { var h = sbHeaders(a.token); h['Prefer'] = 'resolution=merge-duplicates,return=minimal'; return h; })(),
+            body: JSON.stringify(body)
+          }).then(function (o) {
+            if (o.status >= 200 && o.status < 300) {
+              try { state.config.lastSyncAt = Date.now(); saveMeta(); } catch (e) {}
+              done(true, '✅ 已上传到云端：' + Object.keys(snap.images).length + ' 张图片 + 全部数据（约 ' + mb + ' MB）。<br>换手机后在新设备登录同一账号 → 点「⬇ 从云端恢复」即可。');
+            } else done(false, '上传失败(' + o.status + ')：' + String(o.text).slice(0, 220) + '<br>若提示表不存在，请先在 Supabase → SQL Editor 执行 supabase.sql');
+          }).catch(function (e) { done(false, '网络失败：' + (e && e.message ? e.message : e)); });
+        });
+      });
+    });
+  }
+  function cloudDownload(set, done) {
+    if (!sbReady()) { done(false, '未配置 Supabase：请填写 Project URL 和 anon key 后点「保存设置」'); return; }
+    var s = state.session; if (!s || !s.email) { done(false, '请先登录'); return; }
+    askPassword(function (pwd) {
+      if (!pwd) { done(false, '已取消'); return; }
+      set('⏳ 正在登录云端…');
+      sbAuth(s.email, pwd, function (err, a) {
+        if (err) { done(false, '云端登录失败：' + err); return; }
+        set('⏳ 正在下载云端数据…');
+        _sbFetch(sbUrl('/rest/v1/wardrobe_snapshots?select=data,updated_at&owner_id=eq.' + encodeURIComponent(a.uid)), {
+          method: 'GET', headers: sbHeaders(a.token)
+        }).then(function (o) {
+          var j = null; try { j = JSON.parse(o.text); } catch (e) {}
+          if (o.status >= 400 || !j) { done(false, '读取失败(' + o.status + ')：' + String(o.text).slice(0, 220) + '<br>若提示表不存在，请先在 Supabase → SQL Editor 执行 supabase.sql'); return; }
+          if (!j.length || !j[0].data) { done(false, '云端还没有备份。请先在这台设备点「⬆ 上传到云端」。'); return; }
+          var d = j[0].data;
+          set('⏳ 正在写入本地…');
+          var n = applySnapshot(d);
+          done(true, '✅ 已从云端恢复 ' + n + ' 张图片 + 全部数据，正在刷新…', true);
+        }).catch(function (e) { done(false, '网络失败：' + (e && e.message ? e.message : e)); });
+      });
+    });
+  }
+  function syncMenu() {
+    var m = _mkModal(
+      '<h3 style="margin:0 0 10px;font-size:15px">☁ 云端同步</h3>' +
+      '<div style="font-size:12px;color:#666;line-height:1.7;margin-bottom:10px">' +
+      '「上传」＝把这台设备的全部素材和数据传到云端（换手机前做一次）。<br>' +
+      '「恢复」＝从云端下载，覆盖这台设备的数据（新手机上做一次）。</div>' +
+      '<button id="_sy_up" style="width:100%;margin-bottom:8px;padding:11px;border:0;background:var(--brand,#ff758c);color:#fff;border-radius:8px;font-size:14px;font-weight:600">⬆ 上传到云端</button>' +
+      '<button id="_sy_dl" style="width:100%;margin-bottom:8px;padding:11px;border:1px solid var(--brand,#ff758c);background:#fff;color:var(--brand,#ff758c);border-radius:8px;font-size:14px;font-weight:600">⬇ 从云端恢复</button>' +
+      '<div id="_sy_tip" style="font-size:12px;color:#333;line-height:1.7;min-height:20px"></div>' +
+      '<button id="_sy_close" style="width:100%;margin-top:10px;padding:10px;border:1px solid #ddd;background:#fff;border-radius:8px;font-size:14px">关闭</button>'
+    );
+    var tip = m.box.querySelector('#_sy_tip');
+    var set = function (t) { if (tip) tip.innerHTML = t; };
+    var fin = function (ok, msg, reload) {
+      set((ok ? '' : '❌ ') + msg);
+      try { renderSettings(); } catch (e) {}
+      if (reload) setTimeout(function () { try { location.reload(); } catch (e) {} }, 1400);
+    };
+    m.box.querySelector('#_sy_up').onclick = function () { set('⏳ 开始上传…'); cloudUpload(set, fin); };
+    m.box.querySelector('#_sy_dl').onclick = function () { set('⏳ 开始恢复…'); cloudDownload(set, fin); };
+    m.box.querySelector('#_sy_close').onclick = function () { m.close(); };
+  }
+  /* 登录后自动检测云端备份（换手机场景：登录即提示恢复） */
+  function autoCheckCloud(email, password) {
+    try {
+      if (!sbReady()) return;
+      sbAuth(email, password, function (err, a) {
+        if (err) { console.warn('[cloud] auth', err); return; }
+        _sbFetch(sbUrl('/rest/v1/wardrobe_snapshots?select=data,updated_at&owner_id=eq.' + encodeURIComponent(a.uid)), {
+          method: 'GET', headers: sbHeaders(a.token)
+        }).then(function (o) {
+          var j = null; try { j = JSON.parse(o.text); } catch (e) {}
+          if (!j || !j.length || !j[0].data) return;
+          var d = j[0].data;
+          var n = Object.keys(d.images || {}).length;
+          var localN = (state.items || []).length;
+          if (localN > 0 && n === 0) return;
+          var t = d.time ? String(d.time).slice(0, 16).replace('T', ' ') : '未知时间';
+          var m = _mkModal(
+            '<h3 style="margin:0 0 10px;font-size:15px">☁ 发现云端备份</h3>' +
+            '<div style="font-size:13px;line-height:1.8">云端备份：<b>' + n + '</b> 张图片（' + t + '）<br>本机当前素材：<b>' + localN + '</b> 件<br><br>要从云端恢复吗？恢复会覆盖本机数据。</div>' +
+            '<div style="display:flex;gap:8px;margin-top:14px">' +
+            '<button id="_ac_no" style="flex:1;padding:10px;border:1px solid #ddd;background:#fff;border-radius:8px;font-size:14px">不用</button>' +
+            '<button id="_ac_yes" style="flex:1;padding:10px;border:0;background:var(--brand,#ff758c);color:#fff;border-radius:8px;font-size:14px;font-weight:600">恢复</button></div>'
+          );
+          m.box.querySelector('#_ac_yes').onclick = function () {
+            m.close();
+            var cnt = applySnapshot(d);
+            toast('已恢复 ' + cnt + ' 张图片 ✅');
+            setTimeout(function () { try { location.reload(); } catch (e) {} }, 1400);
+          };
+          m.box.querySelector('#_ac_no').onclick = function () { m.close(); };
+        }).catch(function (e) { console.warn('[cloud] fetch', e); });
+      });
+    } catch (e) { console.warn('[cloud]', e); }
+  }
+
+  function exportBackup() {
+    var tip = el('bak-tip');
+    var set = function (t) { if (tip) { tip.style.display = 'block'; tip.innerHTML = t; } };
+    var ids = collectImgIds();
+    if (!ids.length) { set('⚠️ 当前没有素材图片可导出。'); return; }
+    set('⏳ 正在打包 <b>' + ids.length + '</b> 张图片，请稍候…');
+    var imgs = {}, n = 0, total = ids.length, settled = false;
+    var done = function () {
+      if (settled) return;
+      n++;
+      if (n < total) return;
+      settled = true;
+      var slim = {};
+      try {
+        var keys = ['appName', 'accounts', 'categories', 'locations', 'activeLocationId',
+          'items', 'avatars', 'primaryAvatarId', 'plans', 'planFolders', 'params', 'config', 'templates'];
+        for (var i = 0; i < keys.length; i++) {
+          if (typeof state[keys[i]] !== 'undefined') slim[keys[i]] = state[keys[i]];
+        }
+      } catch (e) {}
+      try {
+        var payload = { __wardrobe_backup__: 1, v: 26, time: new Date().toISOString(), meta: slim, images: imgs };
+        var blob = new Blob([JSON.stringify(payload)], { type: 'application/json;charset=utf-8' });
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = '衣橱备份_' + new Date().toISOString().slice(0, 10) + '.json';
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        set('✅ 已导出 <b>' + Object.keys(imgs).length + '</b> 张图片 + 全部数据。<br>把这个文件传到另一台设备（微信/QQ/网盘都行），在那边点「📥 恢复备份」。');
+        toast('备份已导出 ✅');
+      } catch (e) {
+        set('❌ 导出失败：' + (e && e.message ? e.message : e));
+      }
+    };
+    for (var i = 0; i < ids.length; i++) {
+      (function (id) {
+        try { imgGet(id, function (v) { if (v) imgs[id] = v; done(); }); }
+        catch (e) { done(); }
+      })(ids[i]);
+    }
+    setTimeout(done, 8000);   // 兜底：8 秒后无论如何都出文件
+  }
+  function importBackup(file) {
+    var tip = el('bak-tip');
+    var set = function (t) { if (tip) { tip.style.display = 'block'; tip.innerHTML = t; } };
+    if (!file) return;
+    set('⏳ 正在读取备份文件…');
+    var fr = new FileReader();
+    fr.onload = function () {
+      var data = null;
+      try { data = JSON.parse(fr.result); } catch (e) { data = null; }
+      if (!data || !data.__wardrobe_backup__) { set('❌ 这不是衣橱备份文件（请选择「衣橱备份_日期.json」）'); return; }
+      var imgs = data.images || {};
+      var keys = Object.keys(imgs);
+      set('⏳ 正在写入 <b>' + keys.length + '</b> 张图片，请稍候…');
+      for (var i = 0; i < keys.length; i++) {
+        try { imgPut(keys[i], imgs[keys[i]]); } catch (e) {}
+      }
+      try {
+        var m = data.meta || {};
+        Object.keys(m).forEach(function (k) { state[k] = m[k]; });
+        saveMeta();
+      } catch (e) {}
+      set('✅ 已恢复 <b>' + keys.length + '</b> 张图片 + 全部数据，正在刷新…');
+      toast('备份已恢复 ✅');
+      setTimeout(function () { try { location.reload(); } catch (e) {} }, 1500);
+    };
+    fr.onerror = function () { set('❌ 读取文件失败'); };
+    fr.readAsText(file);
+  }
   function setGenStatus(msg) { var s = el('avatar-gen-status'); if (s) s.textContent = msg || ''; }
   function pickImageUrl(t) {
     var j = null; try { j = JSON.parse(t); } catch (e) { j = null; }
@@ -2148,7 +2574,7 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
       fd.append('model', g.model);
       fd.append('n', '1');
       fd.append('size', '768x1024');
-      fetch(url, { method: 'POST', headers: { 'Authorization': 'Bearer ' + g.key }, body: fd })
+      fetch(url, { method: 'POST', headers: aiHeaders(g, '/images/edits'), body: fd })
         .then(function (r) { return r.text(); })
         .then(function (t) { var u = pickImageUrl(t); if (!u) { onErr(parseImgErr(t)); return; } onOk(u); })
         .catch(function () { onErr('网络/跨域失败'); });
@@ -2268,7 +2694,7 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     var body = JSON.stringify({ model: g.model, prompt: prompt, n: 1, size: '768x1024' });
     fetch(url, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + g.key },
+      headers: aiHeaders(g, '/images/generations', { 'Content-Type': 'application/json' }),
       body: body
     }).then(function (r) { return r.text(); }).then(function (t) {
       var u = pickImageUrl(t);
@@ -2663,6 +3089,514 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     }
   }
 
+  /* ==================== 色彩元素（v28）==================== */
+  /* 内置标准色卡：中性色 / 基础色 / 质感流行色 */
+  var PALETTE_LIB = [
+    { g: '中性色 · 打底万能', list: [
+      { n: '纯白', h: '#FFFFFF' }, { n: '象牙白', h: '#FFFFF0' }, { n: '米白', h: '#F5F0EC' },
+      { n: '浅灰', h: '#D9D9D9' }, { n: '中灰', h: '#8C8C8C' }, { n: '炭灰', h: '#4A4A4A' },
+      { n: '墨黑', h: '#1A1A1A' }, { n: '驼色', h: '#C19A6B' }, { n: '燕麦', h: '#E3D5C3' },
+      { n: '卡其', h: '#B5A642' }, { n: '巧克力', h: '#4E342E' }, { n: '奶油杏', h: '#F5E1C8' }
+    ]},
+    { g: '基础色 · 衣橱主力', list: [
+      { n: '正红', h: '#E23B3B' }, { n: '酒红', h: '#7B1F2B' }, { n: '砖红', h: '#B54335' },
+      { n: '樱粉', h: '#F4A6B7' }, { n: '藕粉', h: '#E8C4C8' }, { n: '干枯玫瑰', h: '#C08081' },
+      { n: '活力橙', h: '#F08A3C' }, { n: '姜黄', h: '#E0A32E' }, { n: '柠檬黄', h: '#F5E050' },
+      { n: '草绿', h: '#4CAF50' }, { n: '鼠尾草绿', h: '#9CAF88' }, { n: '墨绿', h: '#1F4B3F' },
+      { n: '天蓝', h: '#6EC1E4' }, { n: '雾霾蓝', h: '#7C99B4' }, { n: '宝蓝', h: '#1B4F9C' },
+      { n: '藏青', h: '#22314F' }, { n: '薰衣草紫', h: '#7B5EA7' }, { n: '香芋紫', h: '#B39DDB' }
+    ]},
+    { g: '质感流行 · 低饱和高级', list: [
+      { n: '莫兰迪灰蓝', h: '#8FA3AD' }, { n: '莫兰迪灰绿', h: '#A8B5A2' }, { n: '莫兰迪灰粉', h: '#C9B8A8' },
+      { n: '灰褐', h: '#8C8577' }, { n: '焦糖', h: '#AF6B3E' }, { n: '克莱因蓝', h: '#002FA7' },
+      { n: '豆沙绿', h: '#7D8C6E' }, { n: '烟灰紫', h: '#9A8C9E' }, { n: '陶土红', h: '#A65D4E' },
+      { n: '芥末黄', h: '#C9A227' }, { n: '浅杏', h: '#F0D9BE' }, { n: '雾灰', h: '#B8B0A8' }
+    ]}
+  ];
+
+  /* 成品色彩搭配卡（可直接存进"我的配色"） */
+  var COMBO_LIB = [
+    { n: '莫兰迪日常', s: '通勤 / 日常 / 四季', c: [
+      { n: '鼠尾草绿', h: '#A8B5A2' }, { n: '燕麦', h: '#C9B8A8' }, { n: '灰褐', h: '#8C8577' }, { n: '米白', h: '#E8E2D9' }
+    ], d: '低饱和的灰调叠穿，整身控制在三个色以内，高级感来自"浊"而不是"艳"。配饰选哑光金属或木质。' },
+    { n: '奶油温柔', s: '约会 / 周末 / 春夏', c: [
+      { n: '奶油杏', h: '#F5E1C8' }, { n: '藕粉', h: '#E8C4C8' }, { n: '焦糖', h: '#C9A87C' }, { n: '纯白', h: '#FFFFFF' }
+    ], d: '奶油色打底 + 一点藕粉提气色，焦糖做包鞋压住整体，甜而不腻。适合暖皮、浅发色。' },
+    { n: '克莱因撞色', s: '出街 / 造型感 / 秋冬', c: [
+      { n: '克莱因蓝', h: '#002FA7' }, { n: '纯白', h: '#FFFFFF' }, { n: '墨黑', h: '#1A1A1A' }
+    ], d: '大面积中性色作画布，克莱因蓝只占 10%（一件外套或一只包）。高饱和色越克制越贵。' },
+    { n: '春日清新', s: '春游 / 度假 / 减龄', c: [
+      { n: '柠檬黄', h: '#F5E050' }, { n: '纯白', h: '#FFFFFF' }, { n: '鼠尾草绿', h: '#9CAF88' }, { n: '雾霾蓝', h: '#7C99B4' }
+    ], d: '黄+白提亮，绿与蓝作辅色压住跳脱感。黄色的面积别超过 30%，否则容易显黑。' },
+    { n: '秋日焦糖', s: '通勤 / 秋冬 / 复古', c: [
+      { n: '焦糖', h: '#AF6B3E' }, { n: '巧克力', h: '#4E342E' }, { n: '燕麦', h: '#E3D5C3' }, { n: '砖红', h: '#B54335' }
+    ], d: '大地色系深浅递进，焦糖外套 + 巧克力内搭 + 燕麦下装，砖红作围巾点亮。最稳的秋冬公式。' },
+    { n: '通勤藏青', s: '职场 / 会议 / 正式', c: [
+      { n: '藏青', h: '#22314F' }, { n: '纯白', h: '#FFFFFF' }, { n: '中灰', h: '#8C8C8C' }, { n: '驼色', h: '#C19A6B' }
+    ], d: '藏青比黑色柔和、比灰色有分量，是职场替代黑色的最优解。驼色包鞋增加暖度，避免过于冷硬。' },
+    { n: '森林系', s: '户外 / 秋冬 / 文艺', c: [
+      { n: '墨绿', h: '#1F4B3F' }, { n: '卡其', h: '#B5A642' }, { n: '燕麦', h: '#E3D5C3' }, { n: '巧克力', h: '#4E342E' }
+    ], d: '深绿作主色大面积铺，卡其与燕麦提亮中段，巧克力收底。适合自然光下的户外场景。' },
+    { n: '高级黑白灰', s: '万能 / 极简 / 四季', c: [
+      { n: '墨黑', h: '#1A1A1A' }, { n: '中灰', h: '#8C8C8C' }, { n: '纯白', h: '#FFFFFF' }, { n: '浅灰', h: '#D9D9D9' }
+    ], d: '零失误配色，靠材质差异（针织 × 皮质 × 棉麻）制造层次，否则容易寡淡。用剪裁和质感说话。' },
+    { n: '干枯玫瑰', s: '约会 / 秋冬 / 温柔', c: [
+      { n: '干枯玫瑰', h: '#C08081' }, { n: '藕粉', h: '#E8C4C8' }, { n: '灰褐', h: '#8C8577' }, { n: '象牙白', h: '#FFFFF0' }
+    ], d: '带灰调的玫瑰色比正粉更显质感，灰褐收边避免甜腻。适合冷白皮与深发色。' },
+    { n: '度假印花', s: '旅行 / 海边 / 夏日', c: [
+      { n: '天蓝', h: '#6EC1E4' }, { n: '奶油杏', h: '#F5E1C8' }, { n: '草绿', h: '#4CAF50' }, { n: '活力橙', h: '#F08A3C' }
+    ], d: '蓝白为底，绿橙作点缀，海边的自然色组合。印花单品挑其中一个色做纯色下装就不会乱。' }
+  ];
+
+  /* 色彩搭配技巧 */
+  var TIPS_LIB = [
+    { h: '6 : 3 : 1 黄金比例', b: '主色占 60%（外套/连衣裙/裤装的大件）、辅色占 30%（内搭/半裙）、点缀色占 10%（包/鞋/丝巾/首饰）。比例一乱，再贵的单品也会显廉价。' },
+    { h: '全身不超过三个色', b: '这是最不容易出错的铁律。三个色指"色相"，黑白灰驼算中性色不计入。想加彩色时，优先替换掉其中一个，而不是往上堆。' },
+    { h: '同色系搭出层次', b: '同一色相做深浅变化（如燕麦 → 焦糖 → 巧克力），最安全也最显高。关键是加入不同材质：针织的哑光、真丝的光泽、皮质的硬挺，避免糊成一片。' },
+    { h: '邻近色最和谐', b: '色轮上相邻的颜色（蓝+绿、黄+橙、紫+粉）组合，视觉过渡自然，适合日常大面积使用，几乎不会翻车。' },
+    { h: '互补色要点缀不要对半', b: '色轮相对的颜色（蓝+橙、红+绿、黄+紫）对比最强、最出彩，但只让其中一色占 10%~20%。五五分会有廉价的对撞感。' },
+    { h: '中性色是万能打底', b: '黑白灰、驼、燕麦、卡其、藏青几乎能接住任何彩色。拿不准配色时，用中性色做 80% 的底，彩色只留一处。' },
+    { h: '按肤色挑彩色', b: '冷皮（血管偏蓝紫、戴银好看）适合蓝、紫、玫粉、酒红；暖皮（血管偏绿、戴金好看）适合橙、姜黄、驼、砖红、草绿。选错会显黄显暗。' },
+    { h: '低饱和 = 高级感', b: '把颜色的饱和度降低、加一点灰（莫兰迪色系），观感立刻柔和高级。高饱和只适合小面积点睛或运动风。' },
+    { h: '用明暗调视觉重心', b: '想显高：上浅下深拉长下半身，或全身同色系；想显瘦：深色放想收的位置，浅色放想突出的位置；小个子避免上下五五分的强对比分割。' },
+    { h: '金属色算中性色', b: '金、银、玫瑰金、裸色、透明色都不占"色相名额"，可以随意加入任何配色方案，是最省心的提亮方式。' },
+    { h: '印花取色法', b: '拿到一件印花单品，从图案里挑一个最浅或最深的色做纯色下装/外套，剩下的颜色做配饰呼应 —— 印花就不难搭了。' },
+    { h: '拍照存配色灵感', b: '看到好看的搭配或街景就拍下来，用本页"上传图片自动取色"存成卡片，慢慢积累出属于你自己的配色库。' }
+  ];
+
+  var colorTab = 'swatch';
+  var colorEditing = null;      // 正在编辑的卡片（null = 表单隐藏）
+
+  function curColorFolderId() {
+    if (!Array.isArray(state.colorFolders) || !state.colorFolders.length) {
+      state.colorFolders = [{ id: uid(), name: '我的配色' }];
+    }
+    var fid = state.activeColorFolderId;
+    var f = state.colorFolders.filter(function (x) { return x.id === fid; })[0];
+    if (!f) { fid = state.activeColorFolderId = state.colorFolders[0].id; }
+    return fid;
+  }
+  function hexLum(h) {
+    var m = /^#?([0-9a-f]{6})$/i.exec(String(h || '').trim());
+    if (!m) return 255;
+    var v = parseInt(m[1], 16);
+    var r = (v >> 16) & 255, g = (v >> 8) & 255, b = v & 255;
+    return 0.299 * r + 0.587 * g + 0.114 * b;
+  }
+  function inkOn(h) { return hexLum(h) < 150 ? '#ffffff' : '#2b2620'; }
+  function rgb2hex(r, g, b) {
+    function p(x) { var s = Math.max(0, Math.min(255, Math.round(x))).toString(16); return s.length < 2 ? '0' + s : s; }
+    return ('#' + p(r) + p(g) + p(b)).toUpperCase();
+  }
+  /* 从图片自动提取主色调：缩略 → 分桶统计 → 相近色合并 */
+  function extractColors(dataUrl, cb, max) {
+    max = max || 6;
+    var img = new Image();
+    img.onload = function () {
+      try {
+        var S = 72, c = document.createElement('canvas');
+        c.width = S; c.height = S;
+        var ctx = c.getContext('2d');
+        ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, S, S);
+        ctx.drawImage(img, 0, 0, S, S);
+        var d = ctx.getImageData(0, 0, S, S).data, bk = {}, i;
+        for (i = 0; i < d.length; i += 4) {
+          if (d[i + 3] < 125) continue;
+          var r = d[i], g = d[i + 1], b = d[i + 2];
+          var mx = Math.max(r, g, b), mn = Math.min(r, g, b);
+          if (mx > 248 && (mx - mn) < 10) continue;      // 纯白
+          if (mx < 16) continue;                          // 纯黑
+          var k = Math.round(r / 22) + '_' + Math.round(g / 22) + '_' + Math.round(b / 22);
+          if (!bk[k]) bk[k] = { r: 0, g: 0, b: 0, n: 0 };
+          bk[k].r += r; bk[k].g += g; bk[k].b += b; bk[k].n++;
+        }
+        var arr = Object.keys(bk).map(function (k) {
+          var o = bk[k]; return { r: o.r / o.n, g: o.g / o.n, b: o.b / o.n, n: o.n };
+        }).sort(function (a, b) { return b.n - a.n; });
+        var res = [];
+        for (i = 0; i < arr.length && res.length < max; i++) {
+          var ok = true, j;
+          for (j = 0; j < res.length; j++) {
+            if (Math.abs(arr[i].r - res[j].r) + Math.abs(arr[i].g - res[j].g) + Math.abs(arr[i].b - res[j].b) < 58) { ok = false; break; }
+          }
+          if (ok) res.push(arr[i]);
+        }
+        cb(res.map(function (x) { return rgb2hex(x.r, x.g, x.b); }));
+      } catch (e) { cb([]); }
+    };
+    img.onerror = function () { cb([]); };
+    img.src = dataUrl;
+  }
+
+  /* ---------- 主渲染 ---------- */
+  function renderColor() {
+    var tabs = el('color-tabs');
+    if (!tabs) return;
+    var T = [['swatch', '🎨 色卡'], ['combo', '🖼️ 成品搭配'], ['mine', '📁 我的配色卡片'], ['tips', '💡 搭配技巧']];
+    tabs.className = 'cc-tabs';
+    tabs.innerHTML = T.map(function (t) {
+      return '<span class="cc-tab' + (colorTab === t[0] ? ' on' : '') + '" data-ctab="' + t[0] + '">' + t[1] + '</span>';
+    }).join('');
+    Array.prototype.forEach.call(tabs.querySelectorAll('.cc-tab'), function (n) {
+      n.onclick = function () { colorTab = n.dataset.ctab; colorEditing = null; renderColor(); };
+    });
+
+    // 文件夹栏 & 新建按钮只在"我的配色卡片"显示
+    var ft = el('color-folder-tabs');
+    if (ft) {
+      if (colorTab === 'mine') {
+        ft.style.display = '';
+        ft.innerHTML = state.colorFolders.map(function (f) {
+          var on = f.id === curColorFolderId();
+          return '<span class="chip' + (on ? ' on' : '') + '" data-cf="' + f.id + '">' + escapeHtml(f.name) +
+                 (on ? ' <b data-cfedit="' + f.id + '" style="color:#b07d4b">✎</b> <b data-cfdel="' + f.id + '" style="color:#c0392b">✕</b>' : '') +
+                 '</span>';
+        }).join('') + '<span class="chip add" id="cf-add">＋ 新建文件夹</span>';
+        var add = el('cf-add');
+        if (add) add.onclick = function () {
+          var nm = prompt('新文件夹名称', '配色灵感');
+          if (nm === null) return;
+          nm = String(nm).trim(); if (!nm) return;
+          state.colorFolders.push({ id: uid(), name: nm });
+          state.activeColorFolderId = state.colorFolders[state.colorFolders.length - 1].id;
+          notify();
+        };
+        Array.prototype.forEach.call(ft.querySelectorAll('[data-cf]'), function (n) {
+          n.onclick = function (ev) {
+            var fid = n.dataset.cf;
+            if (ev.target.dataset.cfedit) {
+              var f = state.colorFolders.filter(function (x) { return x.id === fid; })[0];
+              var v = prompt('重命名文件夹', f ? f.name : '');
+              if (v === null) return; v = String(v).trim(); if (!v) return;
+              if (f) f.name = v; notify(); return;
+            }
+            if (ev.target.dataset.cfdel) {
+              if (state.colorFolders.length <= 1) { toast('至少保留一个文件夹'); return; }
+              if (!confirm('删除该文件夹？文件夹内的配色卡片也会一并删除')) return;
+              state.colorFolders = state.colorFolders.filter(function (x) { return x.id !== fid; });
+              state.colorCards = state.colorCards.filter(function (x) { return x.folderId !== fid; });
+              state.activeColorFolderId = null; notify(); return;
+            }
+            state.activeColorFolderId = fid; notify();
+          };
+        });
+      } else ft.style.display = 'none';
+    }
+    var ab = el('cc-add-card');
+    if (ab) ab.style.display = (colorTab === 'mine') ? '' : 'none';
+
+    var body = el('color-body');
+    if (!body) return;
+    if (colorTab === 'swatch') renderColorSwatch(body);
+    else if (colorTab === 'combo') renderColorCombo(body);
+    else if (colorTab === 'mine') renderColorMine(body);
+    else renderColorTips(body);
+
+    renderColorForm();
+    try { setTimeout(hydrateColorThumbs, 0); } catch (e) {}
+  }
+
+  /* ---------- 色卡 ---------- */
+  function renderColorSwatch(body) {
+    body.innerHTML = PALETTE_LIB.map(function (g) {
+      return '<div class="cc-group"><div class="cc-group-t">' + escapeHtml(g.g) + '</div><div class="cc-sw">' +
+        g.list.map(function (c) {
+          return '<div class="cc-chip" data-copy="' + c.h + '" title="点击复制 ' + c.h + '">' +
+                 '<div class="sw-c" style="background:' + c.h + ';color:' + inkOn(c.h) + '">' + c.h + '</div>' +
+                 '<div class="sw-t">' + escapeHtml(c.n) + '</div></div>';
+        }).join('') + '</div></div>';
+    }).join('');
+    Array.prototype.forEach.call(body.querySelectorAll('[data-copy]'), function (n) {
+      n.onclick = function () {
+        var h = n.dataset.copy;
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(h);
+          else {
+            var ta = document.createElement('textarea'); ta.value = h; document.body.appendChild(ta);
+            ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+          }
+          toast('已复制 ' + h);
+        } catch (e) { toast('色值：' + h); }
+      };
+    });
+  }
+
+  /* ---------- 成品搭配卡 ---------- */
+  function renderColorCombo(body) {
+    body.className = 'grid';
+    body.innerHTML = COMBO_LIB.map(function (c, i) {
+      var bar = c.c.map(function (x) {
+        return '<div class="seg" style="background:' + x.h + ';color:' + inkOn(x.h) + ';flex:' + (100 / c.c.length) + '">' + escapeHtml(x.n) + '</div>';
+      }).join('');
+      return '<div class="cc-combo">' +
+        '<div class="bar">' + bar + '</div>' +
+        '<div class="nm">' + escapeHtml(c.n) + '</div>' +
+        '<div class="sc">' + escapeHtml(c.s) + '</div>' +
+        '<div class="ds">' + escapeHtml(c.d) + '</div>' +
+        '<div class="acts"><button class="btn sec" data-ccsave="' + i + '">存入我的配色</button>' +
+        '<button class="btn sec" data-cchex="' + i + '">复制色值</button></div>' +
+        '</div>';
+    }).join('');
+    Array.prototype.forEach.call(body.querySelectorAll('[data-ccsave]'), function (n) {
+      n.onclick = function () {
+        var c = COMBO_LIB[+n.dataset.ccsave];
+        state.colorCards.push({
+          id: uid(), folderId: curColorFolderId(), title: c.n, note: c.s + '｜' + c.d,
+          colors: c.c.map(function (x) { return { hex: x.h, name: x.n }; }), imgId: '', createdAt: Date.now()
+        });
+        notify(); colorTab = 'mine'; renderColor(); toast('已存入「' + c.n + '」');
+      };
+    });
+    Array.prototype.forEach.call(body.querySelectorAll('[data-cchex]'), function (n) {
+      n.onclick = function () {
+        var c = COMBO_LIB[+n.dataset.cchex];
+        var s = c.c.map(function (x) { return x.n + ' ' + x.h; }).join('，');
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(s);
+          else {
+            var ta = document.createElement('textarea'); ta.value = s; document.body.appendChild(ta);
+            ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+          }
+          toast('已复制该组色值');
+        } catch (e) { toast(s); }
+      };
+    });
+  }
+
+  /* ---------- 我的配色卡片 ---------- */
+  function renderColorMine(body) {
+    var fid = curColorFolderId();
+    var list = (state.colorCards || []).filter(function (x) { return x.folderId === fid; });
+    if (!list.length) {
+      body.className = '';
+      body.innerHTML = '<div class="empty"><div class="big">🌈</div>这个文件夹还没有配色卡片<br><small>点右上角「＋ 新建配色卡片」，或去「成品搭配」里一键存入</small></div>';
+      return;
+    }
+    body.className = 'grid';
+    body.innerHTML = list.map(function (c) {
+      var strip = (c.colors || []).map(function (x) {
+        return '<span style="background:' + escapeHtml(x.hex) + '" title="' + escapeHtml((x.name || '') + ' ' + x.hex) + '"></span>';
+      }).join('');
+      var hexes = (c.colors || []).map(function (x) { return x.hex; }).join(' ');
+      return '<div class="cc-card" data-copen="' + c.id + '">' +
+        '<div class="cv" data-cimg="' + (c.imgId || '') + '">' + (c.imgId ? '' : '🖼️') + '</div>' +
+        '<div class="tt">' + escapeHtml(c.title || '未命名配色') + '</div>' +
+        '<div class="nt">' + escapeHtml(c.note || '') + '</div>' +
+        (strip ? '<div class="cc-strip">' + strip + '</div>' : '') +
+        '<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">' +
+          '<button class="btn sec" data-cedit="' + c.id + '" style="padding:5px 10px;font-size:12px">编辑</button>' +
+          '<button class="btn sec" data-ccopy="' + c.id + '" style="padding:5px 10px;font-size:12px">复制色值</button>' +
+          '<button class="btn sec" data-cdel="' + c.id + '" style="padding:5px 10px;font-size:12px;color:#c0392b">删除</button>' +
+        '</div>' +
+        '<input type="hidden" data-chex="' + escapeHtml(hexes) + '">' +
+        '</div>';
+    }).join('');
+
+    Array.prototype.forEach.call(body.querySelectorAll('[data-cedit]'), function (n) {
+      n.onclick = function (ev) {
+        ev.stopPropagation();
+        var c = state.colorCards.filter(function (x) { return x.id === n.dataset.cedit; })[0];
+        if (!c) return;
+        colorEditing = JSON.parse(JSON.stringify(c));
+        renderColor();
+        var f = el('color-form'); if (f) try { f.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {}
+      };
+    });
+    Array.prototype.forEach.call(body.querySelectorAll('[data-cdel]'), function (n) {
+      n.onclick = function (ev) {
+        ev.stopPropagation();
+        if (!confirm('删除这张配色卡片？')) return;
+        state.colorCards = state.colorCards.filter(function (x) { return x.id !== n.dataset.cdel; });
+        notify();
+      };
+    });
+    Array.prototype.forEach.call(body.querySelectorAll('[data-ccopy]'), function (n) {
+      n.onclick = function (ev) {
+        ev.stopPropagation();
+        var h = n.parentNode.parentNode.querySelector('[data-chex]');
+        var s = h ? h.dataset.chex : '';
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(s);
+          else {
+            var ta = document.createElement('textarea'); ta.value = s; document.body.appendChild(ta);
+            ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+          }
+          toast('已复制色值');
+        } catch (e) { toast(s || '无'); }
+      };
+    });
+    Array.prototype.forEach.call(body.querySelectorAll('[data-copen]'), function (n) {
+      n.onclick = function () {
+        var c = state.colorCards.filter(function (x) { return x.id === n.dataset.copen; })[0];
+        if (c) { colorEditing = JSON.parse(JSON.stringify(c)); renderColor(); }
+      };
+    });
+  }
+
+  /* ---------- 技巧 ---------- */
+  function renderColorTips(body) {
+    body.className = '';
+    body.innerHTML = TIPS_LIB.map(function (t) {
+      return '<div class="cc-tip"><div class="h">' + escapeHtml(t.h) + '</div><div class="b">' + escapeHtml(t.b) + '</div></div>';
+    }).join('');
+  }
+
+  /* ---------- 新建 / 编辑表单 ---------- */
+  function renderColorForm() {
+    var box = el('color-form');
+    if (!box) return;
+    if (!colorEditing || colorTab !== 'mine') { box.style.display = 'none'; box.innerHTML = ''; return; }
+    var e = colorEditing;
+    var isNew = !(state.colorCards || []).some(function (x) { return x.id === e.id; });
+    var foldOpts = state.colorFolders.map(function (f) {
+      return '<option value="' + f.id + '"' + (f.id === (e.folderId || curColorFolderId()) ? ' selected' : '') + '>' + escapeHtml(f.name) + '</option>';
+    }).join('');
+    var blocks = (e.colors || []).map(function (c, i) {
+      return '<div class="cc-ed-item">' +
+        '<input type="color" class="cc-color" data-ci="' + i + '" value="' + escapeHtml(c.hex) + '">' +
+        '<input class="cc-inp" data-cn="' + i + '" value="' + escapeHtml(c.name || '') + '" placeholder="颜色名，如 焦糖">' +
+        '<span style="font-family:monospace;font-size:12px;color:#8a7f72">' + escapeHtml((c.hex || '').toUpperCase()) + '</span>' +
+        '<button class="btn sec" data-crm="' + i + '" style="padding:5px 10px;font-size:12px;color:#c0392b">✕</button>' +
+        '</div>';
+    }).join('');
+
+    box.style.display = '';
+    box.innerHTML =
+      '<div style="font-weight:600;margin-bottom:10px">' + (isNew ? '＋ 新建配色卡片' : '✎ 编辑配色卡片') + '</div>' +
+      '<div class="cc-row"><label>卡片标题</label><input id="cf-title" class="cc-inp" value="' + escapeHtml(e.title || '') + '" placeholder="例：秋日焦糖通勤"></div>' +
+      '<div class="cc-row" style="align-items:flex-start"><label>搭配理念</label><textarea id="cf-note" class="cc-ta" placeholder="记录你的配色理念：主色/辅色/点缀色分别是什么，适合什么场合、什么肤色…">' + escapeHtml(e.note || '') + '</textarea></div>' +
+      '<div style="font-weight:600;font-size:13px;margin:10px 0 6px">色块（会在卡片下方依次显示）</div>' +
+      '<div id="cf-blocks">' + (blocks || '<div class="sub" style="font-size:12px">还没有色块，点下面添加，或上传图片自动取色</div>') + '</div>' +
+      '<div class="cc-row" style="margin-top:8px">' +
+        '<button class="btn sec" id="cf-addcolor">＋ 添加色块</button>' +
+        '<span style="font-size:12px;color:#8a7f72">当前 ' + ((e.colors || []).length) + ' 个色块</span>' +
+      '</div>' +
+      '<div style="font-weight:600;font-size:13px;margin:12px 0 6px">参考图（可选）</div>' +
+      '<div class="cc-row">' +
+        '<input type="file" id="cf-img" accept="image/*">' +
+        '<button class="btn sec" id="cf-pick">🎨 从图片自动取色</button>' +
+        '<button class="btn sec" id="cf-clrimg">移除图片</button>' +
+      '</div>' +
+      '<div id="cf-imgbox" style="margin:8px 0"></div>' +
+      '<div class="cc-row"><label>归入文件夹</label><select id="cf-folder" class="cc-inp" style="max-width:220px">' + foldOpts + '</select></div>' +
+      '<div class="cc-row" style="margin-top:12px">' +
+        '<button class="btn" id="cf-save">保存</button>' +
+        '<button class="btn sec" id="cf-cancel">取消</button>' +
+      '</div>';
+
+    var ti = el('cf-title'); if (ti) ti.oninput = function () { colorEditing.title = ti.value; };
+    var nt = el('cf-note'); if (nt) nt.oninput = function () { colorEditing.note = nt.value; };
+    var fo = el('cf-folder'); if (fo) fo.onchange = function () { colorEditing.folderId = fo.value; };
+
+    Array.prototype.forEach.call(box.querySelectorAll('[data-ci]'), function (n) {
+      n.oninput = function () { colorEditing.colors[+n.dataset.ci].hex = n.value; renderColorForm(); };
+    });
+    Array.prototype.forEach.call(box.querySelectorAll('[data-cn]'), function (n) {
+      n.oninput = function () { colorEditing.colors[+n.dataset.cn].name = n.value; };
+    });
+    Array.prototype.forEach.call(box.querySelectorAll('[data-crm]'), function (n) {
+      n.onclick = function () { colorEditing.colors.splice(+n.dataset.crm, 1); renderColorForm(); };
+    });
+
+    var ac = el('cf-addcolor');
+    if (ac) ac.onclick = function () {
+      colorEditing.colors = colorEditing.colors || [];
+      colorEditing.colors.push({ hex: '#C9A87C', name: '' });
+      renderColorForm();
+    };
+
+    var imgInp = el('cf-img');
+    if (imgInp) imgInp.onchange = function () {
+      var f = imgInp.files && imgInp.files[0]; if (!f) return;
+      var r = new FileReader();
+      r.onload = function () {
+        compressImage(r.result, 900, 'image/jpeg', 0.86, function (dz) {
+          var id = colorEditing.imgId || uid();
+          imgPut(id, dz);
+          colorEditing.imgId = id;
+          try { imgCache[id] = dz; } catch (e) {}
+          renderColorForm();
+          toast('图片已上传，可点「自动取色」');
+        });
+      };
+      r.readAsDataURL(f);
+    };
+    var pk = el('cf-pick');
+    if (pk) pk.onclick = function () {
+      var id = colorEditing.imgId; if (!id) { toast('先上传一张参考图'); return; }
+      imgGet(id, function (dz) {
+        if (!dz) { toast('图片读取失败，请重新上传'); return; }
+        toast('正在取色…');
+        extractColors(dz, function (hexes) {
+          if (!hexes.length) { toast('没能取出颜色，试试更清晰的图片'); return; }
+          colorEditing.colors = hexes.map(function (h) { return { hex: h, name: '' }; });
+          renderColorForm();
+          toast('已提取 ' + hexes.length + ' 个主色，可改名字');
+        });
+      });
+    };
+    var ci = el('cf-clrimg');
+    if (ci) ci.onclick = function () { colorEditing.imgId = ''; renderColorForm(); };
+
+    var ib = el('cf-imgbox');
+    if (ib) {
+      if (e.imgId) {
+        var cached = ''; try { cached = imgCache[e.imgId] || ''; } catch (er) {}
+        ib.innerHTML = '<img data-cfimg="' + e.imgId + '" src="' + cached + '" style="max-width:100%;max-height:180px;border-radius:10px;border:1px solid var(--line)">';
+        if (!cached) {
+          imgGet(e.imgId, function (dz) {
+            var im = ib && ib.querySelector('[data-cfimg]');
+            if (im && dz) im.src = dz;
+          });
+        }
+      } else ib.innerHTML = '';
+    }
+
+    var sv = el('cf-save');
+    if (sv) sv.onclick = function () {
+      var t = (colorEditing.title || '').trim();
+      if (!t) { toast('请填写卡片标题'); return; }
+      if (!colorEditing.folderId) colorEditing.folderId = curColorFolderId();
+      var idx = -1, i;
+      for (i = 0; i < state.colorCards.length; i++) if (state.colorCards[i].id === colorEditing.id) { idx = i; break; }
+      var rec = {
+        id: colorEditing.id, folderId: colorEditing.folderId,
+        title: t, note: colorEditing.note || '',
+        colors: (colorEditing.colors || []).map(function (c) { return { hex: c.hex, name: c.name || '' }; }),
+        imgId: colorEditing.imgId || '', createdAt: colorEditing.createdAt || Date.now()
+      };
+      if (idx >= 0) state.colorCards[idx] = rec; else state.colorCards.push(rec);
+      state.activeColorFolderId = rec.folderId;
+      colorEditing = null;
+      notify(); renderColor();
+      toast('已保存');
+    };
+    var cn = el('cf-cancel');
+    if (cn) cn.onclick = function () { colorEditing = null; renderColor(); };
+  }
+
+  /* 异步补齐卡片封面图 */
+  function hydrateColorThumbs() {
+    var box = el('color-body'); if (!box) return;
+    Array.prototype.forEach.call(box.querySelectorAll('[data-cimg]'), function (n) {
+      var id = n.dataset.cimg; if (!id || n.dataset.done === '1') return;
+      imgGet(id, function (dz) {
+        if (!dz) return;
+        n.dataset.done = '1';
+        n.innerHTML = '<img src="' + dz + '">';
+      });
+    });
+  }
+
+  function openColorNewCard() {
+    colorTab = 'mine';
+    colorEditing = { id: uid(), folderId: curColorFolderId(), title: '', note: '', colors: [{ hex: '#C9A87C', name: '' }], imgId: '', createdAt: Date.now() };
+    showPage('color');
+    renderColor();
+    var f = el('color-form'); if (f) try { f.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {}
+  }
+
+
   /* ============ 搭配顾问（专业搭配师 + 元宝可接入）============ */
   // ★检索真实衣橱
   var ADVISOR_STOP = ['我有', '一件', '一条', '一双', '怎么', '怎样', '如何', '搭配', '好看', '请问', '帮我', '看看', '可以', '什么', '我想', '想要', '求', '的', '了', '吗', '呢', '啊', '我', '你', '想', '要', '穿', '配', '搭', '这', '那', '个', '件', '条', '双', '和', '与', '或', '给', '推荐', '建议', '一下', '适合', '参加', '身高', '体重', '梨形', '苹果', '身材', '显瘦', '显高', '小个子'];
@@ -2762,7 +3696,7 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     if (imageData && cfg.vision) content.push({ type: 'image_url', image_url: { url: imageData } });
     fetch(url, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + cfg.key },
+      headers: aiHeaders(cfg, '/chat/completions', { 'Content-Type': 'application/json' }),
       body: JSON.stringify({
         model: cfg.model,
         messages: [
@@ -3154,7 +4088,7 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
   function toggleTemplate(id, on) { state.templateEnabled[id] = !!on; notify(); }
 
   /* ============ 设置 ============ */
-  var APP_VERSION = 'v2026.09.10-v25手机改名版';
+  var APP_VERSION = 'v2026.09.12-v28色彩版';
   function renderSettings() {
     var c = state.config || {};
     // ★全量回填：保存后立刻能看到已存的值，不再"存了像没存"
@@ -3173,7 +4107,14 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
       ? '✅ AI 形象生成已配置（接口：' + gg.base + '，模型：' + gg.model + '）'
       : '⚠️ 未配置 AI 图像接口 →「生成 AI 形象」只会做本地抠像兜底（不是 AI 生成）';
     var sync = el('set-sync');
-    if (sync) sync.textContent = (state.config && state.config.supabaseUrl) ? '已配置云端同步' : '未配置（本地模式可用）';
+    if (sync) {
+      var has = !!(state.config && state.config.supabaseUrl && state.config.supabaseKey);
+      var lastAt = state.config && state.config.lastSyncAt;
+      var lastTxt = lastAt ? ('　上次上传：' + new Date(lastAt).toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })) : '';
+      sync.innerHTML = has
+        ? ('已配置云端同步 ✅' + lastTxt + '<br>换手机：新设备登录同一账号 → 点「立即同步」→「⬇ 从云端恢复」')
+        : '未配置（本地模式可用；配好后可一键搬家到新手机）';
+    }
     // 可见版本徽章：让用户一眼确认下载的是否为最新版
     var vb = el('ver-badge');
     if (!vb) {
@@ -3183,7 +4124,7 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
       var page = el('page-settings');
       if (page && page.firstChild) page.insertBefore(vb, page.firstChild);
     }
-    if (vb) vb.textContent = '✅ 当前版本：v2026.09.10-v22修复版（①修复软件名保存后不生效：localStorage 被图片快取占满导致 saveMeta 静默失败，现自动清理快取后重试 ②真人试穿页底部补回「混元 AI 引擎」配置区 ③其他功能零改动）';
+    if (vb) vb.textContent = '✅ 当前版本：v2026.09.12-v28色彩版（①新增「色彩元素」板块：内置色卡 42 色 / 成品搭配卡 10 组 / 搭配技巧 12 条 ②「我的配色卡片」可自建文件夹、自己录文字与色块、记录搭配理念 ③上传配色参考图可自动提取主色生成方案 ④成品搭配卡一键存入我的配色 ⑤其他功能零改动）';
     try { renderTryonAI(); } catch (e) {}
   }
   function applySettings(form) {
@@ -3212,6 +4153,9 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     document.querySelectorAll('.nav-item').forEach(function (n) {
       n.onclick = function () { showPage(n.dataset.page); };
     });
+
+    // 色彩元素：新建配色卡片
+    var ccAdd = el('cc-add-card'); if (ccAdd) ccAdd.onclick = function () { openColorNewCard(); };
 
     // 登出 / 改密
     var logoutBtn = el('btn-logout'); if (logoutBtn) logoutBtn.onclick = function () { logout(); render(); };
@@ -3464,6 +4408,8 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     if (pwaBtn) pwaBtn.onclick = function () { syncPwaName(); };
     var rnBtn = el('btn-gen-rename');
     if (rnBtn) rnBtn.onclick = function () { genRenameScript(); };
+    var testAi = el('btn-test-ai');
+    if (testAi) testAi.onclick = function () { testAiConnection(); };
     var saveSet = el('btn-save-settings');
     if (saveSet) saveSet.onclick = function () {
       // ★安全取值：任一输入框不存在都不会再抛错（此前 set-proxy-url 缺失导致保存静默失败）
@@ -3479,8 +4425,16 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
         imgModel: val('set-img-model')
       });
     };
+    var expBak = el('btn-export-bak');
+    if (expBak) expBak.onclick = function () { exportBackup(); };
+    var fileBak = el('file-import-bak');
+    if (fileBak) fileBak.onchange = function () {
+      var f = fileBak.files && fileBak.files[0];
+      if (f) importBackup(f);
+      try { fileBak.value = ''; } catch (e) {}
+    };
     var syncBtn = el('btn-sync');
-    if (syncBtn) syncBtn.onclick = function () { toast('同步功能：配置 Supabase 后自动启用（见使用说明）'); };
+    if (syncBtn) syncBtn.onclick = function () { syncMenu(); };
   }
 
   /* ============ 轻量提示 ============ */
@@ -4050,6 +5004,7 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
 
   // 暴露（仅真实存在的函数）
   global.__app = {
+    get state() { return state; },
     init: init,
     render: render,
     renderCloset: renderCloset,
@@ -4066,6 +5021,15 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     buildManifest: buildManifest,
     dlManifest: dlManifest,
     saveAppNameOnly: saveAppNameOnly,
+    sbCfg: sbCfg,
+    sbReady: sbReady,
+    sbAuth: sbAuth,
+    cloudUpload: cloudUpload,
+    cloudDownload: cloudDownload,
+    syncMenu: syncMenu,
+    autoCheckCloud: autoCheckCloud,
+    slimMeta: slimMeta,
+    applySnapshot: applySnapshot,
     FASHION_NEWS: FASHION_NEWS,
     OUTFIT_LINKS: OUTFIT_LINKS,
     syncPwaName: syncPwaName,
@@ -4184,6 +5148,22 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     itemSrc: itemSrc,
     imgPut: imgPut,
     imgGet: imgGet,
+    // ★v28 色彩元素
+    PALETTE_LIB: PALETTE_LIB,
+    COMBO_LIB: COMBO_LIB,
+    TIPS_LIB: TIPS_LIB,
+    renderColor: renderColor,
+    renderColorForm: renderColorForm,
+    openColorNewCard: openColorNewCard,
+    extractColors: extractColors,
+    hexLum: hexLum,
+    inkOn: inkOn,
+    rgb2hex: rgb2hex,
+    curColorFolderId: curColorFolderId,
+    get colorTab() { return colorTab; },
+    set colorTab(v) { colorTab = v; },
+    get colorEditing() { return colorEditing; },
+    set colorEditing(v) { colorEditing = v; },
     get canvasLayers() { return canvasLayers; },
     set canvasLayers(v) { canvasLayers = v; },
     get selectedItemIds() { return selectedItemIds; },
