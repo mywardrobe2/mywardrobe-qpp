@@ -171,6 +171,84 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
   .cc-ta{width:100%;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:13px;background:#fbfaf8;min-height:64px;resize:vertical}
   .cc-color{width:44px;height:34px;border:1px solid var(--line);border-radius:8px;padding:2px;background:#fff;cursor:pointer}
   .cc-ed-item{display:flex;gap:8px;align-items:center;margin-bottom:6px}
+
+  /* ===== v29 全色盘 ===== */
+  .cc-wh{display:flex;gap:16px;align-items:center;background:var(--card);border-radius:14px;box-shadow:var(--shadow);padding:14px 16px;margin-bottom:16px;flex-wrap:wrap}
+  .cc-wh-disk{width:112px;height:112px;border-radius:50%;flex:0 0 auto;
+    background:conic-gradient(#ED5736 0deg,#FF7500 30deg,#E9BB1D 60deg,#C9DD22 90deg,#1E9B6A 120deg,#48C0A3 150deg,#177CB0 180deg,#1A73B7 210deg,#5A4A8C 240deg,#801DAE 270deg,#C4568F 300deg,#C83C23 330deg,#ED5736 360deg);
+    box-shadow:0 2px 8px rgba(0,0,0,.12);position:relative}
+  .cc-wh-disk::after{content:'';position:absolute;left:50%;top:50%;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;background:#fff;box-shadow:inset 0 1px 3px rgba(0,0,0,.1)}
+  .cc-wh-s{flex:1;min-width:220px}
+  .cc-wh-t{font-weight:700;font-size:15px;margin-bottom:3px}
+  .cc-wh-n{font-size:12px;color:#8a7f72;line-height:1.6;margin-bottom:8px}
+  .cc-fams{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+  .cc-fam{padding:4px 12px;border:1px solid var(--line);border-radius:14px;background:#fff;font-size:12px;cursor:pointer;user-select:none}
+  .cc-fam.on{background:#fbeee0;border-color:#e8c9a0;color:var(--brand2);font-weight:600}
+  .cc-dots{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:14px 8px}
+  .cc-dot{text-align:center;cursor:pointer}
+  .cc-dot:active{transform:scale(.94)}
+  .cc-dot .dt{width:54px;height:54px;border-radius:50%;margin:0 auto 5px;border:1px solid rgba(0,0,0,.07);box-shadow:0 1px 4px rgba(0,0,0,.14)}
+  .cc-dot .nm{font-size:12px;color:var(--ink);line-height:1.3;word-break:break-all;padding:0 2px}
+  .cc-dot .hx{font-size:10px;color:#a2958a;font-family:ui-monospace,Menlo,monospace;margin-top:1px}
+/* ===== v30 真·全色盘（交互色相环）===== */
+.cw-wrap{display:flex;gap:18px;background:var(--card);border-radius:14px;box-shadow:var(--shadow);padding:16px;margin-bottom:16px;flex-wrap:wrap;align-items:flex-start}
+.cw-left{flex:0 0 auto;text-align:center}
+.cw-cv{width:230px;height:230px;border-radius:50%;cursor:crosshair;box-shadow:0 2px 10px rgba(0,0,0,.13);touch-action:none;display:block}
+.cw-hint{font-size:11px;color:#a2958a;margin-top:8px;line-height:1.5}
+.cw-pick{display:flex;align-items:center;gap:10px;background:var(--card);border-radius:14px;box-shadow:var(--shadow);padding:12px 16px;margin-bottom:16px;flex-wrap:wrap}
+.cw-pick-t{font-size:13px;font-weight:600;color:var(--ink);flex:0 0 auto}
+.cw-sel{flex:1;min-width:200px;height:38px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);font-size:14px;padding:0 10px;outline:none;appearance:none;-webkit-appearance:none;background-image:linear-gradient(45deg,transparent 50%,#a2958a 50%),linear-gradient(135deg,#a2958a 50%,transparent 50%);background-position:calc(100% - 18px) 16px,calc(100% - 13px) 16px;background-size:5px 5px,5px 5px;background-repeat:no-repeat}
+.cw-sel:focus{border-color:var(--brand2)}
+.cw-pick-n{font-size:11px;color:#a2958a;flex:0 0 auto}
+.cw-right{flex:1;min-width:230px}
+.cw-big{border-radius:12px;padding:16px 14px;margin-bottom:10px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.06)}
+.cw-hex{font-size:22px;font-weight:700;font-family:ui-monospace,Menlo,monospace;letter-spacing:.5px}
+.cw-cn{font-size:12px;margin-top:4px;opacity:.92}
+.cw-meta{font-size:12px;color:#8a7f72;font-family:ui-monospace,Menlo,monospace;margin-bottom:10px;word-break:break-all}
+.cw-sl{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:12px;color:var(--ink)}
+.cw-sl span{width:32px;flex:0 0 auto}
+.cw-sl input{flex:1;accent-color:var(--brand2)}
+.cw-sl b{width:30px;text-align:right;font-family:ui-monospace,Menlo,monospace;font-weight:600}
+.cw-acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.cw-sec{background:var(--card);border-radius:14px;box-shadow:var(--shadow);padding:14px 16px;margin-bottom:16px}
+.cw-sec-t{font-weight:600;font-size:14px;margin-bottom:10px;color:var(--ink)}
+.cw-fm{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px dashed var(--line);flex-wrap:wrap}
+.cw-fm:first-of-type{border-top:0}
+.cw-fm-t{width:88px;flex:0 0 auto;font-size:13px;font-weight:600}
+.cw-deg{display:block;font-size:10px;color:#a2958a;font-weight:400;margin-top:1px}
+.cw-fm-c{display:flex;gap:6px;flex:1;flex-wrap:wrap}
+.cw-fm-s{padding:5px 9px;border-radius:8px;font-size:11px;font-family:ui-monospace,Menlo,monospace;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.cw-fm-s:active{transform:scale(.95)}
+.cw-fm-b{flex:0 0 auto;padding:5px 12px;font-size:12px}
+.cw-step-r{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.cw-step-t{width:32px;flex:0 0 auto;font-size:12px;color:var(--ink)}
+.cw-step{display:flex;flex:1;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.cw-step span{flex:1;height:26px;cursor:pointer}
+.cw-step span:active{opacity:.8}
+@media(max-width:520px){.cw-cv{width:200px;height:200px}.cw-fm-t{width:100%}.cw-fm-b{width:100%}}
+
+    .cw-ana{margin-top:18px;border:1px solid #eadfd6;border-radius:14px;padding:16px;background:linear-gradient(180deg,#fffdfb,#faf6f1)}
+    .cw-ana.hide{display:none}
+    .ana-hd{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+    .ana-sw{width:64px;height:64px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex:none;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+    .ana-hd-t{flex:1;min-width:0}
+    .ana-t1{font-size:16px;font-weight:800;color:#3a322c}
+    .ana-t2{font-size:12px;color:#a2958a;margin-top:3px}
+    .ana-x{flex:none;padding:6px 12px;font-size:12px}
+    .ana-tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+    .ana-tag{font-size:12px;background:#fff;border:1px solid #eadfd6;border-radius:999px;padding:5px 12px;color:#6b5f56}
+    .ana-g{border-top:1px dashed #e5d9ce;padding:14px 0 4px}
+    .ana-g-t{font-size:14px;font-weight:700;color:#3a322c;margin-bottom:10px}
+    .ana-deg{font-size:11px;font-weight:400;color:#a2958a;margin-left:8px}
+    .ana-g-c{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px}
+    .ana-c{cursor:pointer;text-align:center}
+    .ana-c i{display:block;height:52px;border-radius:10px;box-shadow:0 1px 5px rgba(0,0,0,.1)}
+    .ana-c b{display:block;font-size:12px;font-weight:600;color:#3a322c;margin-top:5px}
+    .ana-c em{display:block;font-size:10px;color:#b3a99f;font-style:normal}
+    .ana-g-r{font-size:12px;font-weight:700;color:#8a6f5c;margin-bottom:4px}
+    .ana-g-d{font-size:12px;color:#8a7f75;line-height:1.7;margin-bottom:10px}
+    .ana-save{padding:6px 14px;font-size:12px}
+    @media(max-width:600px){.ana-g-c{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
@@ -3090,27 +3168,105 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
   }
 
   /* ==================== 色彩元素（v28）==================== */
-  /* 内置标准色卡：中性色 / 基础色 / 质感流行色 */
-  var PALETTE_LIB = [
-    { g: '中性色 · 打底万能', list: [
-      { n: '纯白', h: '#FFFFFF' }, { n: '象牙白', h: '#FFFFF0' }, { n: '米白', h: '#F5F0EC' },
-      { n: '浅灰', h: '#D9D9D9' }, { n: '中灰', h: '#8C8C8C' }, { n: '炭灰', h: '#4A4A4A' },
-      { n: '墨黑', h: '#1A1A1A' }, { n: '驼色', h: '#C19A6B' }, { n: '燕麦', h: '#E3D5C3' },
-      { n: '卡其', h: '#B5A642' }, { n: '巧克力', h: '#4E342E' }, { n: '奶油杏', h: '#F5E1C8' }
+  /* 全色盘：按色相环系统排列（中国传统色名），WHEEL 供"色卡"页使用 */
+  var WHEEL = [
+    { fam: '\u7ea2', g: '\u7ea2\u7cfb \u00b7 \u6731\u7802\u80ed\u8102', list: [
+      { n: '\u5983\u8272', h: '#ED5736' }, { n: '\u54c1\u7ea2', h: '#F00056' }, { n: '\u6843\u7ea2', h: '#F47983' },
+      { n: '\u6d77\u68e0\u7ea2', h: '#DB5A6B' }, { n: '\u77f3\u69b4\u7ea2', h: '#F20C00' }, { n: '\u6a31\u6843\u7ea2', h: '#C93756' },
+      { n: '\u7efb\u7ea2', h: '#C83C23' }, { n: '\u80ed\u8102', h: '#9D2933' }, { n: '\u6731\u7ea2', h: '#FF4C00' },
+      { n: '\u4e39', h: '#FF4E20' }, { n: '\u8d64', h: '#C3272B' }, { n: '\u7ede', h: '#9C3356' },
+      { n: '\u831c\u8272', h: '#CB3A56' }, { n: '\u8d6b\u8d64', h: '#C91F37' }, { n: '\u6bb7\u7ea2', h: '#B0251A' },
+      { n: '\u915f\u7ea2', h: '#DC3023' }, { n: '\u6d0b\u7ea2', h: '#FF0097' }, { n: '\u73ab\u7470\u7ea2', h: '#B52943' },
+      { n: '\u7261\u4e39\u7ea2', h: '#D93A49' }, { n: '\u73ca\u745a\u7ea2', h: '#FF7256' }, { n: '\u69b4\u82b1\u7ea2', h: '#F0562A' },
+      { n: '\u5c71\u8336\u7ea2', h: '#C04851' }
     ]},
-    { g: '基础色 · 衣橱主力', list: [
-      { n: '正红', h: '#E23B3B' }, { n: '酒红', h: '#7B1F2B' }, { n: '砖红', h: '#B54335' },
-      { n: '樱粉', h: '#F4A6B7' }, { n: '藕粉', h: '#E8C4C8' }, { n: '干枯玫瑰', h: '#C08081' },
-      { n: '活力橙', h: '#F08A3C' }, { n: '姜黄', h: '#E0A32E' }, { n: '柠檬黄', h: '#F5E050' },
-      { n: '草绿', h: '#4CAF50' }, { n: '鼠尾草绿', h: '#9CAF88' }, { n: '墨绿', h: '#1F4B3F' },
-      { n: '天蓝', h: '#6EC1E4' }, { n: '雾霾蓝', h: '#7C99B4' }, { n: '宝蓝', h: '#1B4F9C' },
-      { n: '藏青', h: '#22314F' }, { n: '薰衣草紫', h: '#7B5EA7' }, { n: '香芋紫', h: '#B39DDB' }
+    { fam: '\u6a59', g: '\u6a59\u7cfb \u00b7 \u67f4\u6a59\u871c\u68d2', list: [
+      { n: '\u6a58\u7ea2', h: '#FF7500' }, { n: '\u674f\u7ea2', h: '#FF8C69' }, { n: '\u67ff\u7ea2', h: '#F75C2F' },
+      { n: '\u73ca\u745a\u6a59', h: '#FF7F50' }, { n: '\u871c\u6a59', h: '#FF8C00' }, { n: '\u6a58\u9ec4', h: '#FFA400' },
+      { n: '\u7f03\u8272', h: '#F0C239' }, { n: '\u7425\u73c0', h: '#CA6924' }, { n: '\u67ff\u5b50\u6a59', h: '#FF7700' },
+      { n: '\u67f4\u6a59', h: '#E1662A' }, { n: '\u67d4\u6a59', h: '#F2A640' }, { n: '\u871c\u5408', h: '#E8A951' },
+      { n: '\u6a58\u7cd6', h: '#F0A860' }, { n: '\u677f\u6817\u7ea2', h: '#D05A3C' }
     ]},
-    { g: '质感流行 · 低饱和高级', list: [
-      { n: '莫兰迪灰蓝', h: '#8FA3AD' }, { n: '莫兰迪灰绿', h: '#A8B5A2' }, { n: '莫兰迪灰粉', h: '#C9B8A8' },
-      { n: '灰褐', h: '#8C8577' }, { n: '焦糖', h: '#AF6B3E' }, { n: '克莱因蓝', h: '#002FA7' },
-      { n: '豆沙绿', h: '#7D8C6E' }, { n: '烟灰紫', h: '#9A8C9E' }, { n: '陶土红', h: '#A65D4E' },
-      { n: '芥末黄', h: '#C9A227' }, { n: '浅杏', h: '#F0D9BE' }, { n: '雾灰', h: '#B8B0A8' }
+    { fam: '\u9ec4', g: '\u9ec4\u7cfb \u00b7 \u7f03\u9ec4\u9e45\u9ec4', list: [
+      { n: '\u660e\u9ec4', h: '#E9BB1D' }, { n: '\u85e4\u9ec4', h: '#FFB61E' }, { n: '\u96cc\u9ec4', h: '#E9C60D' },
+      { n: '\u9e45\u9ec4', h: '#FFF143' }, { n: '\u674f\u9ec4', h: '#FFA631' }, { n: '\u7f03', h: '#F8D800' },
+      { n: '\u91d1\u9ec4', h: '#E8B004' }, { n: '\u67e0\u6aac\u9ec4', h: '#F5E050' }, { n: '\u9e2d\u9ec4', h: '#FAFF72' },
+      { n: '\u82a5\u672b\u9ec4', h: '#C9A227' }, { n: '\u660e\u5a9a\u9ec4', h: '#E4B21A' }, { n: '\u6c99\u9ec4', h: '#E0C572' },
+      { n: '\u79cb\u9999', h: '#D9B611' }, { n: '\u9e3f\u9ec4', h: '#F5D04C' }, { n: '\u6852\u9ec4', h: '#F3C13A' },
+      { n: '\u83b7\u9ec4', h: '#EAC85A' }
+    ]},
+    { fam: '\u7eff', g: '\u9ec4\u7eff\u7cfb \u00b7 \u67f3\u5ae9\u8c46\u7eff', list: [
+      { n: '\u67f3\u9ec4', h: '#C9DD22' }, { n: '\u5ae9\u7eff', h: '#BDDD22' }, { n: '\u67f3\u7eff', h: '#AFDD22' },
+      { n: '\u8471\u9ec4', h: '#A3D900' }, { n: '\u8471\u9752', h: '#0EB83A' }, { n: '\u8c46\u7eff', h: '#9ED048' },
+      { n: '\u9752\u6885', h: '#7BBF4A' }, { n: '\u82bd\u7eff', h: '#A5CF4C' }, { n: '\u82f9\u679c\u7eff', h: '#8CE62E' },
+      { n: '\u8349\u7eff', h: '#40DE5A' }, { n: '\u725b\u6cb9\u7eff', h: '#7BA23F' }, { n: '\u67ab\u7eff', h: '#6FB75C' },
+      { n: '\u83cc\u7eff', h: '#8FBF5A' }
+    ]},
+    { fam: '\u7eff', g: '\u7eff\u7cfb \u00b7 \u7fe0\u7af9\u82cd\u677e', list: [
+      { n: '\u9752\u7fe0', h: '#00E09E' }, { n: '\u7fe0\u7eff', h: '#1E9B6A' }, { n: '\u78a7\u7eff', h: '#2ADD9C' },
+      { n: '\u77f3\u7eff', h: '#3DE1AD' }, { n: '\u677e\u67cf\u7eff', h: '#21A675' }, { n: '\u82cd\u7eff', h: '#2C7C6C' },
+      { n: '\u6cb9\u7eff', h: '#00BC12' }, { n: '\u7eff\u6c89', h: '#0F9B56' }, { n: '\u8377\u53f6\u7eff', h: '#33C263' },
+      { n: '\u8584\u8377\u7eff', h: '#98FB98' }, { n: '\u519b\u7eff', h: '#4A5D23' }, { n: '\u6954\u6984\u7eff', h: '#688038' },
+      { n: '\u677e\u82b1\u7eff', h: '#057748' }, { n: '\u9f20\u5c3e\u8349\u7eff', h: '#9CAF88' }, { n: '\u58a8\u7eff', h: '#1F4B3F' },
+      { n: '\u82a6\u83b7\u7eff', h: '#7D8C6E' }
+    ]},
+    { fam: '\u9752', g: '\u9752\u7cfb \u00b7 \u7af9\u9752\u7fe1\u7fe0', list: [
+      { n: '\u7af9\u9752', h: '#789262' }, { n: '\u9752\u78a7', h: '#48C0A3' }, { n: '\u78a7\u5c71', h: '#2E8B57' },
+      { n: '\u7fe1\u7fe0', h: '#3DAF8B' }, { n: '\u84dd\u7eff', h: '#0EB0C9' }, { n: '\u9752\u8471', h: '#0AA344' },
+      { n: '\u9e2d\u5375\u9752', h: '#E0EEE8' }, { n: '\u94dc\u7eff', h: '#549688' }, { n: '\u5b54\u96c0\u7eff', h: '#23A38F' },
+      { n: '\u66fe\u9752', h: '#0B6948' }, { n: '\u7af9\u7b50\u7eff', h: '#5C7A5C' }, { n: '\u82d4\u7eff', h: '#4B8B6B' }
+    ]},
+    { fam: '\u9752', g: '\u9752\u7cfb \u00b7 \u5929\u9752\u975b\u9752', list: [
+      { n: '\u5929\u9752', h: '#7AB8C9' }, { n: '\u82b1\u9752', h: '#003472' }, { n: '\u975b\u9752', h: '#177CB0' },
+      { n: '\u7fa4\u9752', h: '#4C8DAE' }, { n: '\u9e26\u9752', h: '#424F57' }, { n: '\u87f9\u58f3\u9752', h: '#BBCDC5' },
+      { n: '\u85cf\u9752', h: '#2E4E7E' }, { n: '\u6bdb\u6708', h: '#70A19F' }, { n: '\u9752\u767d', h: '#C0EBD7' },
+      { n: '\u7a7a\u9752', h: '#8FB8C9' }, { n: '\u6c34\u9752', h: '#A3D1D1' }, { n: '\u9e2d\u5934\u9752', h: '#2B5C68' }
+    ]},
+    { fam: '\u84dd', g: '\u84dd\u7cfb \u00b7 \u5b9d\u84dd\u5b54\u96c0', list: [
+      { n: '\u5929\u84dd', h: '#6EC1E4' }, { n: '\u851a\u84dd', h: '#1A73B7' }, { n: '\u54c1\u84dd', h: '#2E4E9E' },
+      { n: '\u6e5b\u84dd', h: '#062E6B' }, { n: '\u5b9d\u84dd', h: '#0F52BA' }, { n: '\u666f\u6cf0\u84dd', h: '#2E59A7' },
+      { n: '\u94b4\u84dd', h: '#0047AB' }, { n: '\u5b54\u96c0\u84dd', h: '#0093AF' }, { n: '\u975b\u84dd', h: '#065279' },
+      { n: '\u85cf\u84dd', h: '#1B2F54' }, { n: '\u96fe\u973e\u84dd', h: '#7C99B4' }, { n: '\u514b\u83b1\u56e0\u84dd', h: '#002FA7' },
+      { n: '\u7eaa\u4e91', h: '#7E8FA6' }, { n: '\u6674\u7a7a\u84dd', h: '#5EB2D9' }, { n: '\u6d77\u6d0b\u84dd', h: '#1C7BA8' }
+    ]},
+    { fam: '\u7d2b', g: '\u7d2b\u7cfb \u00b7 \u9752\u83b2\u85d5\u8377', list: [
+      { n: '\u9752\u83b2', h: '#801DAE' }, { n: '\u96ea\u9752', h: '#B0A4E3' }, { n: '\u7ec0\u9752', h: '#003A6C' },
+      { n: '\u7d2b\u68e0', h: '#56004F' }, { n: '\u661f\u7a7a\u84dd\u7d2b', h: '#3A4A78' }, { n: '\u975b\u7d2b', h: '#5A4A8C' },
+      { n: '\u7d2b\u7f57\u5170', h: '#8B72BE' }, { n: '\u4e01\u9999\u8272', h: '#CCA4E3' }, { n: '\u85d5\u8377', h: '#E4C6D0' },
+      { n: '\u7d2b\u85e4', h: '#9B7CB9' }, { n: '\u85b0\u8863\u8349', h: '#B39DDB' }, { n: '\u6728\u69c2\u7d2b', h: '#7A378B' },
+      { n: '\u7275\u725b\u7d2b', h: '#823E97' }, { n: '\u8461\u8404\u7d2b', h: '#6F2DA8' }, { n: '\u9ebb\u7d2b', h: '#5D3A6A' },
+      { n: '\u70df\u7070\u7d2b', h: '#9A8C9E' }
+    ]},
+    { fam: '\u7d2b', g: '\u7d2b\u7ea2\u7cfb \u00b7 \u6885\u7ea2\u7ede\u7d2b', list: [
+      { n: '\u6885\u7ea2', h: '#D9556C' }, { n: '\u54c1\u7d2b', h: '#B02F7A' }, { n: '\u7d2b\u6885', h: '#C4568F' },
+      { n: '\u7ede\u7d2b', h: '#8C4356' }, { n: '\u83b2\u85d5\u7d2b', h: '#B5839B' }, { n: '\u69b4\u82b1\u7d2b', h: '#A8497E' },
+      { n: '\u9152\u7ea2\u7d2b', h: '#7E3D5A' }, { n: '\u8549\u5fc3\u7d2b', h: '#9E4E7A' }
+    ]},
+    { fam: '\u68d5', g: '\u68d5\u8910\u7cfb \u00b7 \u6a80\u80e1\u6843\u7126\u7cd6', list: [
+      { n: '\u6c89\u9999', h: '#75664D' }, { n: '\u6a80\u8272', h: '#B36D61' }, { n: '\u9a7c\u8272', h: '#A88462' },
+      { n: '\u6817\u8272', h: '#60281E' }, { n: '\u5496\u5561', h: '#4D3229' }, { n: '\u5de7\u514b\u529b', h: '#4E342E' },
+      { n: '\u80e1\u6843\u8272', h: '#7A4B3A' }, { n: '\u5361\u5176', h: '#B5A642' }, { n: '\u8336\u8272', h: '#B35C44' },
+      { n: '\u8d5a\u77f3', h: '#8C4B31' }, { n: '\u7126\u7cd6', h: '#AF6B3E' }, { n: '\u68d5\u6984', h: '#6B4C2A' },
+      { n: '\u71d5\u9ea6', h: '#E3D5C3' }, { n: '\u571f\u9ec4', h: '#C9A87C' }, { n: '\u9769\u7ea2', h: '#8B5A3C' },
+      { n: '\u6a80\u9999', h: '#9C6B4F' }
+    ]},
+    { fam: '\u767d', g: '\u767d\u7cfb \u00b7 \u6708\u7f3f\u8c61\u7259', list: [
+      { n: '\u6708\u767d', h: '#D6ECF0' }, { n: '\u7f3f', h: '#F2ECDE' }, { n: '\u8c61\u7259\u767d', h: '#FFFFF0' },
+      { n: '\u7c73\u767d', h: '#F5F0EC' }, { n: '\u96ea\u767d', h: '#F2F2F2' }, { n: '\u971c\u8272', h: '#E9F1F6' },
+      { n: '\u83b9\u767d', h: '#E3F0ED' }, { n: '\u85d5\u767d', h: '#EAD7CE' }, { n: '\u73cd\u73e0\u767d', h: '#F0EAD6' },
+      { n: '\u5976\u6cb9', h: '#F5E1C8' }, { n: '\u7eaf\u767d', h: '#FFFFFF' }, { n: '\u9e4f\u7fbd\u767d', h: '#F7F4EF' }
+    ]},
+    { fam: '\u7070', g: '\u7070\u7cfb \u00b7 \u94f6\u7070\u70df\u96fe', list: [
+      { n: '\u94f6\u7070', h: '#C9CDCF' }, { n: '\u94c5\u7070', h: '#8A8D91' }, { n: '\u70df\u7070', h: '#7A7374' },
+      { n: '\u7070\u767d', h: '#D9D9D9' }, { n: '\u4e2d\u7070', h: '#8C8C8C' }, { n: '\u70ad\u7070', h: '#4A4A4A' },
+      { n: '\u58a8\u7070', h: '#5A5A5A' }, { n: '\u96fe\u7070', h: '#B8B0A8' }, { n: '\u77f3\u677f\u7070', h: '#708090' },
+      { n: '\u83ab\u5170\u8fea\u7070\u84dd', h: '#8FA3AD' }, { n: '\u83ab\u5170\u8fea\u7070\u7eff', h: '#A8B5A2' },
+      { n: '\u83ab\u5170\u8fea\u7070\u7c89', h: '#C9B8A8' }, { n: '\u7070\u8910', h: '#8C8577' }
+    ]},
+    { fam: '\u9ed1', g: '\u9ed1\u7cfb \u00b7 \u58a8\u7384\u6f06\u9ed1', list: [
+      { n: '\u58a8\u9ed1', h: '#1A1A1A' }, { n: '\u7384', h: '#3D3B4F' }, { n: '\u4e4c', h: '#2A2926' },
+      { n: '\u6f06\u9ed1', h: '#161823' }, { n: '\u9edb', h: '#4E4B41' }, { n: '\u9e26\u8272', h: '#2B2B2B' },
+      { n: '\u70ad\u9ed1', h: '#292421' }, { n: '\u94c1\u9ed1', h: '#181511' }, { n: '\u6696\u9ed1', h: '#332C2B' }
     ]}
   ];
 
@@ -3296,29 +3452,478 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     try { setTimeout(hydrateColorThumbs, 0); } catch (e) {}
   }
 
-  /* ---------- 色卡 ---------- */
+  /* ---------- 色卡：全色盘（v30 真·交互色相环）---------- */
+  var WHEEL_FAM = [['all', '\u5168\u90e8'], ['\u7ea2', '\u7ea2'], ['\u6a59', '\u6a59'], ['\u9ec4', '\u9ec4'], ['\u7eff', '\u9ec4\u7eff/\u7eff'],
+    ['\u9752', '\u9752'], ['\u84dd', '\u84dd'], ['\u7d2b', '\u7d2b'], ['\u68d5', '\u68d5\u8910'],
+    ['\u767d', '\u767d'], ['\u7070', '\u7070'], ['\u9ed1', '\u9ed1']];
+  var wheelFam = 'all', wheelQ = '';
+  var wheelPick = { h: 20, s: 42, l: 45 };
+  var cwSelHex = '';   /* 下拉/点选的精确色值，用于下拉回显 */
+
+  function _h2r(h, s, l) {
+    h = ((h % 360) + 360) % 360; s = Math.max(0, Math.min(100, s)) / 100; l = Math.max(0, Math.min(100, l)) / 100;
+    var c = (1 - Math.abs(2 * l - 1)) * s, x = c * (1 - Math.abs((h / 60) % 2 - 1)), m = l - c / 2, r = 0, g = 0, b = 0;
+    if (h < 60) { r = c; g = x; } else if (h < 120) { r = x; g = c; } else if (h < 180) { g = c; b = x; }
+    else if (h < 240) { g = x; b = c; } else if (h < 300) { r = x; b = c; } else { r = c; b = x; }
+    return [Math.round((r + m) * 255), Math.round((g + m) * 255), Math.round((b + m) * 255)];
+  }
+  function hsl2hex(h, s, l) {
+    var c = _h2r(h, s, l);
+    return '#' + c.map(function (v) { var t = v.toString(16); return t.length < 2 ? '0' + t : t; }).join('').toUpperCase();
+  }
+  function hex2rgb(x) {
+    x = String(x || '').replace('#', ''); if (x.length === 3) x = x[0] + x[0] + x[1] + x[1] + x[2] + x[2];
+    var n = parseInt(x, 16); if (isNaN(n)) return [0, 0, 0];
+    return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+  }
+  function rgb2hsl(r, g, b) {
+    r /= 255; g /= 255; b /= 255;
+    var mx = Math.max(r, g, b), mn = Math.min(r, g, b), h = 0, s = 0, l = (mx + mn) / 2, d = mx - mn;
+    if (d) {
+      s = l > .5 ? d / (2 - mx - mn) : d / (mx + mn);
+      if (mx === r) h = ((g - b) / d + (g < b ? 6 : 0)); else if (mx === g) h = (b - r) / d + 2; else h = (r - g) / d + 4;
+      h *= 60;
+    }
+    return [Math.round(h), Math.round(s * 100), Math.round(l * 100)];
+  }
+  function hex2hsl(x) { var c = hex2rgb(x); return rgb2hsl(c[0], c[1], c[2]); }
+  function _cdist(a, b) {
+    var r = (a[0] - b[0]) * .3, g = (a[1] - b[1]) * .59, bl = (a[2] - b[2]) * .11;
+    return r * r * 3 + g * g * 6 + bl * bl * 2;
+  }
+  function nearestCn(hex) {
+    var t = hex2rgb(hex), best = null, bd = 1e9;
+    (typeof WHEEL !== 'undefined' ? WHEEL : []).forEach(function (g) {
+      g.list.forEach(function (c) { var d = _cdist(t, hex2rgb(c.h)); if (d < bd) { bd = d; best = c; } });
+    });
+    return best;
+  }
+  function inkFor(hex) {
+    var c = hex2rgb(hex);
+    return (c[0] * .299 + c[1] * .587 + c[2] * .114) > 150 ? '#3a322c' : '#fff';
+  }
+
+  /* 画色相环：角度=色相，半径=饱和度 */
+  function drawWheelCv(cv, L) {
+    var R = cv.width / 2, ctx = cv.getContext('2d');
+    ctx.clearRect(0, 0, cv.width, cv.height);
+    var img = ctx.createImageData(cv.width, cv.height), d = img.data;
+    for (var y = 0; y < cv.height; y++) {
+      for (var x = 0; x < cv.width; x++) {
+        var dx = x - R, dy = y - R, rr = Math.sqrt(dx * dx + dy * dy), i = (y * cv.width + x) * 4;
+        if (rr > R) { d[i + 3] = 0; continue; }
+        var s = rr / R * 100, a = Math.atan2(dy, dx) * 180 / Math.PI + 90; if (a < 0) a += 360;
+        var c = _h2r(a, s, L);
+        d[i] = c[0]; d[i + 1] = c[1]; d[i + 2] = c[2];
+        d[i + 3] = rr > R - 1.5 ? 0 : 255;
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+    // 中心到边缘的明度留白（可选）
+    ctx.strokeStyle = 'rgba(0,0,0,.08)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.arc(R, R, R - 1, 0, Math.PI * 2); ctx.stroke();
+  }
+  function markWheel(cv, h, s) {
+    var R = cv.width / 2, ctx = cv.getContext('2d');
+    var a = (h - 90) * Math.PI / 180, r = s / 100 * (R - 8);
+    var x = R + Math.cos(a) * r, y = R + Math.sin(a) * r;
+    ctx.beginPath(); ctx.arc(x, y, 7, 0, Math.PI * 2);
+    ctx.lineWidth = 3; ctx.strokeStyle = '#fff'; ctx.stroke();
+    ctx.beginPath(); ctx.arc(x, y, 7, 0, Math.PI * 2);
+    ctx.lineWidth = 1.5; ctx.strokeStyle = '#3a322c'; ctx.stroke();
+  }
+
+  
+  /* ============ 点色 → 可搭配色系分析 ============ */
+  var cwAnaOn = false;
+
+  function cwHueName(h) {
+    var H = ((h % 360) + 360) % 360;
+    if (H < 15 || H >= 345) return '红';
+    if (H < 45) return '橙';
+    if (H < 70) return '黄';
+    if (H < 160) return '绿';
+    if (H < 200) return '青';
+    if (H < 250) return '蓝';
+    if (H < 290) return '紫';
+    return '玫紫';
+  }
+  function cwSatTier(s) {
+    if (s < 15) return '近灰'; if (s < 38) return '低饱和';
+    if (s < 65) return '中饱和'; return '高饱和';
+  }
+  function cwLumTier(l) {
+    if (l < 22) return '极深'; if (l < 40) return '深色';
+    if (l < 60) return '中明'; if (l < 82) return '浅色'; return '极浅';
+  }
+  /* 在 194 色传统色库里找最接近该 HSL 的实色 */
+  function nearBy(h, s, l) {
+    var t = hex2rgb(hsl2hex(h, s, l)), best = null, bd = 1e9;
+    WHEEL.forEach(function (g) {
+      g.list.forEach(function (c) { var d = _cdist(t, hex2rgb(c.h)); if (d < bd) { bd = d; best = c; } });
+    });
+    return best || { n: '自定义', h: hsl2hex(h, s, l) };
+  }
+  function cwChar(s, l) {
+    if (s < 18) return '几乎无彩，是天然的打底色，怎么搭都不抢戏，靠材质和廓形出质感。';
+    if (s >= 55 && l >= 40 && l <= 70) return '饱和度高、明度居中，存在感很强，建议小面积点睛，别铺满全身。';
+    if (s >= 55 && l < 40) return '浓郁深色，气场足但有收缩感，适合做外套或下装压住整体。';
+    if (s >= 55) return '高明度高饱和，非常跳，靠近脸时要谨慎，做配饰或下半身更安全。';
+    if (s >= 42) return '有点彩度但不算冲，做主色刚好，配中性色就能压住。';
+    if (l < 30) return '深而浊，稳重收敛，是秋冬最省心的主色。';
+    if (l > 78) return '浅而柔，轻盈显气色，但容易显膨胀，建议放在上半身或配饰。';
+    return '柔和的中间调，好搭不挑人，可以放心做大面积主色。';
+  }
+  function cwSkin(h, s) {
+    if (s < 18) return '冷暖皮都能穿';
+    var H = ((h % 360) + 360) % 360;
+    if ((H < 70 || H >= 300)) return '暖皮 / 黄皮友好';
+    if (H >= 160 && H < 260) return '冷皮 / 白皮更出彩';
+    if (H >= 70 && H < 160) return '暖皮偏友好，冷皮需靠妆容提亮';
+    return '冷暖皮皆可，看搭配';
+  }
+  function cwRatio(s, l) {
+    if (s >= 65) return '占全身 10%~20%';
+    if (s < 18 && l > 70) return '可占 60%~80%';
+    if (s < 18) return '可占 40%~60%';
+    if (l < 30) return '可占 40%~60%';
+    return '占全身 30%~50%';
+  }
+
+  /* 生成 5 组方案：每组 4 个实色 + 比例 + 建议 */
+  function cwSchemes(h, s, l) {
+    var up = l > 58 ? -1 : 1;              /* 亮色往深走，暗色往浅走 */
+    function L(i) {
+      var v = l + up * i;
+      return Math.max(12, Math.min(92, v));
+    }
+    var accS = s < 40 ? Math.max(45, s + 25) : s;   /* 灰调也给出有彩方案 */
+    var out = [];
+
+    out.push({
+      n: '同色系深浅递进', deg: '0°',
+      cs: [nearBy(h, s, L(28)), nearBy(h, s, L(14)), nearBy(h, s, l), nearBy(h, s, L(-16))],
+      r: '主色 60% / 深一档 25% / 浅一档 15%',
+      d: '同一色相拉明暗层次，最不容易出错，也最显质感。'
+    });
+    out.push({
+      n: '邻近色', deg: '±35°',
+      cs: [nearBy(h - 35, s, l), nearBy(h, s, l), nearBy(h + 35, s, l), nearBy(h, Math.max(8, s - 20), Math.min(90, l + 18))],
+      r: '主色 50% / 邻近 30% / 再邻近 20%',
+      d: '色相环上挨着走，和谐又有变化，适合日常通勤。'
+    });
+    out.push({
+      n: '对比色', deg: '±110°',
+      cs: [nearBy(h, s, l), nearBy(h + 110, accS, l), nearBy(h - 110, Math.max(10, s - 15), Math.min(88, l + 14)), nearBy(h, 8, l > 50 ? 24 : 82)],
+      r: '主色 60% / 对比 25% / 中性 15%',
+      d: '拉开距离制造张力，记得用中性色收边，不然会吵。'
+    });
+    out.push({
+      n: '互补撞色', deg: '180°',
+      cs: [nearBy(h, s, l), nearBy(h + 180, accS, l), nearBy(h, 6, 88), nearBy(h, 10, 20)],
+      r: '主色 70% / 互补 10% / 中性 20%',
+      d: '最强对比，互补色只留一处（包、鞋、围巾），越克制越贵。'
+    });
+    out.push({
+      n: '中性打底万能', deg: '万能',
+      cs: [nearBy(h, 6, 90), nearBy(h, 8, 62), nearBy(h, s, l), nearBy(h, 12, 22)],
+      r: '中性 70% / 主色 20% / 深色 10%',
+      d: '把主色交给配饰，其余交给黑白灰米，闭眼穿都成立。'
+    });
+    return out;
+  }
+
+  function cwAnaHtml(hex) {
+    var hsl = hex2hsl(hex), h = hsl[0], s = hsl[1], l = hsl[2];
+    var near = nearestCn(hex);
+    var fam = cwHueName(h);
+    var sch = cwSchemes(h, s, l);
+    return '' +
+      '<div class="ana-hd">' +
+        '<div class="ana-sw" style="background:' + hex + ';color:' + inkFor(hex) + '">' + hex + '</div>' +
+        '<div class="ana-hd-t">' +
+          '<div class="ana-t1">' + escapeHtml((near && near.n) || '自定义色') + ' · 搭配分析</div>' +
+          '<div class="ana-t2">' + fam + '系　色相 ' + Math.round(h) + '°　' + cwSatTier(s) + '　' + cwLumTier(l) + '</div>' +
+        '</div>' +
+        '<button class="btn sec ana-x" data-cwa="close">收起</button>' +
+      '</div>' +
+      '<div class="ana-tags">' +
+        '<span class="ana-tag">性格：' + cwChar(s, l) + '</span>' +
+        '<span class="ana-tag">肤色：' + cwSkin(h, s) + '</span>' +
+        '<span class="ana-tag">占比：' + cwRatio(s, l) + '</span>' +
+      '</div>' +
+      sch.map(function (g, gi) {
+        return '<div class="ana-g">' +
+          '<div class="ana-g-t">' + escapeHtml(g.n) + '<span class="ana-deg">' + escapeHtml(g.deg) + '</span></div>' +
+          '<div class="ana-g-c">' + g.cs.map(function (c) {
+            return '<span class="ana-c" data-copy="' + c.h + '" title="点击复制 ' + c.h + '">' +
+              '<i style="background:' + c.h + '"></i><b>' + escapeHtml(c.n) + '</b><em>' + c.h + '</em></span>';
+          }).join('') + '</div>' +
+          '<div class="ana-g-r">' + escapeHtml(g.r) + '</div>' +
+          '<div class="ana-g-d">' + escapeHtml(g.d) + '</div>' +
+          '<button class="btn sec ana-save" data-cwasave="' + gi + '">＋ 存入我的配色</button>' +
+        '</div>';
+      }).join('');
+  }
+
   function renderColorSwatch(body) {
-    body.innerHTML = PALETTE_LIB.map(function (g) {
-      return '<div class="cc-group"><div class="cc-group-t">' + escapeHtml(g.g) + '</div><div class="cc-sw">' +
-        g.list.map(function (c) {
-          return '<div class="cc-chip" data-copy="' + c.h + '" title="点击复制 ' + c.h + '">' +
-                 '<div class="sw-c" style="background:' + c.h + ';color:' + inkOn(c.h) + '">' + c.h + '</div>' +
-                 '<div class="sw-t">' + escapeHtml(c.n) + '</div></div>';
-        }).join('') + '</div></div>';
+    body.className = '';
+    var P = wheelPick, hex = hsl2hex(P.h, P.s, P.l), near = nearestCn(hex);
+    var fams = {}; WHEEL.forEach(function (g) { fams[g.fam] = 1; });
+    var total = 0; WHEEL.forEach(function (g) { total += g.list.length; });
+
+    /* 配色公式（参考色相环） */
+    function fmRow(name, deg, hs) {
+      return '<div class="cw-fm">' +
+        '<div class="cw-fm-t">' + name + '<span class="cw-deg">' + deg + '</span></div>' +
+        '<div class="cw-fm-c">' + hs.map(function (hh) {
+          var c = hsl2hex(hh, P.s, P.l);
+          return '<span class="cw-fm-s" style="background:' + c + ';color:' + inkFor(c) + '" data-copy="' + c + '" title="点击复制 ' + c + '">' + c + '</span>';
+        }).join('') + '</div>' +
+        '<button class="btn sec cw-fm-b" data-fmsave="' + encodeURIComponent(name + '｜' + hs.map(function (h) { return hsl2hex(h, P.s, P.l); }).join(',')) + '">存入</button>' +
+        '</div>';
+    }
+    var fms =
+      fmRow('同类色', '±30° / 60°', [P.h - 30, P.h, P.h + 30]) +
+      fmRow('邻近色', '±60° / 120°', [P.h - 60, P.h, P.h + 60]) +
+      fmRow('对比色', '相隔 120°', [P.h, P.h + 120, P.h + 240]) +
+      fmRow('互补色', '相隔 180°', [P.h, P.h + 180]) +
+      fmRow('分裂互补', '150° / 210°', [P.h, P.h + 150, P.h + 210]);
+
+    function stepRow(t, arr) {
+      return '<div class="cw-step-r"><div class="cw-step-t">' + t + '</div><div class="cw-step">' +
+        arr.map(function (c) { return '<span data-copy="' + c + '" title="点击复制 ' + c + '" style="background:' + c + '"></span>'; }).join('') +
+        '</div></div>';
+    }
+    var lightSteps = [], satSteps = [];
+    for (var i = 1; i <= 9; i++) lightSteps.push(hsl2hex(P.h, P.s, i * 10 - 5));
+    for (var j = 1; j <= 9; j++) satSteps.push(hsl2hex(P.h, j * 10 + 5, P.l));
+
+    var selOpts = WHEEL.map(function (g) {
+      return '<optgroup label="' + escapeHtml(g.g) + '">' + g.list.map(function (c) {
+        return '<option value="' + c.h + '"' +
+          ((String(hex).toUpperCase() === String(c.h).toUpperCase()) ||
+           (cwSelHex && String(cwSelHex).toUpperCase() === String(c.h).toUpperCase()) ? ' selected' : '') + '>' +
+          escapeHtml(c.n) + '　' + c.h + '</option>';
+      }).join('') + '</optgroup>';
     }).join('');
-    Array.prototype.forEach.call(body.querySelectorAll('[data-copy]'), function (n) {
-      n.onclick = function () {
-        var h = n.dataset.copy;
-        try {
-          if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(h);
-          else {
-            var ta = document.createElement('textarea'); ta.value = h; document.body.appendChild(ta);
-            ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
-          }
-          toast('已复制 ' + h);
-        } catch (e) { toast('色值：' + h); }
+
+    body.innerHTML =
+      '<div class="cw-pick">' +
+        '<span class="cw-pick-t">▼ 下拉选色</span>' +
+        '<select id="cw-sel" class="cw-sel">' +
+          '<option value="">— 从 ' + total + ' 个中国传统色里选择 —</option>' + selOpts +
+        '</select>' +
+        '<span class="cw-pick-n">选中即弹出搭配分析</span>' +
+      '</div>' +
+
+      '<div class="cw-wrap">' +
+        '<div class="cw-left">' +
+          '<canvas id="cw-cv" class="cw-cv" width="230" height="230"></canvas>' +
+          '<div class="cw-hint">点色环取色：角度=色相，半径=饱和度</div>' +
+        '</div>' +
+        '<div class="cw-right">' +
+          '<div class="cw-big" style="background:' + hex + ';color:' + inkFor(hex) + '">' +
+            '<div class="cw-hex">' + hex + '</div>' +
+            '<div class="cw-cn">' + (near ? '近似：' + escapeHtml(near.n) + '　' + near.h : '自定义色') + '</div>' +
+          '</div>' +
+          '<div class="cw-meta">H ' + Math.round(((P.h % 360) + 360) % 360) + '°　S ' + Math.round(P.s) + '%　L ' + Math.round(P.l) + '%　RGB ' + hex2rgb(hex).join(',') + '</div>' +
+          '<div class="cw-sl"><span>明度</span><input type="range" id="cw-l" min="4" max="96" value="' + P.l + '"><b>' + Math.round(P.l) + '</b></div>' +
+          '<div class="cw-sl"><span>纯度</span><input type="range" id="cw-s" min="0" max="100" value="' + P.s + '"><b>' + Math.round(P.s) + '</b></div>' +
+          '<div class="cw-sl"><span>色相</span><input type="range" id="cw-h" min="0" max="359" value="' + Math.round(P.h) + '"><b>' + Math.round(P.h) + '</b></div>' +
+          '<div class="cw-acts">' +
+            '<button class="btn" data-cw="copy">复制色值</button>' +
+            '<button class="btn sec" data-cw="save">存入我的配色</button>' +
+            '<button class="btn sec" data-cw="pick">吸取图片色</button>' +
+            '<button class="btn sec" data-cw="analyze">搭配分析</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+
+      '<div id="cw-ana" class="cw-ana' + (cwAnaOn ? '' : ' hide') + '">' + (cwAnaOn ? cwAnaHtml(hex) : '') + '</div>' +
+
+      '<div class="cw-sec"><div class="cw-sec-t">配色公式 · 色相环</div>' + fms + '</div>' +
+      '<div class="cw-sec"><div class="cw-sec-t">同色相明度阶梯 / 纯度阶梯</div>' +
+        stepRow('明度', lightSteps) + stepRow('纯度', satSteps) + '</div>' +
+
+      '<div class="cc-wh" style="margin-top:16px">' +
+        '<div class="cc-wh-s" style="min-width:100%">' +
+          '<div class="cc-wh-t">全色库 · ' + total + ' 个中国传统色</div>' +
+          '<div class="cc-wh-n">按色相环顺序排列，圆形色块，点击即复制色值。</div>' +
+          '<div class="cc-fams">' + WHEEL_FAM.filter(function (f) { return f[0] === 'all' || fams[f[0]]; })
+            .map(function (f) { return '<span class="cc-fam' + (wheelFam === f[0] ? ' on' : '') + '" data-fam="' + f[0] + '">' + escapeHtml(f[1]) + '</span>'; }).join('') + '</div>' +
+          '<input id="cc-q" class="cc-inp" placeholder="搜索色名或色值，如 胡桃 / #7A4B3A" value="' + escapeHtml(wheelQ) + '">' +
+        '</div>' +
+      '</div>' +
+      WHEEL.map(function (g) {
+        if (wheelFam !== 'all' && g.fam !== wheelFam) return '';
+        var ls = g.list.filter(function (c) {
+          if (!wheelQ) return true;
+          var q = wheelQ.toLowerCase();
+          return c.n.indexOf(wheelQ) >= 0 || c.h.toLowerCase().indexOf(q) >= 0;
+        });
+        if (!ls.length) return '';
+        return '<div class="cc-group"><div class="cc-group-t">' + escapeHtml(g.g) + ' <span style="font-weight:400;color:#a2958a;font-size:12px">' + ls.length + '</span></div>' +
+          '<div class="cc-dots">' + ls.map(function (c) {
+            return '<div class="cc-dot" data-copy="' + c.h + '" data-dothex="' + c.h + '" title="点击看搭配分析并复制 ' + c.h + '">' +
+              '<div class="dt" style="background:' + c.h + '"></div>' +
+              '<div class="nm">' + escapeHtml(c.n) + '</div>' +
+              '<div class="hx">' + c.h + '</div></div>';
+          }).join('') + '</div></div>';
+      }).join('');
+
+    /* 画环 */
+    var cv = el('cw-cv');
+    if (cv) {
+      drawWheelCv(cv, P.l); markWheel(cv, P.h, P.s);
+      function pickFrom(ev) {
+        var r = cv.getBoundingClientRect();
+        var cx = (ev.touches ? ev.touches[0].clientX : ev.clientX) - r.left;
+        var cy = (ev.touches ? ev.touches[0].clientY : ev.clientY) - r.top;
+        var R = r.width / 2, dx = cx - R, dy = cy - R, rr = Math.sqrt(dx * dx + dy * dy);
+        if (rr > R) return;
+        var a = Math.atan2(dy, dx) * 180 / Math.PI + 90; if (a < 0) a += 360;
+        wheelPick.h = a; wheelPick.s = Math.min(100, rr / R * 100);
+        renderColorSwatch(body);
+      }
+      cv.onclick = pickFrom;
+      cv.ontouchstart = function (e) { e.preventDefault(); pickFrom(e); };
+      cv.ontouchmove = function (e) { e.preventDefault(); pickFrom(e); };
+    }
+    var cwSel = el('cw-sel');
+    if (cwSel) {
+      cwSel.onchange = function () {
+        var v = cwSel.value;
+        if (!v) return;
+        var t = hex2hsl(v);
+        wheelPick.h = t[0]; wheelPick.s = t[1]; wheelPick.l = t[2];
+        cwSelHex = v;
+        cwAnaOn = true;
+        renderColorSwatch(body);
+        var pa2 = el('cw-ana');
+        if (pa2 && pa2.scrollIntoView) pa2.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      };
+    }
+    ['cw-l', 'cw-s', 'cw-h'].forEach(function (id) {
+      var n = el(id); if (!n) return;
+      n.oninput = function () {
+        if (id === 'cw-l') wheelPick.l = +n.value; else if (id === 'cw-s') wheelPick.s = +n.value; else wheelPick.h = +n.value;
+        cwSelHex = '';
+        renderColorSwatch(body);
       };
     });
+    Array.prototype.forEach.call(body.querySelectorAll('[data-cw]'), function (n) {
+      n.onclick = function () {
+        var k = n.dataset.cw, hx = hsl2hex(wheelPick.h, wheelPick.s, wheelPick.l);
+        if (k === 'copy') { copyText(hx); return; }
+        if (k === 'save') {
+          var nn = nearestCn(hx);
+          var cols = [{ hex: hx, name: nn ? nn.n : '自定义' }];
+          [P.h - 30, P.h + 30, P.h + 180].forEach(function (hh) {
+            var c = hsl2hex(hh, P.s, P.l); cols.push({ hex: c, name: (nearestCn(c) || {}).n || '自定义' });
+          });
+          state.colorCards.push({ id: uid(), folderId: curColorFolderId(), title: (nn ? nn.n : '自定义色') + '配色',
+            note: '主色 ' + hx + '，同类色 ±30°、互补色 180°', colors: cols, imgId: '', createdAt: Date.now() });
+          notify(); colorTab = 'mine'; renderColor(); toast('已存入我的配色');
+          return;
+        }
+        if (k === 'pick') { pickImgColor(); }
+        if (k === 'analyze') { cwAnaOn = true; renderColorSwatch(body); var pa = el('cw-ana'); if (pa) pa.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+      };
+    });
+    /* 点色库色块 / 点色环 → 同步并弹出搭配分析 */
+    Array.prototype.forEach.call(body.querySelectorAll('.cc-dot'), function (n) {
+      n.addEventListener('click', function () {
+        var hx = n.getAttribute('data-dothex');
+        if (!hx) return;
+        cwSelHex = hx;
+        var t = hex2hsl(hx);
+        wheelPick = { h: t[0], s: t[1], l: t[2] };
+        cwAnaOn = true;
+        renderColorSwatch(body);
+        var pa = el('cw-ana'); if (pa) pa.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      });
+    });
+    Array.prototype.forEach.call(body.querySelectorAll('[data-cwa]'), function (n) {
+      n.onclick = function () { if (n.dataset.cwa === 'close') { cwAnaOn = false; renderColorSwatch(body); } };
+    });
+    Array.prototype.forEach.call(body.querySelectorAll('[data-cwasave]'), function (n) {
+      n.onclick = function () {
+        var hx = hsl2hex(wheelPick.h, wheelPick.s, wheelPick.l);
+        var sch = cwSchemes(wheelPick.h, wheelPick.s, wheelPick.l)[+n.dataset.cwasave];
+        state.colorCards.push({
+          id: uid(), folderId: curColorFolderId(),
+          title: ((nearestCn(hx) || {}).n || '自定义') + '·' + sch.n,
+          note: sch.r + '。' + sch.d,
+          colors: sch.cs.map(function (c) { return { hex: c.h, name: c.n }; }),
+          imgId: '', createdAt: Date.now()
+        });
+        notify(); colorTab = 'mine'; renderColor(); toast('已存入「' + sch.n + '」');
+      };
+    });
+    Array.prototype.forEach.call(body.querySelectorAll('[data-fmsave]'), function (n) {
+      n.onclick = function () {
+        var raw = decodeURIComponent(n.dataset.fmsave).split('｜'), nm = raw[0], hs = raw[1].split(',');
+        state.colorCards.push({
+          id: uid(), folderId: curColorFolderId(), title: (nearestCn(hs[0]) || {}).n ? (nearestCn(hs[0]).n + '·' + nm) : nm,
+          note: nm + '配色方案（基于色相环公式生成）',
+          colors: hs.map(function (h) { return { hex: h, name: (nearestCn(h) || {}).n || '自定义' }; }),
+          imgId: '', createdAt: Date.now()
+        });
+        notify(); colorTab = 'mine'; renderColor(); toast('已存入「' + nm + '」配色');
+      };
+    });
+    Array.prototype.forEach.call(body.querySelectorAll('.cc-fam'), function (n) {
+      n.onclick = function () { wheelFam = n.dataset.fam; renderColorSwatch(body); };
+    });
+    var q = el('cc-q');
+    if (q) q.oninput = function () { wheelQ = q.value.trim(); renderColorSwatch(body); var q2 = el('cc-q'); if (q2) { q2.focus(); try { q2.setSelectionRange(q2.value.length, q2.value.length); } catch (e) {} } };
+    Array.prototype.forEach.call(body.querySelectorAll('[data-copy]'), function (n) {
+      n.onclick = function () { copyText(n.dataset.copy); };
+    });
+  }
+
+  /* 从图片吸取颜色 → 同步到色相环 */
+  function pickImgColor() {
+    var inp = document.createElement('input'); inp.type = 'file'; inp.accept = 'image/*';
+    inp.onchange = function () {
+      var f = inp.files && inp.files[0]; if (!f) return;
+      var rd = new FileReader();
+      rd.onload = function () {
+        var im = new Image();
+        im.onload = function () {
+          var cv = document.createElement('canvas'), w = cv.width = 60, h = cv.height = 60;
+          var cx = cv.getContext('2d'); cx.drawImage(im, 0, 0, w, h);
+          var d = cx.getImageData(0, 0, w, h).data, buckets = {};
+          for (var i = 0; i < d.length; i += 4) {
+            if (d[i + 3] < 200) continue;
+            var c = rgb2hsl(d[i], d[i + 1], d[i + 2]);
+            if (c[1] < 8) continue;
+            var k = Math.round(c[0] / 6) * 6;
+            buckets[k] = buckets[k] || { n: 0, s: 0, l: 0 };
+            buckets[k].n++; buckets[k].s += c[1]; buckets[k].l += c[2];
+          }
+          var best = null, bn = -1;
+          Object.keys(buckets).forEach(function (k) { if (buckets[k].n > bn) { bn = buckets[k].n; best = k; } });
+          if (best === null) { toast('没识别出明显彩色'); return; }
+          var b = buckets[best];
+          wheelPick = { h: +best, s: Math.round(b.s / b.n), l: Math.round(b.l / b.n) };
+          renderColor(); toast('已吸取主色 H' + best + '°');
+        };
+        im.onerror = function () { toast('图片读取失败'); };
+        im.src = rd.result;
+      };
+      rd.readAsDataURL(f);
+    };
+    inp.click();
+  }
+
+  function copyText(t) {
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t);
+      else { var ta = document.createElement('textarea'); ta.value = t; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); }
+      toast('已复制 ' + t);
+    } catch (e) { toast('色值：' + t); }
   }
 
   /* ---------- 成品搭配卡 ---------- */
@@ -4088,7 +4693,7 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
   function toggleTemplate(id, on) { state.templateEnabled[id] = !!on; notify(); }
 
   /* ============ 设置 ============ */
-  var APP_VERSION = 'v2026.09.12-v28色彩版';
+  var APP_VERSION = 'v2026.09.12-v32下拉选色版';
   function renderSettings() {
     var c = state.config || {};
     // ★全量回填：保存后立刻能看到已存的值，不再"存了像没存"
@@ -4124,7 +4729,7 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
       var page = el('page-settings');
       if (page && page.firstChild) page.insertBefore(vb, page.firstChild);
     }
-    if (vb) vb.textContent = '✅ 当前版本：v2026.09.12-v28色彩版（①新增「色彩元素」板块：内置色卡 42 色 / 成品搭配卡 10 组 / 搭配技巧 12 条 ②「我的配色卡片」可自建文件夹、自己录文字与色块、记录搭配理念 ③上传配色参考图可自动提取主色生成方案 ④成品搭配卡一键存入我的配色 ⑤其他功能零改动）';
+    if (vb) vb.textContent = '✅ 当前版本：v2026.09.12-v32下拉选色版（①「色彩元素」板块：全色盘 194 色(14 色系·可筛选搜索) / 成品搭配卡 10 组 / 搭配技巧 12 条 ②「我的配色卡片」可自建文件夹、自己录文字与色块、记录搭配理念 ③上传配色参考图可自动提取主色生成方案 ④色盘顶部新增「▼ 下拉选色」：194 个传统色按色系分组，选哪个就弹出哪个的搭配分析 ⑤点任意颜色即弹出「可搭配色系分析」：色彩档案/性格/肤色/占比 + 同色系·邻近·对比·互补·中性打底 5 组实色方案（每组可一键存入） ④成品搭配卡一键存入我的配色 ⑤其他功能零改动）';
     try { renderTryonAI(); } catch (e) {}
   }
   function applySettings(form) {
@@ -5149,7 +5754,8 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     imgPut: imgPut,
     imgGet: imgGet,
     // ★v28 色彩元素
-    PALETTE_LIB: PALETTE_LIB,
+    WHEEL: WHEEL,
+    PALETTE_LIB: WHEEL,
     COMBO_LIB: COMBO_LIB,
     TIPS_LIB: TIPS_LIB,
     renderColor: renderColor,
@@ -5160,6 +5766,25 @@ h2{margin:0 0 2px;font-size:19px}.sub{color:var(--sub);font-size:12px}
     inkOn: inkOn,
     rgb2hex: rgb2hex,
     curColorFolderId: curColorFolderId,
+    // ★v30 真·全色盘
+    hsl2hex: hsl2hex,
+    hex2rgb: hex2rgb,
+    rgb2hsl: rgb2hsl,
+    hex2hsl: hex2hsl,
+    nearestCn: nearestCn,
+    inkFor: inkFor,
+    copyText: copyText,
+    pickImgColor: pickImgColor,
+    drawWheelCv: drawWheelCv,
+    markWheel: markWheel,
+    notify: notify,
+    uid: uid,
+    get wheelPick() { return wheelPick; },
+    set wheelPick(v) { wheelPick = v; },
+    get wheelQ() { return wheelQ; },
+    set wheelQ(v) { wheelQ = v; },
+    get wheelFam() { return wheelFam; },
+    set wheelFam(v) { wheelFam = v; },
     get colorTab() { return colorTab; },
     set colorTab(v) { colorTab = v; },
     get colorEditing() { return colorEditing; },
